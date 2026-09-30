@@ -10,7 +10,7 @@ format. The first pass reuses existing assets, so it tests the glue and not the 
 | Role | Asset | Checked |
 |---|---|---|
 | 3D character | `vulpine/model.glb` from the agent-meshes creature gallery (a fox) | GLB: 48 skins sharing 19 joints, clips `walk` and `trot`, no morphs. UE 5.7.3 import: one SkeletalMesh, one Skeleton, 2 animations, 48 material instances, no errors. |
-| 2D character | `character-walk/dist/courier.atlas.json` from the agent-sprites examples | 12 frames, tag `walk` (frames 4 to 7, forward), a `pivot` slice. |
+| 2D character | `character-walk/dist/courier.atlas.json` from the agent-sprites examples | 12 frames, tag `walk` (frames 4 to 7, forward), a `pivot` slice. Unity's and Godot's Aseprite importers take Aseprite source files, not this sheet plus JSON, so each engine needs a small loader for it. |
 | 2D effect (optional) | `blink/dist/blink.atlas.json` from the agent-sprites examples | 8 frames, tag `blink` (frames 2 to 5, forward), a `pivot` slice. |
 | Music bed | a song from agent-beeps `library/songs/` | Songs are definitions, not audio. Render with `beeps song export`. Track not chosen. |
 | One-shot sound | an agent-beeps sound exported with variants and a manifest | Not chosen or rendered. |
@@ -42,7 +42,7 @@ not depend on them.
 |---|---|
 | Unreal 5.7.3 | Fox import only (check 1, mesh). Nothing rendered or played. |
 | Unity | Nothing. |
-| Godot | Nothing. |
+| Godot 4.7.2 | Installed; nothing imported yet. |
 
 ## Open
 

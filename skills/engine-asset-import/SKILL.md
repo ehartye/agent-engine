@@ -42,15 +42,28 @@ Documented by agent-meshes, not re-verified here:
 - Unreal drops a morph that moves no vertex used by a triangle.
 - Interchange builds one SkeletalMesh and Skeleton per skin, unless the skins share joint nodes.
 
+From vendor documentation, not tested here:
+
+- Unity has no native glTF import. The `com.unity.cloud.gltfast` package registers as the default
+  importer for `.gltf` and `.glb`. Copy the companion `.bin` and image files too, with their names
+  unchanged. Install the package first; do not assume a new project has it.
+- Godot imports glTF 2.0 natively (`.glb` and `.gltf`) and recommends it. Copy the scene and its
+  textures into the project and the editor imports on focus. `godot --headless --import` imports
+  without a window.
+
 ## Sprites (agent-sprites atlas)
 
 Documented by agent-sprites, not verified here:
 
 - Export is a sheet PNG plus `<name>.atlas.json` in Aseprite JSON form. Frame tags, per-frame
   durations and a `pivot` slice come from the project.
-- Unity and Godot are documented to read it with their Aseprite JSON importers, including tags,
-  durations and pivot. Check all three after import: tag names, frame counts, durations, and where
-  the pivot lands.
+- agent-sprites says Unity and Godot importers read this directly. **Vendor documentation does not
+  support that.** Unity's 2D Aseprite Importer imports `.ase` and `.aseprite` files, and its pages
+  never mention a sheet plus JSON. The Godot Aseprite Wizard also takes Aseprite source files: it
+  runs the Aseprite program to produce a sheet and JSON, then reads that. Godot has no built-in
+  sprite-sheet importer. Nothing has been tested here, and third-party importers were not searched.
+  Plan on a small loader per engine that builds clips from the atlas, and check tag names, frame
+  counts, durations and where the pivot lands.
 - A trimmed atlas (`--trim true`) packs each cell as its opaque box with real `spriteSourceSize`
   offsets. Draw each frame at that offset inside the cell.
 - Only importers that honor the tag `direction` play reverse and ping-pong tags correctly.
@@ -68,6 +81,8 @@ Documented by agent-beeps, not verified here:
   repeat as the audition page does.
 - Priority follows the FMOD convention: 1 is most important, 5 least. Songs are trimmed to a
   project loudness, -20 LUFS integrated by default.
+- Godot follows loop metadata inside a WAV by default; Unity was not checked. Set the loop mode
+  explicitly and confirm it after import.
 - You cannot hear the result. In an engine, claim only that the source exists, plays, loops where
   it should, and logs no errors.
 
@@ -77,7 +92,7 @@ Documented by agent-beeps, not verified here:
 |---|---|---|
 | Unreal 5.7.3 | Fox GLB import (above) | Sprites, audio, rendering, playback |
 | Unity | Nothing | Everything |
-| Godot | Nothing | Everything |
+| Godot 4.7.2 | Nothing (installed, nothing imported) | Everything |
 
 ## After importing
 
