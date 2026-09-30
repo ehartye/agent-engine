@@ -12,7 +12,7 @@ import traps that are otherwise scattered across the asset plugins' docs.
 
 ## Status
 
-Early (0.1.0). One skill. The only thing verified so far is an agent-meshes GLB importing into
+Early (0.1.1). One skill. The only thing verified so far is an agent-meshes GLB importing into
 Unreal Engine 5.7.3 through Interchange, import only: nothing was rendered, animated or played. No
 engine MCP server has been chosen or tested yet, and Unity and Godot are untested. The skills say
 this plainly and do not claim more.
