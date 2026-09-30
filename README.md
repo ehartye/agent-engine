@@ -12,21 +12,22 @@ import traps that are otherwise scattered across the asset plugins' docs.
 
 ## Status
 
-Early (0.1.1). One skill. The only thing verified so far is an agent-meshes GLB importing into
-Unreal Engine 5.7.3 through Interchange, import only: nothing was rendered, animated or played. No
-engine MCP server has been chosen or tested yet, and Unity and Godot are untested. The skills say
-this plainly and do not claim more.
+Early (0.2.0). Two skills. Unreal Engine 5.7.3 is the only engine tested: the sample scene (a fox, a pixel
+campfire, a pixel courier, a music bed and a one-shot) imports, runs with no errors, renders offscreen on
+the GPU and produces a screenshot. No engine MCP server was used in that loop. Godot is installed but
+untested; Unity, UEFN and the web stacks are untested. The skills say this plainly and do not claim more.
 
 ## Skills
 
 | Skill | Job |
 |---|---|
+| `engine-selection` | Choose an engine or web stack (Unity, Unreal, UEFN, Godot, Phaser, three.js, Babylon.js, PlayCanvas) by weighing how easily an agent can drive and verify it against quality and reach, with evidence labels and limits per option. |
 | `engine-asset-import` | Import sprite atlases, GLB models and WAV exports into an engine project, with the known traps per engine and a strict line between verified and documented. |
 
 ## Sample scene
 
 [`docs/sample-scene.md`](docs/sample-scene.md) defines one scene built from reused assets (a fox, a
-pixel courier, a music bed and a one-shot) and a ladder of checks: import, clean run, screenshot,
+pixel courier, a pixel campfire, a music bed and a one-shot) and a ladder of checks: import, clean run, screenshot,
 audio state. It is the acceptance test for the skills. Each engine has to pass it.
 
 ## Install

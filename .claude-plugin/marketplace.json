@@ -7,8 +7,8 @@
   "plugins": [
     {
       "name": "agent-engine",
-      "description": "Skills that glue agent-sprites, agent-meshes and agent-beeps assets into Unity, Unreal and Godot projects",
-      "version": "0.1.1",
+      "description": "Skills that help choose a game engine or web stack for agent-built projects and glue agent-sprites, agent-meshes and agent-beeps assets into Unity, Unreal, UEFN, Godot and the web",
+      "version": "0.2.0",
       "source": "./",
       "license": "MIT"
     }
