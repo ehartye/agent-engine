@@ -1,0 +1,86 @@
+---
+name: engine-asset-import
+description: Import agent-sprites atlases, agent-meshes GLB models and agent-beeps WAV exports into a Unity, Unreal or Godot project, using the known per-engine traps and stating exactly what has been verified.
+when_to_use: Use when bringing a sprite atlas, GLB, WAV or song export into a Unity, Unreal or Godot project; when an imported model is missing bones, morphs or meshes, or its clips have different names; when a sprite sheet imports with wrong frames, tags or pivot; or when asked whether an asset "works in" an engine.
+---
+
+# Importing plugin assets into a game engine
+
+The three asset plugins export plain files. The engines import them with their own importers, and
+that is where things go wrong quietly. This skill lists the traps that are known, and keeps a
+strict line between what was verified and what was only read in documentation.
+
+## Before you claim anything
+
+- Say what you checked: "imports into UE 5.7 via Interchange with names intact", not "works in
+  Unreal". Nothing below has been rendered, animated or played in an engine yet.
+- Unity and Godot: **nothing is verified**. Everything said about them is from the exporting
+  plugins' documentation. Say so, and run the import to find out.
+- Check what the engine reports, not only the cause the tool states. A failure message can blame
+  the wrong thing (a wrong expected bone name was reported as a skin problem).
+
+## Meshes (agent-meshes GLB)
+
+Verified on Unreal 5.7.3 through Interchange, import only:
+
+- A GLB whose 48 mesh parts each had their own skin, all listing the same 19 joint nodes, imported
+  as one SkeletalMesh with one Skeleton, 19 bones, 2 animation sequences, 48 material instances and
+  no errors.
+- Clips `walk` and `trot` from `fox.glb` arrived named `foxwalk` and `foxtrot`. Look clips up by
+  suffix, or list them after import.
+- Check an Unreal import with agent-meshes `verify-unreal` (see its `mesh-build` skill). It needs
+  an installed engine (`AGENT_MESHES_UNREAL`, or a launcher install) and fails with
+  `UNREAL_NOT_FOUND` otherwise. Say so instead of claiming Unreal support.
+
+Documented by agent-meshes, not re-verified here:
+
+- In a GLB that has a skin, Interchange silently drops mesh nodes with no skin, no morphs and no
+  skin joint above them. Bind every mesh to the skin.
+- Unreal keeps morph target names only if every name is unique across all meshes in the file.
+  Otherwise all are renamed `<file>_mesh_<m>_<i>_MorphTarget`. Put all morph-bearing parts in one
+  mesh, one primitive per material.
+- Unreal drops a morph that moves no vertex used by a triangle.
+- Interchange builds one SkeletalMesh and Skeleton per skin, unless the skins share joint nodes.
+
+## Sprites (agent-sprites atlas)
+
+Documented by agent-sprites, not verified here:
+
+- Export is a sheet PNG plus `<name>.atlas.json` in Aseprite JSON form. Frame tags, per-frame
+  durations and a `pivot` slice come from the project.
+- Unity and Godot are documented to read it with their Aseprite JSON importers, including tags,
+  durations and pivot. Check all three after import: tag names, frame counts, durations, and where
+  the pivot lands.
+- A trimmed atlas (`--trim true`) packs each cell as its opaque box with real `spriteSourceSize`
+  offsets. Draw each frame at that offset inside the cell.
+- Only importers that honor the tag `direction` play reverse and ping-pong tags correctly.
+
+## Audio (agent-beeps WAV)
+
+Documented by agent-beeps, not verified here:
+
+- Engines receive rendered WAVs. The synth and the game player runtime are browser-only, so seeded
+  live variation is not available in an engine.
+- The library holds patch and song definitions, not audio. Render first: `beeps export <patch>
+  --variants <n> --manifest` writes `<name>.<i>.wav` and one sidecar. `beeps song export <name>
+  --layers <dir> --manifest` writes one WAV per layer.
+- Variant weights and `noRepeat` live in the sidecar. The engine must reimplement the picking to
+  repeat as the audition page does.
+- Priority follows the FMOD convention: 1 is most important, 5 least. Songs are trimmed to a
+  project loudness, -20 LUFS integrated by default.
+- You cannot hear the result. In an engine, claim only that the source exists, plays, loops where
+  it should, and logs no errors.
+
+## Engine status
+
+| Engine | Verified | Not verified |
+|---|---|---|
+| Unreal 5.7.3 | Fox GLB import (above) | Sprites, audio, rendering, playback |
+| Unity | Nothing | Everything |
+| Godot | Nothing | Everything |
+
+## After importing
+
+Import, then check, then report. If the engine's own MCP server is connected, use it to list the
+imported assets and read the engine log; if it is not, say which checks you could not run. The
+[sample scene](../../docs/sample-scene.md) defines the checks this plugin is aiming for.
