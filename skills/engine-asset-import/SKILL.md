@@ -86,13 +86,35 @@ Documented by agent-beeps, not verified here:
 - You cannot hear the result. In an engine, claim only that the source exists, plays, loops where
   it should, and logs no errors.
 
+## Unreal 5.7: sprites, audio and running it (tested)
+
+Built and run in the [sample scene](../../docs/sample-scene.md); scripts in `examples/unreal`.
+
+- Import GLB and PNG with `InterchangeManager.import_asset` and `is_automated = True`. glTF through
+  `AssetTools.import_asset_tasks` in a commandlet crashes on a missing Slate application. WAV is not an
+  Interchange format: use `AssetTools` for it.
+- Names change on import: `relic-discovered.0.wav` becomes `relic-discovered_0`.
+- Sprites need the Paper2D plugin. Its pivots are in **sheet pixels**: set the pivot to the frame's x and y
+  plus the atlas pivot, or every frame but the first is drawn displaced.
+- Paper2D sprites lie in the XZ plane. Yaw them to face the camera, or they render edge-on and look missing.
+- The atlas `frames` array holds raw cells, each tag's frames and named cells together. Follow the tag's
+  `from` and `to` into it; frame index is not cell index, and durations differ between the copies.
+- The music manifest says `loop: true` but the WAV has no loop metadata. Set looping on the imported asset.
+- Run with `UnrealEditor -RenderOffScreen -ExecCmds="py script.py"`. `-ExecutePythonScript` quits the editor
+  when the script ends and is refused in `-game`. In Git Bash set `MSYS_NO_PATHCONV=1`.
+- Take a screenshot. Wrong rotation order, scale, facing and pivots only showed up there.
+
 ## Engine status
 
 | Engine | Verified | Not verified |
 |---|---|---|
-| Unreal 5.7.3 | Fox GLB import (above) | Sprites, audio, rendering, playback |
-| Unity | Nothing | Everything |
+| Unreal 5.7.3 | Import of fox, courier, campfire and audio; a clean Play-In-Editor run; a screenshot read by eye; music bed reports playing | Audio by ear, pickup variant picking, any automated pixel check |
 | Godot 4.7.2 | Nothing (installed, nothing imported) | Everything |
+| Unity | Nothing | Everything |
+| UEFN | Nothing | Everything; needs an owner sign-in |
+| Web (Phaser, three.js) | Nothing | Everything |
+
+To choose between these, use the `engine-selection` skill.
 
 ## After importing
 
