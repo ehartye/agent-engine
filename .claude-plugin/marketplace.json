@@ -1,0 +1,16 @@
+{
+  "name": "agent-engine",
+  "description": "Local marketplace for the agent-engine plugin",
+  "owner": {
+    "name": "ehartye"
+  },
+  "plugins": [
+    {
+      "name": "agent-engine",
+      "description": "Skills that glue agent-sprites, agent-meshes and agent-beeps assets into Unity, Unreal and Godot projects",
+      "version": "0.1.0",
+      "source": "./",
+      "license": "MIT"
+    }
+  ]
+}
