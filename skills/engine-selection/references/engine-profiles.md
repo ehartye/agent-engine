@@ -57,26 +57,23 @@ binary assets, so scenes cannot be reviewed as text diffs.
 ## UEFN (Unreal Editor for Fortnite)
 
 Mostly research from 2026-09-30; the [tested] items below are what was run on the dev machine.
-- [tested] The launcher installed Fortnite (38.6 GB) and UEFN 42.20 (21.4 GB), both marked complete, but the
-  editor died at startup (exit 0xC0000135, DLL not found) whether started directly or by the launcher, and the
-  launcher's Verify failed with "installation record not found" for Fortnite. Scanning the exe's import table
-  found one missing file: `tbb12.dll` was absent from `Fortnite_Studio\FortniteGame\Binaries\Win64`, where the
-  base Fortnite install keeps its copy. Copying the same-build file there (Program Files was writable) got past
-  that first crash only; the install is still incomplete (next bullet). Windows searches the exe's own folder,
-  so a copy in the engine folder alone did not help.
-- [tested] The editor then launched in the user's session (Epic Launcher URI
-  `com.epicgames.launcher://apps/<namespace>:<item>:Fortnite_Studio?action=launch` from an interactive scheduled
-  task) but only to an error dialog: a process that looks alive and "responding" at about 280 MB can be sitting on a
-  modal error, so read the log, not the process list. It exited about 11 seconds later. The crash log is
-  `%LOCALAPPDATA%\UnrealEditorFortnite\Saved\Crashes\_0000\UnrealEditorFortnite.log`. It reports `UnrealBuildTool.exe`
-  failing to launch, "Failed to open descriptor file ../../../FortniteGame/FortniteGame.uproject" ("Could not find a
-  valid project file, the engine will exit now") and a fatal "ICU data directory was not discovered"
-  (`Content/Internationalization`). All of those files are absent from `Fortnite_Studio`, as is `Engine\Config`.
-  The install is incomplete even though the launcher marks it complete and its manifest and disk size agree;
-  the launcher's repair failed, so the fix is to uninstall and reinstall UEFN from the launcher, which needs the user.
+- [tested] The first install of UEFN 42.20 (21.4 GB, into its own `Fortnite_Studio` folder) was broken even though
+  the launcher marked it complete: the editor died at startup with 0xC0000135 (`tbb12.dll` missing from the exe's
+  folder; Windows searches the exe's own folder, found by reading the import table), and after a copy of that file
+  it showed an error dialog and exited (`UnrealBuildTool.exe`, `FortniteGame.uproject` and ICU data missing,
+  `Engine\Config` absent). The crash log is
+  `%LOCALAPPDATA%\UnrealEditorFortnite\Saved\Crashes\_0000\UnrealEditorFortnite.log`. A process that looks alive
+  and "responding" can be sitting on a modal error, so read the log, not the process list.
+- [tested] A reinstall from the launcher fixed it. The launcher queued it behind the Unreal Engine 5.8 update, and
+  installed UEFN into the **Fortnite** folder (`Fortnite\FortniteGame\Binaries\Win64\UnrealEditorFortnite-Win64-Shipping.exe`;
+  the manifest's InstallLocation is `...\Epic Games\Fortnite`, and that folder grew by exactly UEFN's size). The old
+  `Fortnite_Studio` folder is a leftover. The editor then ran: about 10 GB resident, 3,321 game features loaded, the
+  project templates registered (Basic, Verse, Samples), no fatal errors, listening on local ports 1962, 1963 and 23430.
+  It was started in the user's session through the Epic Launcher URI
+  `com.epicgames.launcher://apps/<namespace>:<item>:Fortnite_Studio?action=launch` from an interactive scheduled task.
 - [tested] Port 8000, the UEFN MCP default, was already taken by an unrelated Python service on this machine, so
-  expect to change the MCP port. Project creation and the two project settings need the user at the GUI; the MCP
-  and Python route is untested.
+  expect to change the MCP port. Creating a project and the two project settings need the user at the GUI; the
+  MCP and Python route is untested.
 - [documented] Windows only; install Fortnite then UEFN through the Epic Games Launcher; an Epic account
   is required. Minimums: Win10 1909, 16 GB RAM, GTX 960-class GPU.
 - [documented] Import: meshes (FBX, OBJ, glTF, GLB), textures (PNG, TGA, JPG and more), audio (WAV, AIF,
