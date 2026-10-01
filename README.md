@@ -12,10 +12,12 @@ across the asset plugins' docs.
 
 ## Status
 
-Early (0.5.0). Two skills. Four targets are tested with the sample scene (a fox, a pixel campfire, a pixel courier,
-a music bed and a one-shot): Unreal Engine 5.7.3, Godot 4.7.2, Unity 6000.3.25f1 and the web tier (Phaser 3.90.0 and
-three.js 0.186.1). Each imports the assets, runs with no errors, renders on the GPU and produces a screenshot; the web
-and Unity passes also record which pickup variants played. No engine MCP server was used in any loop. UEFN is untested.
+Early (0.5.4). Two skills. Four targets are tested with the sample scene (a fox, a pixel campfire, a pixel courier,
+a music bed and a one-shot): Unreal Engine 5.7.3 and 5.8.3, Godot 4.7.2, Unity 6000.3.25f1 and the web tier (Phaser
+3.90.0 and three.js 0.186.1). Each imports the assets, runs with no errors, renders on the GPU and produces a screenshot;
+the web and Unity passes also record which pickup variants played. The scene loops use scripts, not an MCP server.
+Epic's MCP plugin was tried separately on Unreal 5.8.3 and UEFN 42.20: it drives the editor and returns screenshots, but
+has no audio import and rejects GLB. UEFN is partly tested (textures and a mesh imported, no scene built yet).
 The skills say this plainly and do not claim more.
 
 ## Skills
