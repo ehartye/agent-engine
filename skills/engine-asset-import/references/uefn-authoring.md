@@ -31,7 +31,7 @@ and registered tools; it could not import `unreal`. Do not treat native Python
 documentation as permission to bypass that sandbox. Native editor Python is a
 separate, Epic-documented entrypoint.
 
-**Documented, not yet executed locally:** [UEFN Python](https://dev.epicgames.com/documentation/en-us/fortnite/python-tools-in-uefn)
+**Documented:** [UEFN Python](https://dev.epicgames.com/documentation/en-us/fortnite/python-tools-in-uefn)
 supports imports, scene automation and remote execution in early preview. It links
 [Unreal Python execution](https://dev.epicgames.com/documentation/en-us/unreal-engine/scripting-the-unreal-editor-using-python),
 which describes File > Execute Python Script and Output Log Cmd mode:
@@ -43,10 +43,87 @@ py "C:/path/to/project_script.py"
 Preflight required APIs and the active project before edits. UEFN validation can
 reject Python-created content; restrict changes to project assets and properties
 available in its UI. A successful Python call is not validation or runtime proof.
-Epic's `PythonScriptPlugin/Content/Python/remote_execution.py` was found in the
-installed UEFN, but a shipped client is not evidence remote execution is enabled.
-Use one normal editor execution before investing in transport setup. If a manual
-step is needed, first prepare the exact script and expected result for the owner.
+Before asking the owner to execute scripts manually, check the native routes below.
+If an editor action is needed, prepare its exact script and expected receipt first.
+
+## Native Python execution: tested in UEFN 42.30
+
+**Project files:** `Content/Python/init_unreal.py` ran automatically after reopening
+the museum project with Python enabled. It waited for the exact island world, then
+created and saved one Level Sequence through `unreal`. A bounded startup callback
+should unregister before edits, log failures without retrying, and leave existing
+assets unchanged. A newly added startup file needs a reopen; writing a file is not
+itself proof that the running editor executed it. Keep these editor scripts as source.
+
+**Native remote execution:** Epic's shipped
+`Engine/Plugins/Experimental/PythonScriptPlugin/Content/Python/remote_execution.py`
+successfully executed project scripts with `unreal` in the running UEFN. It opens
+a short-lived command connection; no custom MCP bridge or resident service was added.
+
+Discover the current settings rather than assume client defaults. MCP ObjectTools
+can inspect `/Script/PythonScriptPlugin.Default__PythonScriptPluginSettings`.
+The tested editor already had `bRemoteExecution=true`, multicast endpoint
+`239.0.0.1:6766`, bind address `0.0.0.0` and TTL 0. Earlier default loopback
+discovery returned no nodes; after reopening, matching the configured bind address
+discovered the editor. This does not isolate every cause of the earlier failure.
+Do not infer that every UEFN has these settings or enable them solely from this example.
+[Epic Python settings](https://dev.epicgames.com/documentation/en-us/unreal-engine/python-settings-in-the-unreal-engine-project-settings).
+
+Using the supplied client: configure discovery, `start()`, collect nodes, select
+exactly one intended editor, `open_command_connection(node_id)`, `run_command(...)`,
+and `stop()` in `finally`. Check `success` and log output; never retry a timed-out
+mutation blindly. The tested node advertised `project_name=FortniteGame` and an
+engine project root, so those fields did **not** identify the loaded island.
+Read `UnrealEditorSubsystem.get_editor_world().get_path_name()` and verify its
+mount/level before writes. A local native client must preserve that guard.
+
+Minimal read-only probe after adding the installed client directory to `sys.path`
+and checking discovery settings (the two named values are project inputs):
+
+```python
+import ast
+import time
+import remote_execution
+
+config = remote_execution.RemoteExecutionConfig()
+config.multicast_bind_address = checked_editor_bind_address
+client = remote_execution.RemoteExecution(config)
+try:
+    client.start()
+    time.sleep(2)
+    nodes = client.remote_nodes
+    if len(nodes) != 1:
+        raise RuntimeError("Select exactly one intended editor")
+    client.open_command_connection(nodes[0]["node_id"])
+    client.run_command("import unreal",
+                       exec_mode=remote_execution.MODE_EXEC_STATEMENT,
+                       raise_on_failure=True)
+    result = client.run_command(
+        "unreal.get_editor_subsystem(unreal.UnrealEditorSubsystem)"
+        ".get_editor_world().get_path_name()",
+        exec_mode=remote_execution.MODE_EVAL_STATEMENT,
+        raise_on_failure=True)
+    world = ast.literal_eval(result["result"])
+    if world.split(".")[0] != expected_island_level:
+        raise RuntimeError("Wrong loaded island; abort")
+finally:
+    client.stop()
+```
+
+After this guard, a prepared script can use `MODE_EXEC_FILE` with its quoted
+absolute path. Keep the same world check inside the script, inspect result/logs,
+and save only intended assets. Empty discovery is a failed probe, not permission
+to launch a second editor or replay an earlier mutation.
+
+**Launch with a project:** Epic documents the Project Browser's
+[Open last project on start up](https://dev.epicgames.com/documentation/fortnite/starting-and-organizing-a-project-in-fortnite).
+The tested config object `/Script/ValkyrieEditor.Default__ValkyrieEditorConfig`
+exposed `valkyrieLoadAtStartupMostRecentProject=LastProject`; the old boolean
+`bStartupWithLastProject` is deprecated. The saved `LastProjectFileName` identified
+the museum. Normal close and Epic Launcher relaunch opened that project and ran
+its startup hook. Verify saved configuration: changing the live property did not
+immediately change the INI. Discover the installed Launcher app identity; do not
+hardcode this machine's catalog ID. No arbitrary UEFN `-project=` route was proved.
 
 ## Animation: preserve the actual control requirement
 
@@ -55,11 +132,15 @@ read-only playback properties do not provide a writable seek/reset. Reverse is
 not exact Reset. Three imported skeletal clips read back as eight seconds,
 240 frames and 241 sampled keys at 30 fps. This establishes import, not playback.
 
-**Documented route, local proof pending:** author a native Level Sequence with
-a skeletal animation track and use a Cinematic Sequence device. Generic
+**Tested authoring, runtime pending:** native Python created a Level Sequence
+with an eight-second skeletal animation section at 30 fps (frames 0–240).
+Its actor and component possessables both resolved in the target level, and five
+scrubbed samples produced five different numeric bone poses. The sequence was saved
+and read back clean. This is editor evaluation evidence, not Fortnite playback.
+A Cinematic Sequence device is the documented runtime route. Generic
 [Sequencer Python examples](https://dev.epicgames.com/documentation/en-us/unreal-engine/python-scripting-in-sequencer-in-unreal-engine)
-show `LevelSequenceFactoryNew`, actor bindings and animation sections. Preflight
-these APIs in the installed UEFN; do not advertise an unexecuted snippet as a recipe.
+show `LevelSequenceFactoryNew`, actor bindings and animation sections. Those core
+operations worked locally; preflight their availability again after upgrades.
 The [device API](https://dev.epicgames.com/documentation/en-us/fortnite/verse-api/fortnitedotcom/devices/cinematic_sequence_device)
 includes `SetPlaybackFrame` and `SetPlaybackTime`.
 
@@ -130,6 +211,8 @@ justifies its cost. Stop broad workflow research after a reproducible validated
 authoring path exists; keep runtime acceptance open until observed in Fortnite.
 
 Report separately: files exported, assets imported/saved, editor appearance,
-validation, runtime behavior and owner audio audition. The museum exercise had
-verified the first three, passed upload validation, and then lost its session;
-reset, audio and multiplayer behavior were still unverified at this reference's date.
+validation, runtime behavior and owner audio audition. The museum exercise verified
+export/import, gallery appearance, project startup, native remote execution and
+saved Sequence evaluation. An earlier gallery session passed upload validation,
+then disconnected; the new Sequence was not yet validated in Fortnite. Reset,
+audio and multiplayer behavior remained unverified at this reference's date.

@@ -76,7 +76,9 @@ Mostly research from 2026-09-30; the [tested] items below are what was run on th
   `com.epicgames.launcher://apps/<namespace>:<item>:Fortnite_Studio?action=launch` from an interactive scheduled task.
 - [tested] Port 8000, the UEFN MCP default, was already taken by an unrelated Python service on this machine, so
   expect to change the MCP port. The owner created the project and enabled settings in the GUI. Later MCP tests
-  imported and saved FBX clips, placed devices and captured the editor; native Python authoring remains untested.
+  imported and saved FBX clips, placed devices and captured the editor. UEFN 42.30 also executed project-local
+  startup and Epic's native remote Python client: a saved Level Sequence resolved its bindings and evaluated
+  moving bone poses in the editor. Fortnite runtime remains unverified.
 - [documented] Windows only; install Fortnite then UEFN through the Epic Games Launcher; an Epic account
   is required. Minimums: Win10 1909, 16 GB RAM, GTX 960-class GPU.
 - [documented] Import: meshes (FBX, OBJ, glTF, GLB), textures (PNG, TGA, JPG and more), audio (WAV, AIF,
@@ -96,8 +98,8 @@ Mostly research from 2026-09-30; the [tested] items below are what was run on th
 
 **Verdict**: a separate target, not standard Unreal with another path. It adds Fortnite distribution and
 an official agent path. It costs platform lock-in and an unattended loop capped by sign-in and the client.
-Next proof: one native Sequence around an already imported clip, exact reset controls, then Fortnite runtime
-verification. Use native Python or an editor exemplar before introducing a second UE project solely for a missing
+Next proof: wire exact reset controls around the saved native Sequence, then verify Fortnite runtime.
+Use native Python or an editor exemplar before introducing a second UE project solely for a missing
 MCP tool. See the UEFN authoring reference linked directly from the engine-selection skill for evidence and limits.
 
 ## Godot 4.7
