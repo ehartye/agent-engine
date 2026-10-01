@@ -13,9 +13,9 @@ strict line between what was verified and what was only read in documentation.
 ## Before you claim anything
 
 - Say what you checked: "imports into UE 5.7 via Interchange with names intact", not "works in
-  Unreal". Nothing below has been rendered, animated or played in an engine yet.
-- Unity and Godot: **nothing is verified**. Everything said about them is from the exporting
-  plugins' documentation. Say so, and run the import to find out.
+  Unreal". Sections marked "tested" were run in the sample scene; the rest is documentation.
+- Unity: **nothing is verified**; what is said about it is from vendor documentation. Say so, and run the
+  import to find out.
 - Check what the engine reports, not only the cause the tool states. A failure message can blame
   the wrong thing (a wrong expected bone name was reported as a skin problem).
 
@@ -121,12 +121,32 @@ Built in the sample scene; pages and verifier in `examples/web`.
 - Headless Chromium with `--use-angle=d3d11 --ignore-gpu-blocklist` rendered on the RTX 5090 (the WebGL renderer
   string says so); check that string, since software rendering is the silent fallback.
 
+## Godot 4.7 (tested)
+
+Built and run in the sample scene; scripts in `examples/godot`.
+
+- `godot --headless --path <project> --import` imports the GLB, PNGs and WAVs; a `--script` builder then
+  writes the scene. Use the `_console` executable to see output; pass your own arguments after `--`.
+- The fox's 48 skins became one `Skeleton3D` (19 bones) with 48 meshes and one `AnimationPlayer`; `walk` and
+  `trot` kept their names but import with **no loop**. Set `LOOP_LINEAR` on the animation.
+- There is no sprite-sheet importer. Build `SpriteFrames` from the atlas: follow the tag into the frames array,
+  make one `AtlasTexture` per frame, set the animation speed from the first duration and each frame's duration
+  as a multiplier. For an `AnimatedSprite3D`, put the pivot at the origin with
+  `offset = (cell_w / 2 - pivot_x, pivot_y - cell_h / 2)`.
+- The music WAV has no loop chunk, so set `LOOP_FORWARD` yourself. Godot imports WAV compressed by default, so
+  compute `loop_end` as `get_length() * mix_rate`; `data.size()` gave about a fifth of the right figure.
+- `AudioStreamRandomizer` can consume the manifest's variants, weights and `noRepeat`. A script cannot read
+  which variant it chose, so the variant sequence is not checkable the way it is on the web.
+- `Camera3D.look_at()` does nothing before the node is in the tree. Set the rotation.
+- A scripted quit prints "ObjectDB instances leaked" and "resources still in use" lines. They are exit
+  notices, not run errors; a naive error grep trips on them.
+
 ## Engine status
 
 | Engine | Verified | Not verified |
 |---|---|---|
 | Unreal 5.7.3 | Import of fox, courier, campfire and audio; a clean Play-In-Editor run; a screenshot read by eye; music bed reports playing | Audio by ear, pickup variant picking, any automated pixel check |
-| Godot 4.7.2 | Nothing (installed, nothing imported) | Everything |
+| Godot 4.7.2 | Import, headless build, a windowed GPU run, animations and music reporting playing, a loop set from the stream length, a screenshot read by eye | Audio by ear, the chosen pickup variant, the bed looping end to end |
 | Unity | Nothing | Everything |
 | UEFN | Nothing | Everything; needs an owner sign-in |
 | Web: three.js, Phaser | Import, animation advance, audio start and variant picking, a clean console, a screenshot read by eye, on the GPU in headless Chromium | Audio by ear; the bed looping end to end |

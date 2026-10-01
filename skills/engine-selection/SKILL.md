@@ -39,7 +39,7 @@ play it. The profiles give what is known per option.
 | Stack | Agent autonomy | Quality and reach | Main limit |
 |---|---|---|---|
 | Web: Phaser, three.js | Highest, and tested: headless Chromium on the GPU, text project, no sign-in, about 12 s per pass | Any browser. 2D strong, 3D moderate | Browser performance ceiling; no native or console |
-| Godot | High: CLI headless, one-command install, small | Strong 2D, good 3D | Smaller high-end 3D ceiling; best MCP needs Godot 4.7+ |
+| Godot | High, and tested: one-command install, headless build, windowed run in about 12 s | Strong 2D, good 3D | Smaller high-end 3D ceiling; best MCP needs Godot 4.7+ |
 | Unreal | Medium: works unattended, but heavy and slow to iterate | Highest visual ceiling | Install weight, minute-long loops, binary assets |
 | Unity | Medium to low on the evidence held | Widest platform reach | Not tested here; licensing login and package steps |
 | UEFN | Lowest unattended; official MCP exists | Fortnite only, inside Verse and a memory budget | Sign-in and a running Fortnite client |

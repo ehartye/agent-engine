@@ -68,8 +68,15 @@ check that the assets exist and the memory figure still passes.
 
 ## Godot 4.7
 
-- [tested] One command installs it on Windows (`winget install GodotEngine.GodotEngine`, 4.7.2). Nothing
-  was imported or run yet.
+- [tested] One command installs it on Windows (`winget install GodotEngine.GodotEngine`, 4.7.2). The sample
+  scene built headless in seconds (`--import`, then a `--script` builder) and ran in a window on Vulkan,
+  Forward+, on the RTX 5090 (a window worked here, where Unreal's windowed D3D12 swap chain did not). A run
+  to a screenshot and report takes about 12 seconds. No MCP server was used.
+- [tested] The 48-skin fox imported as one `Skeleton3D` (19 bones), 48 `MeshInstance3D` and one
+  `AnimationPlayer` with `walk` and `trot` under their original names. The clips import with no loop.
+- [tested] WAVs import compressed (QOA) by default, so `data.size()` is not the PCM size: derive a loop end
+  from `get_length() * mix_rate`. `AudioStreamRandomizer` took the manifest's variants, weights and
+  `noRepeat` directly, but a script cannot see which variant it picked.
 - [documented] Headless flags: `--headless`, `--import` (import then quit), `--script`, `--check-only`,
   `--export-release`, `--write-movie`. No screenshot flag on that page.
 - [documented] glTF 2.0 is imported natively and recommended; `.blend` needs Blender installed.
