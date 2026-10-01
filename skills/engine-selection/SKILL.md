@@ -60,3 +60,7 @@ play it. The profiles give what is known per option.
 - A screenshot is the only check that catches wrong scale, facing and pivots. Require one.
 
 Per-engine evidence, traps and blockers: [engine profiles](references/engine-profiles.md).
+
+For a Fortnite project blocked by missing MCP operations, or a proposal to author
+in regular UE and port, read [UEFN authoring routes](../engine-asset-import/references/uefn-authoring.md)
+before recommending a second editor workflow.
