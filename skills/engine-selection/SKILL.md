@@ -52,6 +52,8 @@ play it. The profiles give what is known per option.
   sprite animation, movement and triggers). Engines built on it exist: Needle Engine (Unity or Blender authoring)
   is the closest; react-three-fiber is a React renderer over it. Babylon.js and PlayCanvas are separate engines,
   not built on three.js.
+- Check whether the agent's shell has a desktop before promising a visual check (see the sessions section of the
+  profiles): windowed rendering and screen capture fail in a non-interactive session, while offscreen modes work.
 - Recommend one option and say what it gives up. Do not list five and stop.
 - When a question is open (for example whether a GLB imports with its skin intact), propose a
   one-hour spike with the [sample scene](../../docs/sample-scene.md) and say what it will settle.
