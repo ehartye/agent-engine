@@ -12,11 +12,11 @@ across the asset plugins' docs.
 
 ## Status
 
-Early (0.4.0). Two skills. Three targets are tested with the sample scene (a fox, a pixel campfire, a pixel courier,
-a music bed and a one-shot): Unreal Engine 5.7.3, Godot 4.7.2 and the web tier (Phaser 3.90.0 and three.js 0.186.1).
-Each imports the assets, runs with no errors, renders on the GPU and produces a screenshot; the web pass also checks the
-pickup variants. No engine MCP server was used in any loop. Unity and UEFN are untested. The skills say this plainly and
-do not claim more.
+Early (0.5.0). Two skills. Four targets are tested with the sample scene (a fox, a pixel campfire, a pixel courier,
+a music bed and a one-shot): Unreal Engine 5.7.3, Godot 4.7.2, Unity 6000.3.25f1 and the web tier (Phaser 3.90.0 and
+three.js 0.186.1). Each imports the assets, runs with no errors, renders on the GPU and produces a screenshot; the web
+and Unity passes also record which pickup variants played. No engine MCP server was used in any loop. UEFN is untested.
+The skills say this plainly and do not claim more.
 
 ## Skills
 
