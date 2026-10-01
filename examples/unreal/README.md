@@ -1,6 +1,6 @@
 # Unreal sample scene scripts
 
-Verified on Unreal Engine 5.7.3, Windows. They build the [sample scene](../../docs/sample-scene.md) and
+Verified on Unreal Engine 5.7.3 and 5.8.3, Windows (5.8.3 needed three changes, listed under "Unreal 5.8.3" in the `engine-asset-import` skill). They build the [sample scene](../../docs/sample-scene.md) and
 run it with real rendering. Read the traps in the `engine-asset-import` and `engine-selection` skills
 before changing them.
 

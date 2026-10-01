@@ -1,7 +1,7 @@
 ---
 name: engine-asset-import
-description: Import agent-sprites atlases, agent-meshes GLB models and agent-beeps WAV exports into a Unity, Unreal or Godot project, using the known per-engine traps and stating exactly what has been verified.
-when_to_use: Use when bringing a sprite atlas, GLB, WAV or song export into a Unity, Unreal or Godot project; when an imported model is missing bones, morphs or meshes, or its clips have different names; when a sprite sheet imports with wrong frames, tags or pivot; or when asked whether an asset "works in" an engine.
+description: Import agent-sprites atlases, agent-meshes GLB models and agent-beeps WAV exports into a Unity, Unreal, UEFN or Godot project, using the known per-engine traps and stating exactly what has been verified.
+when_to_use: Use when bringing a sprite atlas, GLB, WAV or song export into a Unity, Unreal, UEFN or Godot project, by script or through an engine's MCP server; when an imported model is missing bones, morphs, meshes or animation clips, or its clips have different names; when an Unreal import splits one model into many meshes or leaves nothing on disk; when a sprite sheet imports with wrong frames, tags or pivot; or when asked whether an asset "works in" an engine.
 ---
 
 # Importing plugin assets into a game engine
@@ -40,7 +40,8 @@ Documented by agent-meshes, not re-verified here:
   Otherwise all are renamed `<file>_mesh_<m>_<i>_MorphTarget`. Put all morph-bearing parts in one
   mesh, one primitive per material.
 - Unreal drops a morph that moves no vertex used by a triangle.
-- Interchange builds one SkeletalMesh and Skeleton per skin, unless the skins share joint nodes.
+- Interchange builds one SkeletalMesh and Skeleton per skin, unless the skins share joint nodes. (On 5.8.3 the
+  default stack split a GLB whose skins share joints into one mesh per skin anyway; see "Unreal 5.8.3" below.)
 
 From vendor documentation, not tested here:
 
@@ -103,6 +104,78 @@ Built and run in the [sample scene](../../docs/sample-scene.md); scripts in `exa
 - Run with `UnrealEditor -RenderOffScreen -ExecCmds="py script.py"`. `-ExecutePythonScript` quits the editor
   when the script ends and is refused in `-game`. In Git Bash set `MSYS_NO_PATHCONV=1`.
 - Take a screenshot. Wrong rotation order, scale, facing and pivots only showed up there.
+
+## Unreal 5.8.3 (tested)
+
+The same scripts from `examples/unreal` pass on 5.8.3 (fox animating, music bed playing, both flipbooks advancing,
+screenshot read by eye) after three changes. Each failed quietly on the first try.
+
+- **The fox split into 48 meshes.** The same `InterchangeManager.import_asset` call that gave one `fox` mesh on
+  5.7.3 gave 48 skeletal meshes, 48 physics assets and one shared skeleton, so "the first SkeletalMesh" was
+  `back_mantle`. Pass a saved pipeline asset with `combine_skeletal_meshes_behavior = BY_SKELETON` through
+  `ImportAssetParameters.override_pipelines`, and pick the mesh by name. Python cannot pass a pipeline object there:
+  it takes soft asset paths, so create the pipeline with `AssetTools.create_asset`, save it, and pass its path.
+  The enum has `BY_SKELETON`, `BY_SKELETON_VISIBLE_ONLY` and `DO_NOT_COMBINE`.
+- **An automated import no longer saves its assets.** On 5.7.3 the files were on disk afterwards; on 5.8.3 they stayed
+  in memory, so the saved map referenced nothing. The build step still reported the fox placed, and only the rendered
+  run showed an empty scene. Call `EditorAssetLibrary.save_directory(dest, only_if_is_dirty=False, recursive=True)`
+  after each import, and check what the render shows, not what the build claims.
+- **FBX clips need whole-frame lengths.** See the next section.
+
+## FBX into Unreal and UEFN: clips need frame-aligned lengths (tested)
+
+Tested on Unreal 5.8.3 and UEFN 42.20. A mesh import tool that only takes FBX (see the next section) means a GLB
+has to be converted first, and the clips can vanish in the conversion.
+
+- Symptom: the mesh, skeleton and materials import, no AnimSequence appears with `import_animations` true, and the
+  tool reports success. The only trace is an error in the editor log: "Animation length 0.8 is not compatible with
+  import frame-rate 24 fps ... frame-border aligned if the 'Snap to Closest Frame Boundary' pipeline option is
+  disabled". The FBX does contain the clips; check its animation stacks before blaming the file.
+- Fix at the source (works through the MCP tool): export at a rate where each clip is a whole number of frames.
+  The fox's 0.8 s and 1.2 s clips are exact at 30 fps and not at 24. In Blender set `scene.render.fps = 30`
+  **before** the glTF import: the importer turns seconds into frames at the current rate, and changing it afterwards
+  keeps the old frame numbers and shrinks every clip (0.8 s became 0.64 s). `examples/uefn/glb_to_fbx.py` does this.
+  After it, the default import and Epic's MCP `import_file` both produced the mesh, skeleton and two clips.
+- Fix in the engine (needs a pipeline asset, so not available through the MCP tool): set the animation pipeline's
+  `frame_alignment` to `SNAP_TO_FLOOR`, `SNAP_TO_CLOSEST` or `SNAP_TO_CEILING`; all three imported both clips.
+- Clip names differ by route: Interchange from the GLB gave `foxwalk`; the MCP tool from the FBX gave
+  `Fox_Anim_Ember_fox_walk`. List the clips after import and look them up by suffix.
+- Blender from the Microsoft Store cannot be run from its folder under `WindowsApps` (access denied). Run
+  `%LOCALAPPDATA%\Microsoft\WindowsApps\blender-launcher.exe` as an interactive task in the owner's session; it
+  swallows Blender's console output, so check that the output file was rewritten. A leftover Blender process stalls
+  the next launch.
+
+## Epic's MCP server on Unreal 5.8.3 and UEFN (tested)
+
+Epic's `ModelContextProtocol` plugin (Experimental, off by default) ships with 5.8 and is the same plugin family UEFN
+uses. Tested 2026-10-01; details and sources are in the project wiki.
+
+- Enable `ModelContextProtocol`, `ToolsetRegistry`, `EditorToolset` and `AllToolsets` in the `.uproject`. Launch with
+  `-RenderOffScreen -unattended -ModelContextProtocolStartServer -ModelContextProtocolPort=<port>`; the server
+  answered about 30 seconds later with no click. The default port is 8000, which may be taken. In UEFN the port is
+  the `ServerPortNumber` setting, command-line arguments are discarded, and the server must be started by hand after
+  each launch.
+- Only `list_toolsets`, `describe_toolset` and `call_tool` are listed; the toolsets are reached through `call_tool`
+  with a toolset name and a tool name.
+- It did: import textures; import FBX and OBJ meshes; spawn an actor from an asset; capture the viewport as a PNG
+  (base64 inside the JSON result; pass an explicit camera pose, because `FocusOnActors` can park the camera
+  kilometres away). It did not: import audio (no tool in either toolset list), accept a GLB ("FbxFactory does not
+  support .glb. Allowed: fbx, obj."), or run Python with the `unreal` module (the script tool allows only `json`,
+  `re`, `math`, `copy`, `time`, `datetime`).
+- Argument shapes differ from UEFN's on 5.8.3: `find_assets` needs `name` (empty string for all),
+  `add_to_scene_from_asset` needs an `xform`, and `CaptureViewport` needs both `captureTransform` and `annotations`.
+- Pair it with the headless Python route above for GLB and audio. Epic's 20 built-in agent skills are domain guidance
+  (PCG, Niagara, editor, Dataflow); none covers import.
+
+## UEFN 42.20 (partly tested)
+
+- Tested through the MCP server in a real project: textures import; the fox imports as a skeletal mesh with a
+  skeleton and 48 materials from the converted FBX (clips need the frame-rate fix above, which has not been re-run in
+  UEFN). No scene has been built and no session played.
+- Audio: no MCP route. Auto Reimport created nothing from dropped WAVs across two restarts. Drag the files into the
+  Content Browser; Epic documents `.wav`, `.aif`, `.flac` and `.ogg` up to 300 seconds.
+- Documented versus tested: Epic's pages say GLB and glTF import in the editor; the MCP mesh tool accepts only FBX
+  and OBJ. Say which one you mean.
 
 ## Web: Phaser and three.js (tested)
 
@@ -167,9 +240,10 @@ Built and run in the sample scene; scripts in `examples/unity`.
 | Engine | Verified | Not verified |
 |---|---|---|
 | Unreal 5.7.3 | Import of fox, courier, campfire and audio; a clean Play-In-Editor run; a screenshot read by eye; music bed reports playing | Audio by ear, pickup variant picking, any automated pixel check |
+| Unreal 5.8.3 | The same scene after three fixes: import, a clean rendered run, fox animating, music bed reporting playing, a screenshot read by eye; Epic's MCP server started headless, imported textures and an FBX, spawned an actor and returned a screenshot | Audio by ear, pickup variant picking, an automated pixel check, MCP audio or GLB import (none exists) |
 | Godot 4.7.2 | Import, headless build, a windowed GPU run, animations and music reporting playing, a loop set from the stream length, a screenshot read by eye | Audio by ear, the chosen pickup variant, the bed looping end to end |
 | Unity 6000.3.25f1 | Licensed headless build and run, a D3D12 batchmode player on the GPU, animations and loop, 12 pickups with no repeat, zero log errors, a screenshot read by eye | Audio by ear, the bed looping end to end, the Unity CLI and MCP route |
-| UEFN | Nothing | Everything; needs an owner sign-in |
+| UEFN 42.20 | MCP server on a set port; texture import; the fox as a skeletal mesh from a converted FBX | A scene, a play-test session, the fox's clips after the frame-rate fix, audio import (manual only), the memory budget |
 | Web: three.js, Phaser | Import, animation advance, audio start and variant picking, a clean console, a screenshot read by eye, on the GPU in headless Chromium | Audio by ear; the bed looping end to end |
 
 To choose between these, use the `engine-selection` skill.

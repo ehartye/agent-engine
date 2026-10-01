@@ -28,8 +28,11 @@ Contents: [Sessions](#before-any-of-these-is-the-shell-interactive) | [Unreal](#
   started Play-In-Editor, sampled state and wrote a screenshot on the GPU. A windowed `-game` run failed
   in that session with `DXGI_ERROR_NOT_CURRENTLY_AVAILABLE` (no desktop to present to).
 - [tested] A run costs 60 to 75 seconds, mostly editor start. Expect several runs to fix layout.
-- [documented] MCP servers exist (Epic's own in 5.8; community servers). Several need a C++ plugin built
-  into the project. None was used in the tested loop.
+- [tested] Epic's own MCP plugin (5.8.3, Experimental) starts headless with `-ModelContextProtocolStartServer`, imports
+  textures and FBX, spawns actors and returns screenshots; it has no audio import and rejects GLB, so the tested
+  loops still use scripts. [documented] Community MCP servers exist; several need a C++ plugin built into the project.
+- [tested] Unreal 5.8.3 passes the same scene after three fixes (the fox splits into 48 meshes by default, automated
+  imports are not saved, FBX clips need frame-aligned lengths); see the `engine-asset-import` skill.
 
 **Import** ([tested] unless noted)
 - GLB and PNG: `InterchangeManager.import_asset` with `is_automated = True`. Do not use

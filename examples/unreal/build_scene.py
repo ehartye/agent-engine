@@ -1,4 +1,4 @@
-"""Build the agent-engine sample scene in Unreal 5.7 through the editor Python API.
+"""Build the agent-engine sample scene in Unreal 5.7 and 5.8 through the editor Python API.
 
 Run headless (assets + level only, no rendering):
   UnrealEditor-Cmd.exe SampleScene.uproject -run=pythonscript -script=<this file> -unattended -nullrhi -nosplash -nopause -nosound
@@ -34,14 +34,38 @@ def step(name, fn):
 tools = unreal.AssetToolsHelpers.get_asset_tools()
 
 
-def import_file(src, dest):
+def combine_by_skeleton_pipeline():
+    """A saved pipeline asset that merges the skins of one skeleton into one SkeletalMesh.
+
+    The default glTF stack in 5.8.3 splits the 48-skin fox into 48 skeletal meshes; 5.7.3 produced one. Interchange takes
+    pipelines as asset paths, so the configured pipeline is saved in the project. Returns None where the engine has no such option.
+    """
+    try:
+        behavior = unreal.InterchangeCombineSkeletalMeshesBehavior.BY_SKELETON
+        folder, name = "/Game/Pipelines", "P_combine_by_skeleton"
+        unreal.EditorAssetLibrary.make_directory(folder)
+        if not unreal.EditorAssetLibrary.does_asset_exist(folder + "/" + name):
+            asset = unreal.AssetToolsHelpers.get_asset_tools().create_asset(name, folder, unreal.InterchangeGenericAssetsPipeline, None)
+            asset.get_editor_property("mesh_pipeline").set_editor_property("combine_skeletal_meshes_behavior", behavior)
+            unreal.EditorAssetLibrary.save_asset(folder + "/" + name)
+        return unreal.SoftObjectPath(folder + "/" + name + "." + name)
+    except Exception as exc:
+        unreal.log_warning("[build] no combine pipeline, using the default stack: " + str(exc))
+        return None
+
+
+def import_file(src, dest, pipeline=None):
     # InterchangeManager with is_automated skips the Content Browser sync that crashes a headless run
     # (AssetTools.import_asset_tasks asserts on a missing Slate application).
     manager = unreal.InterchangeManager.get_interchange_manager_scripted()
     source = unreal.InterchangeManager.create_source_data(src)
     params = unreal.ImportAssetParameters()
     params.is_automated = True
+    if pipeline is not None:
+        params.override_pipelines = [pipeline]
     returned = bool(manager.import_asset(dest, source, params))
+    # 5.7.3 saved the assets of an automated import; 5.8.3 leaves them in memory only, so the saved map pointed at nothing
+    unreal.EditorAssetLibrary.save_directory(dest, only_if_is_dirty=False, recursive=True)
     made = [str(p) for p in unreal.EditorAssetLibrary.list_assets(dest, recursive=True, include_folder=False)]
     return {"returned": returned, "assets_in_dest": made}
 
@@ -66,7 +90,7 @@ def load(path):
 
 
 # ---------------------------------------------------------------- imports
-fox_paths = step("import fox.glb", lambda: import_file(ROOT + "/assets/meshes/fox.glb", "/Game/Fox"))
+fox_paths = step("import fox.glb", lambda: import_file(ROOT + "/assets/meshes/fox.glb", "/Game/Fox", combine_by_skeleton_pipeline()))
 step("import courier.png", lambda: import_file(ROOT + "/assets/sprites/courier.png", "/Game/Sprites"))
 step("import campfire.png", lambda: import_file(ROOT + "/assets/sprites/campfire.png", "/Game/Sprites"))
 audio_files = ["survey-drone.wav"] + ["relic-discovered.%d.wav" % i for i in range(4)]
@@ -178,13 +202,14 @@ def make_level():
     anims = find_assets("/Game/Fox", unreal.AnimSequence)
     fox = spawn(unreal.SkeletalMeshActor, loc=(0, -300, 0), rot=(0, 0, 0), label="Fox")
     comp = fox.skeletal_mesh_component
-    comp.set_skeletal_mesh_asset(skel[0])
+    fox_mesh = ([m for m in skel if m.get_name() == "fox"] or skel)[0]   # an import that splits the skins would put "back_mantle" first
+    comp.set_skeletal_mesh_asset(fox_mesh)
     walk_anim = [a for a in anims if a.get_name().lower().endswith("walk")][0]
     data = unreal.SingleAnimationPlayData()
     data.set_editor_property("anim_to_play", walk_anim)
     comp.set_editor_property("animation_mode", unreal.AnimationMode.ANIMATION_SINGLE_NODE)
     comp.set_editor_property("animation_data", data)
-    placed["fox"] = {"mesh": skel[0].get_name(), "anim": walk_anim.get_name(), "anims": [a.get_name() for a in anims]}
+    placed["fox"] = {"mesh": fox_mesh.get_name(), "skeletal_meshes_found": len(skel), "anim": walk_anim.get_name(), "anims": [a.get_name() for a in anims]}
 
     courier = spawn(unreal.PaperFlipbookActor, loc=(0, 190, 0), rot=(0, -90, 0), label="Courier")
     rc = courier.get_editor_property("render_component")
