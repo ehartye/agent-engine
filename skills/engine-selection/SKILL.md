@@ -46,9 +46,12 @@ play it. The profiles give what is known per option.
 
 ## Rules
 
-- **Three.js is a rendering library, not an engine.** It gives a scene graph, cameras, lights,
-  materials and loaders, and leaves physics, entities and audio to you. Babylon.js and PlayCanvas
-  are engines; react-three-fiber is a framework over three.js.
+- **Three.js is a 3D library, and "not an engine" is a fair description, not a verdict.** It gives a scene graph,
+  cameras, lights, materials, loaders, animation playback and thin Web Audio wrappers, and leaves physics,
+  entities, input, flipbooks and game loop structure to you (tested: the web sample scene needed hand-written
+  sprite animation, movement and triggers). Engines built on it exist: Needle Engine (Unity or Blender authoring)
+  is the closest; react-three-fiber is a React renderer over it. Babylon.js and PlayCanvas are separate engines,
+  not built on three.js.
 - Recommend one option and say what it gives up. Do not list five and stop.
 - When a question is open (for example whether a GLB imports with its skin intact), propose a
   one-hour spike with the [sample scene](../../docs/sample-scene.md) and say what it will settle.
