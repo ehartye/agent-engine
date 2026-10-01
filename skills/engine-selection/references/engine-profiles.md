@@ -4,8 +4,20 @@ Dated 2026-09-30. Tags: **[tested]** ran on the dev machine (Windows 11, RTX-cla
 read in vendor or project docs, **[general]** general knowledge not checked here. Re-check anything
 not tagged [tested] before relying on it.
 
-Contents: [Unreal](#unreal-engine-57) | [UEFN](#uefn-unreal-editor-for-fortnite) | [Godot](#godot-47) |
+Contents: [Sessions](#before-any-of-these-is-the-shell-interactive) | [Unreal](#unreal-engine-57) | [UEFN](#uefn-unreal-editor-for-fortnite) | [Godot](#godot-47) |
 [Unity](#unity) | [Web stacks](#web-stacks) | [What to check first](#what-to-check-first)
+
+## Before any of these: is the shell interactive?
+
+- [tested] The agent's shell on the dev machine ran in Windows session 0, a non-interactive service session
+  (`(Get-Process -Id $PID).SessionId` is 0 and `[Environment]::UserInteractive` is false), while Explorer and
+  the Epic Launcher ran in session 1, the user's desktop. There, windowed rendering fails (Unreal D3D12 and
+  Unity D3D12 and D3D11 with 0x887A0022 or "Switching to resolution failed", Unity Vulkan crashed) and screen
+  capture fails ("The handle is invalid"). Offscreen modes work: Unreal `-RenderOffScreen`, Unity `-batchmode`
+  without `-nographics`, headless Chromium, Godot's Vulkan window. Check this first and pick the mode to match.
+- [tested] A GUI app can be started on the user's desktop from session 0 with a one-shot scheduled task that
+  runs interactively as the user (`schtasks /create /tn <name> /tr <cmd> /sc once /st 23:59 /it /ru <user>`, then
+  `/run`, then `/delete`). It cannot click for you: sign-ins and "new project" dialogs still need the user.
 
 ## Unreal Engine 5.7
 
@@ -44,7 +56,21 @@ binary assets, so scenes cannot be reviewed as text diffs.
 
 ## UEFN (Unreal Editor for Fortnite)
 
-Nothing here is tested. From research on 2026-09-30.
+Mostly research from 2026-09-30; the [tested] items below are what was run on the dev machine.
+- [tested] The launcher installed Fortnite (38.6 GB) and UEFN 42.20 (21.4 GB), both marked complete, but the
+  editor died at startup (exit 0xC0000135, DLL not found) whether started directly or by the launcher, and the
+  launcher's Verify failed with "installation record not found" for Fortnite. Scanning the exe's import table
+  found one missing file: `tbb12.dll` was absent from `Fortnite_Studio\FortniteGame\Binaries\Win64`, where the
+  base Fortnite install keeps its copy. Copying the same-build file there (Program Files was writable) let the
+  editor start and stay running. Windows searches the exe's own folder, so a copy in the engine folder alone did
+  not help.
+- [tested] UEFN is a GUI editor: it started and stayed responsive in the user's session when launched through the
+  Epic Launcher URI (`com.epicgames.launcher://apps/<namespace>:<item>:Fortnite_Studio?action=launch`) from an
+  interactive scheduled task (the launcher passes its sign-in on the command line; whether UEFN accepted it was
+  not observed). A copy started from session 0 stayed alive but has no desktop.
+- [tested] Port 8000, the UEFN MCP default, was already taken by an unrelated Python service on this machine, so
+  expect to change the MCP port. Project creation and the two project settings need the user at the GUI; the MCP
+  and Python route is untested.
 - [documented] Windows only; install Fortnite then UEFN through the Epic Games Launcher; an Epic account
   is required. Minimums: Win10 1909, 16 GB RAM, GTX 960-class GPU.
 - [documented] Import: meshes (FBX, OBJ, glTF, GLB), textures (PNG, TGA, JPG and more), audio (WAV, AIF,
