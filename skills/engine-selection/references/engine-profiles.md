@@ -99,16 +99,20 @@ Nothing here is tested; it is not installed on the dev machine.
 
 ## Web stacks
 
-- [documented] Phaser is a 2D HTML5 framework. agent-sprites documents its atlas loading and agent-beeps
-  ships a browser player. [tested] Chromium renders audio for agent-beeps on the dev machine; no web scene
-  was built yet.
+- [tested] Phaser 3.90.0 and three.js 0.186.1 builds of the sample scene ran in headless Chromium on the GPU
+  (WebGL renderer: RTX 5090 through ANGLE D3D11) with no console errors; a page loads in about a second and a
+  full verification pass takes about 12 seconds, with no install of an engine and no sign-in. Phaser loaded the
+  agent-sprites atlas unchanged through its Aseprite loader. three.js kept the GLB's clip names. The
+  agent-beeps player picked all 4 pickup variants with no immediate repeat.
+- [documented] Phaser is a 2D HTML5 framework; agent-beeps ships a browser player.
 - [documented] three.js is a rendering library ("it gives you a scene graph, cameras, lights, materials,
   geometry, loaders, and a renderer, and then it stops"). agent-meshes ships a three.js viewer for its GLBs.
 - [documented] Babylon.js (full engine, built-in Havok physics, free web editor) and PlayCanvas (engine
   with entity-component model and a hosted editor; engine MIT, editor proprietary). The comparing source
   is written by a web-engine vendor.
-- [general] Headless Chromium gives an unattended run and screenshot with no sign-in. Limits are browser
-  performance and memory, and no native or console target.
+- [tested] three.js has no flipbook, entities or physics: the sprite animation, the walk-around and the trigger
+  were written by hand. Its API moves (0.186 deprecated `THREE.Clock`), so pin the version.
+- [general] Limits are browser performance and memory, and no native or console target.
 
 ## What to check first
 

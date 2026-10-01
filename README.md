@@ -12,6 +12,22 @@ import traps that are otherwise scattered across the asset plugins' docs.
 
 ## Status
 
+Early (0.3.0). Two skills. Two targets are tested with the sample scene (a fox, a pixel campfire, a pixel courier,
+a music bed and a one-shot): Unreal Engine 5.7.3 and the web tier (Phaser 3.90.0 and three.js 0.186.1). Both import
+the assets, run with no errors, render on the GPU and produce a screenshot; the web pass also checks the pickup
+variants. No engine MCP server was used in either loop. Godot is installed but untested; Unity and UEFN are
+untested. The skills say this plainly and do not claim more.in of skills that glues the asset plugins to game engines. It covers assets from
+[agent-sprites](https://github.com/ehartye/agent-sprites) (pixel sprites),
+[agent-meshes](https://github.com/ehartye/agent-meshes) (rigged GLB models) and
+[agent-beeps](https://github.com/ehartye/agent-beeps) (procedural sounds and music), and the
+engines Unity, Unreal Engine 5 and Godot 4.
+
+It is deliberately small. It adds no runtime, importer framework or scene format. The skills
+orchestrate the engines' existing MCP servers and the engines' own importers, and they collect the
+import traps that are otherwise scattered across the asset plugins' docs.
+
+## Status
+
 Early (0.2.0). Two skills. Unreal Engine 5.7.3 is the only engine tested: the sample scene (a fox, a pixel
 campfire, a pixel courier, a music bed and a one-shot) imports, runs with no errors, renders offscreen on
 the GPU and produces a screenshot. No engine MCP server was used in that loop. Godot is installed but
