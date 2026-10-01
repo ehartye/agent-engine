@@ -104,6 +104,23 @@ Built and run in the [sample scene](../../docs/sample-scene.md); scripts in `exa
   when the script ends and is refused in `-game`. In Git Bash set `MSYS_NO_PATHCONV=1`.
 - Take a screenshot. Wrong rotation order, scale, facing and pivots only showed up there.
 
+## Web: Phaser and three.js (tested)
+
+Built in the sample scene; pages and verifier in `examples/web`.
+
+- Phaser loads the agent-sprites atlas unchanged: `load.aseprite(key, png, json)` then `anims.createFromAseprite(key)`.
+  It followed the tag into the mixed frames array (the campfire's texture frames were "8" to "15") and kept the
+  100 ms and 125 ms durations. Phaser ignores the pivot slice: set the origin by hand (pivot over cell size).
+- three.js has no flipbook. Cut frames from the atlas with texture `offset` and `repeat`, follow the tag range, and
+  use `Sprite.center` for the pivot. `GLTFLoader` kept the clip names (`walk`, `trot`), where Unreal prefixed them.
+- Pin three.js: 0.186 deprecated `THREE.Clock` for `THREE.Timer`.
+- Audio: the vendored agent-beeps player (`beeps player export`, `beeps bundle`). `unlock()` needs a real
+  gesture. `play()` returns a handle whose `file` is the chosen variant, so variants are checkable; it honours
+  `noRepeat`. It has an 8-voice budget and returns null when a burst exceeds it, which is correct behaviour,
+  not a failure.
+- Headless Chromium with `--use-angle=d3d11 --ignore-gpu-blocklist` rendered on the RTX 5090 (the WebGL renderer
+  string says so); check that string, since software rendering is the silent fallback.
+
 ## Engine status
 
 | Engine | Verified | Not verified |
@@ -112,7 +129,7 @@ Built and run in the [sample scene](../../docs/sample-scene.md); scripts in `exa
 | Godot 4.7.2 | Nothing (installed, nothing imported) | Everything |
 | Unity | Nothing | Everything |
 | UEFN | Nothing | Everything; needs an owner sign-in |
-| Web (Phaser, three.js) | Nothing | Everything |
+| Web: three.js, Phaser | Import, animation advance, audio start and variant picking, a clean console, a screenshot read by eye, on the GPU in headless Chromium | Audio by ear; the bed looping end to end |
 
 To choose between these, use the `engine-selection` skill.
 
