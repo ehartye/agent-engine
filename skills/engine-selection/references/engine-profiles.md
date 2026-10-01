@@ -75,8 +75,8 @@ Mostly research from 2026-09-30; the [tested] items below are what was run on th
   It was started in the user's session through the Epic Launcher URI
   `com.epicgames.launcher://apps/<namespace>:<item>:Fortnite_Studio?action=launch` from an interactive scheduled task.
 - [tested] Port 8000, the UEFN MCP default, was already taken by an unrelated Python service on this machine, so
-  expect to change the MCP port. Creating a project and the two project settings need the user at the GUI; the
-  MCP and Python route is untested.
+  expect to change the MCP port. The owner created the project and enabled settings in the GUI. Later MCP tests
+  imported and saved FBX clips, placed devices and captured the editor; native Python authoring remains untested.
 - [documented] Windows only; install Fortnite then UEFN through the Epic Games Launcher; an Epic account
   is required. Minimums: Win10 1909, 16 GB RAM, GTX 960-class GPU.
 - [documented] Import: meshes (FBX, OBJ, glTF, GLB), textures (PNG, TGA, JPG and more), audio (WAV, AIF,
@@ -85,7 +85,8 @@ Mostly research from 2026-09-30; the [tested] items below are what was run on th
   was found: a sprite would be a texture on a mesh or a UI image.
 - [documented] Automation: "Python Editor Scripting" is an early-preview project setting. An official
   UEFN MCP shipped in release 42.00 with Verse, Verse Scene Graph, Creative Devices and Sessions toolsets.
-  It has no asset-import toolset. No command line was found.
+  [tested] The later discovered toolsets imported textures and FBX/OBJ meshes, but exposed no audio import or
+  Sequencer authoring in the tested UEFN 42.30 configuration. A missing MCP operation is not an editor limitation.
 - [documented] Budget: an area over 100,000 memory units cannot be published.
 - [documented] Testing needs a running Fortnite client and an Epic sign-in; a cycle is about 3 to 6
   minutes. Publishing needs a rating questionnaire and moderation, and an adult account.
@@ -95,8 +96,9 @@ Mostly research from 2026-09-30; the [tested] items below are what was run on th
 
 **Verdict**: a separate target, not standard Unreal with another path. It adds Fortnite distribution and
 an official agent path. It costs platform lock-in and an unattended loop capped by sign-in and the client.
-First milestone: one sign-in by the owner, then a Python script that imports one GLB and one WAV and a
-check that the assets exist and the memory figure still passes.
+Next proof: one native Sequence around an already imported clip, exact reset controls, then Fortnite runtime
+verification. Use native Python or an editor exemplar before introducing a second UE project solely for a missing
+MCP tool. See the UEFN authoring reference linked directly from the engine-selection skill for evidence and limits.
 
 ## Godot 4.7
 

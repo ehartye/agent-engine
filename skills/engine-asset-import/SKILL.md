@@ -158,7 +158,8 @@ uses. Tested 2026-10-01; details and sources are in the project wiki.
 - Only `list_toolsets`, `describe_toolset` and `call_tool` are listed; the toolsets are reached through `call_tool`
   with a toolset name and a tool name.
 - It did: import textures; import FBX and OBJ meshes; spawn an actor from an asset; capture the viewport as a PNG
-  (base64 inside the JSON result; pass an explicit camera pose, because `FocusOnActors` can park the camera
+  (inspect the response: UEFN returned a separate image content block and a JSON URN, not JSON image bytes;
+  pass an explicit camera pose, because `FocusOnActors` can park the camera
   kilometres away). It did not: import audio (no tool in either toolset list), accept a GLB ("FbxFactory does not
   support .glb. Allowed: fbx, obj."), or run Python with the `unreal` module (the script tool allows only `json`,
   `re`, `math`, `copy`, `time`, `datetime`).
@@ -169,9 +170,13 @@ uses. Tested 2026-10-01; details and sources are in the project wiki.
 
 ## UEFN 42.20 (partly tested)
 
+For missing MCP tools, native Python/Sequencer, exact Reset, audio or UE-to-UEFN
+migration, read [UEFN authoring beyond MCP](references/uefn-authoring.md). It separates
+42.30 museum observations from documented routes still awaiting local execution.
+
 - Tested through the MCP server in a real project: textures import; the fox imports as a skeletal mesh with a
-  skeleton and 48 materials from the converted FBX (clips need the frame-rate fix above, which has not been re-run in
-  UEFN). No scene has been built and no session played.
+  skeleton and 48 materials from the converted FBX. The 30 fps fix was re-run: both clips were saved and verified
+  through registry duration/frame counts. An Animated Mesh device renders it in the editor; runtime is unverified.
 - Audio: no MCP route. Auto Reimport created nothing from dropped WAVs across two restarts. Drag the files into the
   Content Browser; Epic documents `.wav`, `.aif`, `.flac` and `.ogg` up to 300 seconds.
 - Documented versus tested: Epic's pages say GLB and glTF import in the editor; the MCP mesh tool accepts only FBX
@@ -243,7 +248,7 @@ Built and run in the sample scene; scripts in `examples/unity`.
 | Unreal 5.8.3 | The same scene after three fixes: import, a clean rendered run, fox animating, music bed reporting playing, a screenshot read by eye; Epic's MCP server started headless, imported textures and an FBX, spawned an actor and returned a screenshot | Audio by ear, pickup variant picking, an automated pixel check, MCP audio or GLB import (none exists) |
 | Godot 4.7.2 | Import, headless build, a windowed GPU run, animations and music reporting playing, a loop set from the stream length, a screenshot read by eye | Audio by ear, the chosen pickup variant, the bed looping end to end |
 | Unity 6000.3.25f1 | Licensed headless build and run, a D3D12 batchmode player on the GPU, animations and loop, 12 pickups with no repeat, zero log errors, a screenshot read by eye | Audio by ear, the bed looping end to end, the Unity CLI and MCP route |
-| UEFN 42.20 | MCP server on a set port; texture import; the fox as a skeletal mesh from a converted FBX | A scene, a play-test session, the fox's clips after the frame-rate fix, audio import (manual only), the memory budget |
+| UEFN 42.20 / 42.30 | MCP imports; saved fox clips after the frame-rate fix; three museum clips and gallery placement; editor captures | Successful Fortnite runtime, exact Reset, native Python Sequence creation, audio playback, memory/performance budget |
 | Web: three.js, Phaser | Import, animation advance, audio start and variant picking, a clean console, a screenshot read by eye, on the GPU in headless Chromium | Audio by ear; the bed looping end to end |
 
 To choose between these, use the `engine-selection` skill.
