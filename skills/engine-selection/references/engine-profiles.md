@@ -112,8 +112,14 @@ Nothing here is tested; it is not installed on the dev machine.
   agent-sprites atlas unchanged through its Aseprite loader. three.js kept the GLB's clip names. The
   agent-beeps player picked all 4 pickup variants with no immediate repeat.
 - [documented] Phaser is a 2D HTML5 framework; agent-beeps ships a browser player.
-- [documented] three.js is a rendering library ("it gives you a scene graph, cameras, lights, materials,
-  geometry, loaders, and a renderer, and then it stops"). agent-meshes ships a three.js viewer for its GLBs.
+- [documented] three.js describes itself as a 3D library. A vendor comparison says "it gives you a scene graph,
+  cameras, lights, materials, geometry, loaders, and a renderer, and then it stops"; the wiki records "not a game
+  engine" as an unsourced claim, likely true. three.js does ship basic Web Audio classes. agent-meshes ships a
+  three.js viewer for its GLBs.
+- [documented] Built on three.js: Needle Engine (its docs say all rendering goes through three.js and its
+  components revolve around three's scene graph; Unity and Blender authoring, cloud hosting), and
+  react-three-fiber (a React renderer producing the same three.js objects). A-Frame is also three.js-based
+  [general]. Not tested here.
 - [documented] Babylon.js (full engine, built-in Havok physics, free web editor) and PlayCanvas (engine
   with entity-component model and a hosted editor; engine MIT, editor proprietary). The comparing source
   is written by a web-engine vendor.
