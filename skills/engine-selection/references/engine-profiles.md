@@ -91,7 +91,27 @@ check that the assets exist and the memory figure still passes.
 
 ## Unity
 
-Nothing here is tested; it is not installed on the dev machine.
+- [tested] Install: Unity Hub 3.22.0 through winget (an MSIX app under WindowsApps) and Editor 6000.3.25f1
+  (7.8 GB) through the Hub's headless CLI (`Unity Hub.exe -- --headless editors -r`, `install-path -s`,
+  `install --version`), to a user folder with no admin rights. The bundled `unity.exe` CLI is access-denied from
+  the MSIX folder, so the `unity mcp` route is untested.
+- [tested] Licence: before sign-in a headless launch exits 198 with "No valid Unity Editor license found" (no
+  access token, 0 entitlements). After the owner signed in and activated Personal in the Hub, headless project
+  creation, scene build, player build and a run all worked. The sign-in is the one step an agent cannot do.
+- [tested] The sample scene builds from an Editor script (`-batchmode -executeMethod`) and a Windows player
+  builds in about 15 seconds. glTFast 6.20.0 imports the 48-skin fox as 48 skinned renderers on 19 bones (merged)
+  with `walk` and `trot` keeping their names, as a Mecanim Animator with **no controller**: play the clip through
+  a `PlayableGraph` and loop it by wrapping the time.
+- [tested] The default texture type rescales non-power-of-two sheets (256x40, 96x32) to a power of two, which
+  squashes and blurs pixel art: set NPOT Scale to None. Unity is left-handed, so a camera on +Z looking at the
+  origin shows +X on the left.
+- [tested] No window could be presented in this session: a D3D12 player failed with 0x887A0022, D3D11 with
+  "Switching to resolution failed", and Vulkan crashed in the player. The default Windows API list is D3D12 only,
+  so `-force-vulkan` first needs Vulkan added. `-batchmode` without `-nographics` renders on the GPU with no
+  window; capture by rendering the camera to a RenderTexture, not with `ScreenCapture`.
+- [tested] The bed is looped with `AudioSource.loop` (set, and reported true while playing; the wrap itself was
+  not observed), so the WAV's missing loop chunk does not matter. Unity has no randomizer component; a small
+  picker built from the manifest made the chosen variant observable.
 - [documented] Unity deprecated the MCP server inside its in-editor assistant package. The Unity CLI
   (`unity mcp`, `unity command`, `unity eval`) replaces it; third-party MCP packages are unaffected.
   The CLI page lists no tools.

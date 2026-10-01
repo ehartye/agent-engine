@@ -14,8 +14,8 @@ strict line between what was verified and what was only read in documentation.
 
 - Say what you checked: "imports into UE 5.7 via Interchange with names intact", not "works in
   Unreal". Sections marked "tested" were run in the sample scene; the rest is documentation.
-- Unity: **nothing is verified**; what is said about it is from vendor documentation. Say so, and run the
-  import to find out.
+- Unity: sections marked "tested" were run in the sample scene; the rest of what is said about it is vendor
+  documentation. Say which is which.
 - Check what the engine reports, not only the cause the tool states. A failure message can blame
   the wrong thing (a wrong expected bone name was reported as a skin problem).
 
@@ -81,7 +81,7 @@ Documented by agent-beeps, not verified here:
   repeat as the audition page does.
 - Priority follows the FMOD convention: 1 is most important, 5 least. Songs are trimmed to a
   project loudness, -20 LUFS integrated by default.
-- Godot follows loop metadata inside a WAV by default; Unity was not checked. Set the loop mode
+- Godot follows loop metadata inside a WAV by default; Unity loops through `AudioSource.loop` and ignores it. Set the loop mode
   explicitly and confirm it after import.
 - You cannot hear the result. In an engine, claim only that the source exists, plays, loops where
   it should, and logs no errors.
@@ -141,13 +141,34 @@ Built and run in the sample scene; scripts in `examples/godot`.
 - A scripted quit prints "ObjectDB instances leaked" and "resources still in use" lines. They are exit
   notices, not run errors; a naive error grep trips on them.
 
+## Unity 6.3 (tested)
+
+Built and run in the sample scene; scripts in `examples/unity`.
+
+- Unity needs an owner sign-in and licence before any headless launch works: unlicensed it exits 198 with "No valid
+  Unity Editor license found". After that, `-batchmode -executeMethod` builds the scene and a player.
+- GLB needs the `com.unity.cloud.gltfast` package (6.20.0 resolved from the registry; pin it). The 48-skin fox became
+  48 skinned renderers on 19 bones with `walk` and `trot` named intact, as an `Animator` with no controller and
+  non-legacy clips. Play the clip through a `PlayableGraph` and loop it by wrapping the time.
+- Unity's Aseprite importer takes `.aseprite` files, so cut the atlas yourself: follow the tag into the frames array,
+  flip the rect's y (Unity textures start at the bottom left), normalise the pivot from the bottom left, and use
+  `Sprite.Create`. Set the texture's NPOT Scale to None, or the default rescales a 256x40 sheet to a power of two
+  and squashes and blurs it.
+- Unity is left-handed: a camera on +Z looking at the origin mirrors +X to the left.
+- The audio manifest needs a small picker; Unity has no randomizer component. Loop the bed with `AudioSource.loop`
+  (verified set and playing; the wrap itself was not observed).
+- The default Windows graphics API list is D3D12 only. In the tested session no window could be presented (D3D12
+  and D3D11 failed, Vulkan crashed in the player), so run the player with `-batchmode` (not `-nographics`) and
+  render the camera to a `RenderTexture` for the screenshot. Hook `Application.logMessageReceived` to count real
+  errors instead of grepping the log.
+
 ## Engine status
 
 | Engine | Verified | Not verified |
 |---|---|---|
 | Unreal 5.7.3 | Import of fox, courier, campfire and audio; a clean Play-In-Editor run; a screenshot read by eye; music bed reports playing | Audio by ear, pickup variant picking, any automated pixel check |
 | Godot 4.7.2 | Import, headless build, a windowed GPU run, animations and music reporting playing, a loop set from the stream length, a screenshot read by eye | Audio by ear, the chosen pickup variant, the bed looping end to end |
-| Unity | Nothing | Everything |
+| Unity 6000.3.25f1 | Licensed headless build and run, a D3D12 batchmode player on the GPU, animations and loop, 12 pickups with no repeat, zero log errors, a screenshot read by eye | Audio by ear, the bed looping end to end, the Unity CLI and MCP route |
 | UEFN | Nothing | Everything; needs an owner sign-in |
 | Web: three.js, Phaser | Import, animation advance, audio start and variant picking, a clean console, a screenshot read by eye, on the GPU in headless Chromium | Audio by ear; the bed looping end to end |
 
