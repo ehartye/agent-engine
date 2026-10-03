@@ -12,7 +12,7 @@ across the asset plugins' docs.
 
 ## Status
 
-Early (0.5.13). Two skills. Four targets are tested with the sample scene (a fox, a pixel campfire, a pixel courier,
+Early (0.5.14). Two skills. Four targets are tested with the sample scene (a fox, a pixel campfire, a pixel courier,
 a music bed and a one-shot): Unreal Engine 5.7.3 and 5.8.3, Godot 4.7.2, Unity 6000.3.25f1 and the web tier (Phaser
 3.90.0 and three.js 0.186.1). Each imports the assets, runs with no errors, renders on the GPU and produces a screenshot;
 the web and Unity passes also record which pickup variants played. The scene loops use scripts, not an MCP server.
@@ -30,6 +30,8 @@ plus [native FBX coordinates and collision](skills/engine-asset-import/reference
 and [native audio import](skills/engine-asset-import/references/uefn-native-audio.md).
 The saved-controls reference also records the measured Fortnite Button component
 reconstruction trap and a verified whole-vector MCP write with complete readback.
+It also documents the measured native rotation constructor trap: use named axes
+and verify the visible mesh's world front and up directions before scoped saves.
 The [moving exhibit cover reference](skills/engine-asset-import/references/uefn-native-cover.md)
 records the source-fitted chair pilot, bone-policy ordering, study-owned collision,
 independent source-corner checks and failures that self-derived surface rays missed.

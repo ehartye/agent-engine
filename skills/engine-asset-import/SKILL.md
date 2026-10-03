@@ -179,7 +179,8 @@ before recommending manual import. The tested 42.30 route uses SoundFactory,
 guarded source/destination checks, direct looping Wave Players and scoped saves;
 editor import does not establish audible Fortnite playback.
 
-For scoped native actor saves, disposable proof cleanup, typed Verse references,
+For named native rotation axes and visible front/up checks, scoped actor saves,
+disposable proof cleanup, typed Verse references,
 compact buttons or editor/client screenshots, read
 [UEFN saved controls and capture](references/uefn-native-operations.md).
 It separates saved assets, server controller tests and physical interaction evidence.

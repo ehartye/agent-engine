@@ -6,10 +6,23 @@ through 2026-10-03 in UEFN 42.30.
 Inspect the installed schemas after upgrades; these observations are not an API
 contract for every project. Use the authoring reference for connection setup.
 
+## Contents
+
+- [Choose the operation and its proof](#choose-the-operation-and-its-proof)
+- [Name rotation axes and check the visible component](#name-rotation-axes-and-check-the-visible-component)
+- [Save only owned external actor packages](#save-only-owned-external-actor-packages)
+- [Delete only reconciled disposable proof assets](#delete-only-reconciled-disposable-proof-assets)
+- [Distinguish built-in adapters from custom Verse instances](#distinguish-built-in-adapters-from-custom-verse-instances)
+- [Compact switches without shrinking interaction targets](#compact-switches-without-shrinking-interaction-targets)
+- [Bounded editor screenshots when viewport capture stalls](#bounded-editor-screenshots-when-viewport-capture-stalls)
+- [Actual client capture across Windows sessions](#actual-client-capture-across-windows-sessions)
+- [Runtime QA without leaking diagnostics into visits](#runtime-qa-without-leaking-diagnostics-into-visits)
+
 ## Choose the operation and its proof
 
 | Operation | Time | Risk | Complexity | Architectural fit | Maintenance |
 |---|---|---|---|---|---|
+| Orient native switches | One audited rotation pass | Positional axes or upside-down child mesh | Low | Explicit axes and visible component basis | Versioned evidence; preserve other transforms |
 | Save named external actor packages | One preflight and batch call | Wrong package ownership | Small native script | Project owns its actors | Exact targets and save receipt |
 | Delete owned disposable proof assets | Reconcile first, then one bounded attempt | Wrong ownership or retained references | Explicit identities and native readback | Experiments own their fixtures | Preserve failures; stop rather than force/replay |
 | Reuse existing Verse adapters | Preflight, write, read back | Wrong reference type or stale field | Small MCP script | Preserve device identities | Stable editable fields |
@@ -19,6 +32,63 @@ contract for every project. Use the authoring reference for connection setup.
 Source, saved packages, editor images, validation and runtime behavior establish
 different things. State the layer checked. Method-invoking QA does not establish
 physical interaction, third-person camera behavior, late joining or performance.
+
+## Name rotation axes and check the visible component
+
+**Tested on UEFN 42.30:** `unreal.Rotator(0, 90, 0)` produced
+`pitch=90, yaw=0, roll=0` in the installed native Python API. A museum repair
+had treated the middle argument as yaw: ten active switches lay flat, and
+eighteen others were upside down. Twenty-four active switches were already
+correct. Do not infer this constructor's positional order from a displayed
+Pitch/Yaw/Roll struct or an MCP JSON schema.
+
+Use explicit `pitch=`, `yaw=` and `roll=` arguments for every native constructor,
+including camera and verification code. MCP rotation objects name their fields;
+that does not make positional Python constructors equivalent. Recheck the
+installed API after upgrades instead of assuming this observation is universal.
+
+The tested Military Switch ButtonMesh used local +X as its visible front and
++Z as its top. For an upright world yaw, verify **both** its world forward and
+up vectors. Forward alone accepts a switch rolled 180 degrees. Actor rotation
+alone can miss a rotated child component: inspect the current `buttonMesh`,
+its relative rotation/scale, and its world basis. Other imported meshes may
+use different face axes; establish those from actual geometry first. Do not
+zero an intentional child transform just to satisfy a Button-specific check.
+
+This excerpt uses the exercised calls; `actor` and `target_yaw` must come from
+an exact project/actor preflight. It is not a standalone repair or save routine.
+
+```python
+import math
+import unreal
+
+actor.set_actor_rotation(
+    unreal.Rotator(pitch=0, yaw=target_yaw, roll=0), False)
+mesh = actor.get_editor_property('buttonMesh')
+front, up = mesh.get_forward_vector(), mesh.get_up_vector()
+angle = math.radians(target_yaw)
+expected_front = [math.cos(angle), math.sin(angle), 0]
+if (math.dist([front.x, front.y, front.z], expected_front) > .001
+        or math.dist([up.x, up.y, up.z], [0, 0, 1]) > .001):
+    raise RuntimeError('Visible switch orientation differs; inspect child transform')
+```
+
+Snapshot identities, positions, scales and interaction properties first. Apply
+only the audited rotation changes, preserve already-correct and retired devices,
+then read back the visible basis and protected state before scoped package saves.
+The museum repaired exactly 28 actors; all 52 active switches then passed both
+axis checks, while 614 positions/scales and 586 other rotations stayed unchanged.
+Three editor captures confirmed upright visible switches. These checks do not
+establish physical interaction, readable placards or full-artwork camera framing.
+
+The measured constructor result, protected-state checks and source/native hashes
+are in museum [PR #28](https://github.com/ehartye/art_explorers_fn/pull/28),
+`museum/controls/button-rotation-verification.json`, with
+`scripts/audit_button_rotation.py`, `repair_button_rotation.py` and
+`verify_button_rotation.py`. This is historical rotation-only evidence; later
+wall-layout changes intentionally alter pixel positions and visible scales.
+The living wiki record is
+`wiki/authored/art-explorers-fn/notes/native-button-rotation-repair.md`.
 
 ## Save only owned external actor packages
 
