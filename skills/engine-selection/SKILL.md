@@ -64,3 +64,8 @@ Per-engine evidence, traps and blockers: [engine profiles](references/engine-pro
 For a Fortnite project blocked by missing MCP operations, or a proposal to author
 in regular UE and port, read [UEFN authoring routes](../engine-asset-import/references/uefn-authoring.md)
 before recommending a second editor workflow.
+
+For a saved-device, compact-control or screenshot bottleneck, also read
+[UEFN saved controls and capture](../engine-asset-import/references/uefn-native-operations.md).
+Server controller QA establishes behavior separately from physical input, game-camera
+appearance and multiplayer capacity.

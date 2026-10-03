@@ -174,6 +174,10 @@ For missing MCP tools, native Python/Sequencer, exact Reset, audio or UE-to-UEFN
 migration, read [UEFN authoring beyond MCP](references/uefn-authoring.md). It includes
 tested 42.30 project startup, native remote Python and Sequence authoring, plus runtime limits.
 
+For scoped native actor saves, typed Verse references, compact buttons or editor/client
+screenshots, read [UEFN saved controls and capture](references/uefn-native-operations.md).
+It separates saved assets, server controller tests and physical interaction evidence.
+
 - Tested through the MCP server in a real project: textures import; the fox imports as a skeletal mesh with a
   skeleton and 48 materials from the converted FBX. The 30 fps fix was re-run: both clips were saved and verified
   through registry duration/frame counts. An Animated Mesh device renders it in the editor; runtime is unverified.
@@ -248,7 +252,7 @@ Built and run in the sample scene; scripts in `examples/unity`.
 | Unreal 5.8.3 | The same scene after three fixes: import, a clean rendered run, fox animating, music bed reporting playing, a screenshot read by eye; Epic's MCP server started headless, imported textures and an FBX, spawned an actor and returned a screenshot | Audio by ear, pickup variant picking, an automated pixel check, MCP audio or GLB import (none exists) |
 | Godot 4.7.2 | Import, headless build, a windowed GPU run, animations and music reporting playing, a loop set from the stream length, a screenshot read by eye | Audio by ear, the chosen pickup variant, the bed looping end to end |
 | Unity 6000.3.25f1 | Licensed headless build and run, a D3D12 batchmode player on the GPU, animations and loop, 12 pickups with no repeat, zero log errors, a screenshot read by eye | Audio by ear, the bed looping end to end, the Unity CLI and MCP route |
-| UEFN 42.20 / 42.30 | MCP imports and saved clips; gallery placement/captures; project Python startup; native remote Python; saved Sequence with resolved bindings and evaluated bone poses | Successful Fortnite runtime, exact Reset, audio playback, memory/performance budget |
+| UEFN 42.20 / 42.30 | MCP imports and saved clips; gallery captures; native Python/Sequence authoring; scoped actor saves; Fortnite startup on 12 timelines and 156 controller-method results, including reset and held-frame resume | Physical button use, rendered reset poses, completed-clip reset, audio playback, multiplayer and memory/performance budget |
 | Web: three.js, Phaser | Import, animation advance, audio start and variant picking, a clean console, a screenshot read by eye, on the GPU in headless Chromium | Audio by ear; the bed looping end to end |
 
 To choose between these, use the `engine-selection` skill.
