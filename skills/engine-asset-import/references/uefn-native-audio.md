@@ -120,6 +120,7 @@ The tested source/inspection recipe is in the museum's
 [importer](https://github.com/ehartye/art_explorers_fn/blob/f2a06b783053c6ac92e5dd23f145abde6914de61/scripts/import_score_audio.py),
 [native inspector](https://github.com/ehartye/art_explorers_fn/blob/f2a06b783053c6ac92e5dd23f145abde6914de61/scripts/inspect_score_audio.py)
 and [independent verifier](https://github.com/ehartye/art_explorers_fn/blob/f2a06b783053c6ac92e5dd23f145abde6914de61/scripts/verify_score_audio.py).
+The museum repository is private; these examples require repository access.
 Their island UUID, manifests and paths belong to that project; inspect and adapt
 them rather than executing against a different island.
 
