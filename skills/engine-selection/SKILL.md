@@ -69,3 +69,7 @@ For a saved-device, compact-control or screenshot bottleneck, also read
 [UEFN saved controls and capture](../engine-asset-import/references/uefn-native-operations.md).
 Server controller QA establishes behavior separately from physical input, game-camera
 appearance and multiplayer capacity.
+
+For native FBX layout or collision defects, read
+[UEFN FBX coordinates and collision](../engine-asset-import/references/uefn-native-fbx.md)
+before treating migration to another editor as a prerequisite.

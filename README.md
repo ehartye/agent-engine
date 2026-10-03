@@ -12,7 +12,7 @@ across the asset plugins' docs.
 
 ## Status
 
-Early (0.5.7). Two skills. Four targets are tested with the sample scene (a fox, a pixel campfire, a pixel courier,
+Early (0.5.8). Two skills. Four targets are tested with the sample scene (a fox, a pixel campfire, a pixel courier,
 a music bed and a one-shot): Unreal Engine 5.7.3 and 5.8.3, Godot 4.7.2, Unity 6000.3.25f1 and the web tier (Phaser
 3.90.0 and three.js 0.186.1). Each imports the assets, runs with no errors, renders on the GPU and produces a screenshot;
 the web and Unity passes also record which pickup variants played. The scene loops use scripts, not an MCP server.
@@ -23,7 +23,8 @@ results. Physical button use, rendered reset poses, audio, multiplayer and perfo
 this does not establish a complete UEFN sample-scene pass.
 
 The UEFN references cover [authoring routes](skills/engine-asset-import/references/uefn-authoring.md)
-and [saved controls and capture](skills/engine-asset-import/references/uefn-native-operations.md).
+and [saved controls and capture](skills/engine-asset-import/references/uefn-native-operations.md),
+plus [native FBX coordinates and collision](skills/engine-asset-import/references/uefn-native-fbx.md).
 
 ## Skills
 
