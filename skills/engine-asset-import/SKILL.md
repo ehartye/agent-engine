@@ -178,6 +178,10 @@ For scoped native actor saves, typed Verse references, compact buttons or editor
 screenshots, read [UEFN saved controls and capture](references/uefn-native-operations.md).
 It separates saved assets, server controller tests and physical interaction evidence.
 
+For mirrored native FBX architecture, reversed glyphs or missing UCX/deck collision,
+read [UEFN FBX coordinates and collision](references/uefn-native-fbx.md) before
+reimporting or transforming the whole scene.
+
 - Tested through the MCP server in a real project: textures import; the fox imports as a skeletal mesh with a
   skeleton and 48 materials from the converted FBX. The 30 fps fix was re-run: both clips were saved and verified
   through registry duration/frame counts. An Animated Mesh device renders it in the editor; runtime is unverified.

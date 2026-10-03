@@ -187,6 +187,11 @@ version number alone does not prove compatible serialization or Fortnite support
 
 ## Tested operational traps
 
+Native floorplan imports also exposed reflected coordinates, reversed glyphs and
+omitted UCX collision. The directly linked FBX reference records the measured
+42.30 basis, native shape/readback recipe, editor trace checks and uncertain
+reimport crash; none establishes cooked character or weapon collision.
+
 - Verify the active level and project mount before each connection's first edit.
   The museum used a UUID mount; a previous island's paths were not reusable.
 - Import responses may list only the mesh. Query the destination registry for
