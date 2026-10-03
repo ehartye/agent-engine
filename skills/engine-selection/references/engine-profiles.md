@@ -89,6 +89,10 @@ Mostly research from 2026-09-30; the [tested] items below are what was run on th
   UEFN MCP shipped in release 42.00 with Verse, Verse Scene Graph, Creative Devices and Sessions toolsets.
   [tested] The later discovered toolsets imported textures and FBX/OBJ meshes, but exposed no audio import or
   Sequencer authoring in the tested UEFN 42.30 configuration. A missing MCP operation is not an editor limitation.
+- [tested] Native Python SoundFactory/AssetImportTask imported five approved 72-second stereo 48 kHz PCM16
+  WAVs and saved five Waves plus five direct looping Cues in 42.30. These formats are tested inputs, not universal
+  limits. Personal Audio Player settings/bindings were read back, but the client stayed in Sleep Mode and the
+  launch ended without a connected game client. Audible playback, loops and multiplayer remain unverified.
 - [documented] Budget: an area over 100,000 memory units cannot be published.
 - [documented] Testing needs a running Fortnite client and an Epic sign-in; a cycle is about 3 to 6
   minutes. Publishing needs a rating questionnaire and moderation, and an adult account.

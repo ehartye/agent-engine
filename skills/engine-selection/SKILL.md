@@ -65,6 +65,11 @@ For a Fortnite project blocked by missing MCP operations, or a proposal to autho
 in regular UE and port, read [UEFN authoring routes](../engine-asset-import/references/uefn-authoring.md)
 before recommending a second editor workflow.
 
+For missing audio import tools, read
+[native UEFN audio import](../engine-asset-import/references/uefn-native-audio.md).
+Five Wave/Cue pairs are verified in 42.30; manual import or a second UE project
+is not a prerequisite. Import/save, launch, listening and multiplayer are separate proofs.
+
 For a saved-device, compact-control or screenshot bottleneck, also read
 [UEFN saved controls and capture](../engine-asset-import/references/uefn-native-operations.md).
 Server controller QA establishes behavior separately from physical input, game-camera

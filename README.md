@@ -12,19 +12,22 @@ across the asset plugins' docs.
 
 ## Status
 
-Early (0.5.8). Two skills. Four targets are tested with the sample scene (a fox, a pixel campfire, a pixel courier,
+Early (0.5.9). Two skills. Four targets are tested with the sample scene (a fox, a pixel campfire, a pixel courier,
 a music bed and a one-shot): Unreal Engine 5.7.3 and 5.8.3, Godot 4.7.2, Unity 6000.3.25f1 and the web tier (Phaser
 3.90.0 and three.js 0.186.1). Each imports the assets, runs with no errors, renders on the GPU and produces a screenshot;
 the web and Unity passes also record which pickup variants played. The scene loops use scripts, not an MCP server.
 Epic's MCP plugin was tried separately on Unreal 5.8.3 and UEFN 42.20: it drives the editor and returns screenshots, but
 has no audio import and rejects GLB. UEFN 42.30 museum work additionally verified native Python authoring,
 scoped actor saves, editor captures, automatic playback on 12 timelines and 156 server controller-method
-results. Physical button use, rendered reset poses, audio, multiplayer and performance remain open;
+results. Native Python also imported and saved five museum Wave/Cue pairs, and personal gallery
+playback settings/bindings are verified. A launch reached server cook but ended without a connected
+game client. Physical button use, rendered reset poses, audible audio, multiplayer and performance remain open;
 this does not establish a complete UEFN sample-scene pass.
 
 The UEFN references cover [authoring routes](skills/engine-asset-import/references/uefn-authoring.md)
 and [saved controls and capture](skills/engine-asset-import/references/uefn-native-operations.md),
-plus [native FBX coordinates and collision](skills/engine-asset-import/references/uefn-native-fbx.md).
+plus [native FBX coordinates and collision](skills/engine-asset-import/references/uefn-native-fbx.md)
+and [native audio import](skills/engine-asset-import/references/uefn-native-audio.md).
 
 ## Skills
 
