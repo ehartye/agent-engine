@@ -183,6 +183,11 @@ For scoped native actor saves, typed Verse references, compact buttons or editor
 screenshots, read [UEFN saved controls and capture](references/uefn-native-operations.md).
 It separates saved assets, server controller tests and physical interaction evidence.
 
+For fitted exhibit cover following bones, hidden comparison blockers or misplaced
+proxies after animation-property edits, read [moving exhibit cover](references/uefn-native-cover.md).
+Verify against original source geometry as well as the colliders' own faces;
+editor queries alone do not establish Fortnite player or weapon cover.
+
 For mirrored native FBX architecture, reversed glyphs or missing UCX/deck collision,
 read [UEFN FBX coordinates and collision](references/uefn-native-fbx.md) before
 reimporting or transforming the whole scene.
