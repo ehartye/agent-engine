@@ -139,5 +139,5 @@ merely to create cover or infer a performance improvement from fewer actors.
 The owner's canonical wiki records the living installation and open acceptance
 at `wiki/authored/art-explorers-fn/notes/chair-fitted-cover-installation.md` and
 `wiki/authored/art-explorers-fn/backlog/exhibit-cover-collision.md`. Ordinary
-native save/capture guidance remains in the existing operations reference;
-disposable asset-lifetime cleanup is a separate follow-up.
+native save/capture and disposable asset-lifetime cleanup guidance are in the
+operations reference linked directly from the skill.

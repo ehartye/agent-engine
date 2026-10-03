@@ -1,7 +1,8 @@
 # UEFN saved controls and capture
 
-Read this when native UEFN edits need scoped saves, Verse references, compact
-buttons or screenshots. First-hand evidence checked through 2026-10-03 in UEFN 42.30.
+Read this when native UEFN edits need scoped saves, disposable proof cleanup,
+Verse references, compact buttons or screenshots. First-hand evidence checked
+through 2026-10-03 in UEFN 42.30.
 Inspect the installed schemas after upgrades; these observations are not an API
 contract for every project. Use the authoring reference for connection setup.
 
@@ -10,6 +11,7 @@ contract for every project. Use the authoring reference for connection setup.
 | Operation | Time | Risk | Complexity | Architectural fit | Maintenance |
 |---|---|---|---|---|---|
 | Save named external actor packages | One preflight and batch call | Wrong package ownership | Small native script | Project owns its actors | Exact targets and save receipt |
+| Delete owned disposable proof assets | Reconcile first, then one bounded attempt | Wrong ownership or retained references | Explicit identities and native readback | Experiments own their fixtures | Preserve failures; stop rather than force/replay |
 | Reuse existing Verse adapters | Preflight, write, read back | Wrong reference type or stale field | Small MCP script | Preserve device identities | Stable editable fields |
 | Shrink a Button's visible component | One component edit | Confusing appearance with reach | Low | Preserve the logical device | Read back both scales and radius |
 | Offscreen SceneCapture2D | Short bounded callback job | Leaked actor or misleading exposure | Moderate | Temporary editor inspection | Cleanup receipt; keep runtime checks |
@@ -67,6 +69,80 @@ Retain the saved package names and pending-save state in a receipt. Reconcile a
 timeout against native package state before another mutation. Serialize native
 scripts and callback jobs: the tested remote entrypoint shared Python globals.
 Do not call MCP from inside an editor Python script.
+
+## Delete only reconciled disposable proof assets
+
+**Tested on 42.30:** immediate deletion failed while proof assets remained in
+use. Closing owned asset editors returned zero; Unreal GC alone did not release
+the assets. Python `gc.collect()` followed by
+`unreal.SystemLibrary.collect_garbage()` allowed twelve remaining disposable
+assets to be deleted. The Python return value was 33 **unreachable objects**,
+not 33 cycles. The exact retaining references/internal cause were not inspected.
+Later hardened cleanup returned 574 unreachable Python objects and removed an
+additional owned comparison sequence. Do not turn those observations into a
+universal cleanup guarantee or invent a reference-clearing fix.
+
+Treat deletion as a separate operation from experiment authoring. Before any
+delete, reconcile against current native state, not just a `removed` flag:
+
+1. Verify the exact loaded island and that editor Sequencer is idle. Stop or
+   finish the owned callback/job and remove its owned transient fixtures first.
+   Do not delete an asset still evaluated or used by a live fixture.
+2. Derive the complete expected proof set from the original experiment recipe:
+   exact role, version, package and object name. A folder, naming prefix or
+   glob is not deletion ownership. The museum expected five SK/PA/LS triplets
+   plus two explicitly named sequences, including one outside its Proof folder.
+   Accept an exact package path or its matching package.object form; refuse a
+   neighboring version, nested path, unknown role or mismatched object suffix.
+3. Preserve historical failed receipts verbatim. Write a separate read-only
+   reconciliation containing each original receipt's SHA-256, exact fixture
+   paths, current absence and idle evaluation evidence. Missing or incomplete
+   identities fail closed. The demonstrated set had eight original receipts.
+4. Immediately before deletion, re-hash every original receipt, require the
+   same complete set and recheck each recorded fixture path unoccupied. A path
+   may have been reused after reconciliation: even a different actor there is
+   a stop, not permission to destroy it. Verify protected original assets and
+   the full exact asset set against the preflight. Refuse a prior cleanup-attempt
+   receipt instead of overwriting it or treating elapsed time as reconciliation.
+5. Write a pending cleanup receipt before collection/deletion. Avoid loading
+   owned proof assets during the deletion pass. In the demonstrated recovery,
+   collect unreachable Python wrappers before Unreal UObject collection; do
+   not clear shared Python globals, force deletion or suppress references to
+   make the operation pass. A GC count proves collection, not asset absence.
+6. Delete only exact owned targets with `EditorAssetLibrary.delete_asset`.
+   Record the currently attempted path and each successful deletion. Check
+   the boolean result and `does_asset_exist` after each target. Stop on failure;
+   retain the partial receipt and inspect/reconcile before a later operation.
+   Refuse automatic retries, including after a client timeout.
+7. Check every expected destination absent, not merely those reported deleted.
+   Restore selection/evaluation state and verify protected native state. Record
+   explicit remaining targets, package-save state and the evidence boundary.
+   Never replace this process with Delete Directory, Save All or user-global
+   clearing. These are editor cleanup checks, not Fortnite behavior/performance.
+
+The museum final receipt covers all seventeen exact asset paths absent and
+eight hash-bound reconciliations; the hardened final pass itself deleted only
+the one extra sequence still present. Do not claim it deleted all seventeen in
+one operation. One earlier disposable physics package was saved and then deleted;
+the proof feature saved no production sculpture changes. Five source-scope
+regression tests exercise nearby/foreign names, roles/versions, fixture scope
+and stale hash/removed-state guards. They do not execute native GC or deletion.
+
+**API discovery is separate evidence:** installed `FortPhysicsAssetEditorSubsystem`
+exposed body creation, weighted bone vertices and primitive authoring/inspection;
+generic `PhysicsAsset.skeletal_body_setups` was not reflected. Shapes created in
+the failed chair PhysicsAsset experiments still produced zero query hits.
+Discover actual available APIs; neither the existence of authoring methods nor
+failed queries establishes universal runtime support or a performance budget.
+
+Source/negative receipts are in museum
+[PR #15](https://github.com/ehartye/art_explorers_fn/pull/15):
+`scripts/collision_proof_scope.py`, `reconcile_collision_proofs.py`,
+`cleanup_collision_proof_assets.py`, `tests/test_collision_proof_scope.py` and
+`museum/collision/editor-proof.json`. The owner's living wiki note is
+`wiki/authored/art-explorers-fn/notes/exhibit-collision-audit-and-proofs.md`.
+The later production chair installation uses a separate recipe and is not a
+disposable target; see the directly linked moving-cover reference in the skill.
 
 ## Distinguish built-in adapters from custom Verse instances
 

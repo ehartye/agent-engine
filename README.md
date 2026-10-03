@@ -12,7 +12,7 @@ across the asset plugins' docs.
 
 ## Status
 
-Early (0.5.11). Two skills. Four targets are tested with the sample scene (a fox, a pixel campfire, a pixel courier,
+Early (0.5.12). Two skills. Four targets are tested with the sample scene (a fox, a pixel campfire, a pixel courier,
 a music bed and a one-shot): Unreal Engine 5.7.3 and 5.8.3, Godot 4.7.2, Unity 6000.3.25f1 and the web tier (Phaser
 3.90.0 and three.js 0.186.1). Each imports the assets, runs with no errors, renders on the GPU and produces a screenshot;
 the web and Unity passes also record which pickup variants played. The scene loops use scripts, not an MCP server.
@@ -34,6 +34,9 @@ The [moving exhibit cover reference](skills/engine-asset-import/references/uefn-
 records the source-fitted chair pilot, bone-policy ordering, study-owned collision,
 independent source-corner checks and failures that self-derived surface rays missed.
 Its saved/editor proof remains separate from Fortnite gameplay and performance.
+The saved-controls reference also records exact disposable-proof ownership,
+hash-bound cleanup reconciliation and the observed Python-before-Unreal GC recovery,
+with preserved failed receipts and no force-deletion or automatic replay.
 
 ## Skills
 
