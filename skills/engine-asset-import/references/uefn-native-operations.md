@@ -70,6 +70,11 @@ timeout against native package state before another mutation. Serialize native
 scripts and callback jobs: the tested remote entrypoint shared Python globals.
 Do not call MCP from inside an editor Python script.
 
+For an extra dirty ActorFolder, derived LevelBounds, native material pins or sky
+collision readback, use [exterior materials and save scope](uefn-native-exterior.md).
+The tested folder follow-up identified the new package separately and preserved
+the original dirty external objects; a successful actor save was not replayed.
+
 ## Delete only reconciled disposable proof assets
 
 **Tested on 42.30:** immediate deletion failed while proof assets remained in

@@ -184,6 +184,11 @@ compact buttons or editor/client screenshots, read
 [UEFN saved controls and capture](references/uefn-native-operations.md).
 It separates saved assets, server controller tests and physical interaction evidence.
 
+For native material pin failures, sky collision after property edits, unexpected
+LevelBounds changes or an extra dirty ActorFolder, read
+[native exterior materials and save scope](references/uefn-native-exterior.md).
+Inspect installed metadata and exact ownership before continuing or broadening saves.
+
 For fitted exhibit cover following bones, hidden comparison blockers or misplaced
 proxies after animation-property edits, read [moving exhibit cover](references/uefn-native-cover.md).
 Verify against original source geometry as well as the colliders' own faces;
