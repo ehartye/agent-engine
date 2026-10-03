@@ -2,7 +2,7 @@
 
 Use this when UEFN MCP lacks an operation, animation controls need exact Reset,
 audio needs importing, or the owner proposes authoring in regular Unreal and porting.
-Evidence checked 2026-10-01, UEFN 42.30 and UE 5.8.3. Re-discover capabilities after upgrades.
+Evidence checked 2026-10-02, UEFN 42.30 and UE 5.8.3. Re-discover capabilities after upgrades.
 
 ## Choose the smallest working route
 
@@ -132,7 +132,7 @@ read-only playback properties do not provide a writable seek/reset. Reverse is
 not exact Reset. Three imported skeletal clips read back as eight seconds,
 240 frames and 241 sampled keys at 30 fps. This establishes import, not playback.
 
-**Tested authoring, runtime pending:** native Python created a Level Sequence
+**Tested authoring:** native Python created a Level Sequence
 with an eight-second skeletal animation section at 30 fps (frames 0–240).
 Its actor and component possessables both resolved in the target level, and five
 scrubbed samples produced five different numeric bone poses. The sequence was saved
@@ -144,9 +144,12 @@ operations worked locally; preflight their availability again after upgrades.
 The [device API](https://dev.epicgames.com/documentation/en-us/fortnite/verse-api/fortnitedotcom/devices/cinematic_sequence_device)
 includes `SetPlaybackFrame` and `SetPlaybackTime`.
 
-Pause plus SetPlaybackFrame(0) is a reset **candidate**. Verify immediate visible
-frame-zero pose, paused state and forward resumption from mid-clip, paused and
-completed states. Keep camera tracks out of exhibit-only sequences. Verify shared
+**Tested server behavior:** the museum's saved cinematic controllers passed frame
+checks for reset, held-frame pause/resume and wrapping study cycles; startup
+advanced eight kinetic and four animated picture timelines. Method calls did not
+verify physical button use or visible reset poses. Verify the immediate rendered
+frame-zero pose, paused state and resumption, including completed clips. Keep
+camera tracks out of exhibit-only sequences. Verify shared
 visibility and late joining in Fortnite; inspect completion state and device
 cost before multiplying devices. [Cinematic device guidance](https://dev.epicgames.com/documentation/en-us/fortnite/using-cinematic-sequence-device-in-unreal-editor-for-fortnite).
 
@@ -212,7 +215,10 @@ authoring path exists; keep runtime acceptance open until observed in Fortnite.
 
 Report separately: files exported, assets imported/saved, editor appearance,
 validation, runtime behavior and owner audio audition. The museum exercise verified
-export/import, gallery appearance, project startup, native remote execution and
-saved Sequence evaluation. An earlier gallery session passed upload validation,
-then disconnected; the new Sequence was not yet validated in Fortnite. Reset,
-audio and multiplayer behavior remained unverified at this reference's date.
+export/import, gallery appearance, project startup, native remote execution,
+scoped native saves and saved Sequence evaluation. After recovery from an earlier
+client disconnection, automatic startup and 156 production-controller results
+passed in Fortnite, followed by a normal push with QA disabled. Physical button
+use, rendered reset poses, completed-clip reset, audio, multiplayer and performance
+remain unverified. The directly linked saved-controls/capture reference records
+those operational checks and their limits.
