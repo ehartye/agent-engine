@@ -1,7 +1,7 @@
 # UEFN saved controls and capture
 
 Read this when native UEFN edits need scoped saves, Verse references, compact
-buttons or screenshots. First-hand evidence checked 2026-10-02 in UEFN 42.30.
+buttons or screenshots. First-hand evidence checked through 2026-10-03 in UEFN 42.30.
 Inspect the installed schemas after upgrades; these observations are not an API
 contract for every project. Use the authoring reference for connection setup.
 
@@ -103,6 +103,34 @@ actor scale 1 and `interactionRadius` 1. All 24 surviving pixel controls had
 independent native readbacks. A visible mesh about 45.94 cm tall became about
 4.59 cm. Other components expanded actor bounds to 128 cm; those bounds did not
 measure the visible switch.
+
+**Button component reconstruction (42.30):** a nested MCP write such as
+`{"relativeScale3D":{"x":0.1,"y":0.1,"z":0.1}}` returned true but changed
+only the first supplied axis on the native Fortnite Button's `ButtonMesh`.
+Fresh unequal-axis fixtures reproduced this; changing JSON member order changed
+which axis survived. Generic StaticMeshActor components passed the same writes.
+This is not a general JSON-vector serialization failure.
+
+The installed ObjectTools wrapper forwards the JSON directly to native
+`ToolsetLibrary.set_object_properties`. Calling that native method directly
+reproduced the Button failure. Its original mesh became `TRASH_StaticMeshComponent`
+and a different component occupied the same `ButtonMesh` path. Component
+reconstruction during nested member editing is observed; subsequent writes
+targeting the obsolete component is the likely mechanism, not inspected C++ proof.
+
+For this tested Button property, pass one whole-vector text value through MCP:
+`{"relativeScale3D":"(X=0.1,Y=0.1,Z=0.1)"}`. Independent MCP and native readback
+confirmed all axes, including when their initial values were 1, 2 and 3. Native
+`mesh.set_relative_scale3d(unreal.Vector(.1,.1,.1))` also worked; read it with
+`mesh.get_editor_property('relative_scale3d')`. This build has no
+`get_relative_scale3d()` getter. Resolve the component again after reflected
+property edits, since its identity may change even when its path stays the same.
+Do not patch vendor files or generalize this workaround to untested struct types.
+
+Always verify every axis on the current component. An already-uniform .1/.1/.1
+fixture masked the nested-write defect and cannot establish a working setter.
+The disposable fixtures were transient, cleaned up with selection restored,
+and never saved or pushed. These editor tests do not establish physical reach.
 
 Logical radius readback is not a physical reach test. Confirm the real focus
 prompt, activation and camera view in Fortnite before claiming usability.
