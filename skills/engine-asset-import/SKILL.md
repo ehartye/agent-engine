@@ -174,6 +174,11 @@ For missing MCP tools, native Python/Sequencer, exact Reset, audio or UE-to-UEFN
 migration, read [UEFN authoring beyond MCP](references/uefn-authoring.md). It includes
 tested 42.30 project startup, native remote Python and Sequence authoring, plus runtime limits.
 
+For rendered WAVs, read [native UEFN audio import](references/uefn-native-audio.md)
+before recommending manual import. The tested 42.30 route uses SoundFactory,
+guarded source/destination checks, direct looping Wave Players and scoped saves;
+editor import does not establish audible Fortnite playback.
+
 For scoped native actor saves, typed Verse references, compact buttons or editor/client
 screenshots, read [UEFN saved controls and capture](references/uefn-native-operations.md).
 It separates saved assets, server controller tests and physical interaction evidence.
@@ -185,8 +190,9 @@ reimporting or transforming the whole scene.
 - Tested through the MCP server in a real project: textures import; the fox imports as a skeletal mesh with a
   skeleton and 48 materials from the converted FBX. The 30 fps fix was re-run: both clips were saved and verified
   through registry duration/frame counts. An Animated Mesh device renders it in the editor; runtime is unverified.
-- Audio: no MCP route. Auto Reimport created nothing from dropped WAVs across two restarts. Drag the files into the
-  Content Browser; Epic documents `.wav`, `.aif`, `.flac` and `.ogg` up to 300 seconds.
+- Audio: no MCP import tool in the tested configuration. Auto Reimport created nothing from dropped WAVs across
+  two 42.20 restarts. Native Python imported and saved five Wave/Cue pairs in 42.30; use the audio reference above.
+  Content Browser Import remains a fallback. Audible playback and a full UEFN sample-scene pass remain unverified.
 - Documented versus tested: Epic's pages say GLB and glTF import in the editor; the MCP mesh tool accepts only FBX
   and OBJ. Say which one you mean.
 

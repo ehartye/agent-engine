@@ -164,7 +164,11 @@ Agent Beeps supplies rendered WAVs; its browser synth is not the Fortnite audio
 runtime. [Native UEFN import](https://dev.epicgames.com/documentation/en-us/fortnite/importing-custom-audio-in-unreal-editor-for-fortnite)
 supports WAV through Import or Content Browser drag/drop. Use Sound Wave/Sound Cue
 and Audio Player as appropriate; verify looping and volume in the target session.
-Native Python `AssetImportTask` is a candidate batch route, untested here in UEFN.
+**Tested in 42.30:** SoundFactory plus AssetImportTask imported five approved WAVs,
+created their direct looping Wave Player Cues and saved only the ten new packages.
+Both skill bodies link the native-audio reference directly for the source checks,
+pending receipts, task-result omission and independent metadata/package verification.
+This removes the need for manual dragging when the native connection is available.
 Auto Reimport did not create WAV assets in the earlier local test; repeating it
 or introducing a second UE project is not a necessary prerequisite for audio.
 For an initial score, one auditioned loop is enough to prove delivery. Stems and
@@ -224,6 +228,8 @@ export/import, gallery appearance, project startup, native remote execution,
 scoped native saves and saved Sequence evaluation. After recovery from an earlier
 client disconnection, automatic startup and 156 production-controller results
 passed in Fortnite, followed by a normal push with QA disabled. Physical button
-use, rendered reset poses, completed-clip reset, audio, multiplayer and performance
-remain unverified. The directly linked saved-controls/capture reference records
+use, rendered reset poses, completed-clip reset, audible audio, multiplayer and performance
+remain unverified. Native audio import/save and personal playback preparation are
+verified separately; a later launch reached server cook but ended without a connected
+game client. The directly linked saved-controls/capture reference records
 those operational checks and their limits.
