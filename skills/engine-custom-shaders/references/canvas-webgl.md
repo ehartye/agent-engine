@@ -78,7 +78,18 @@ pixel grid, palette/dither, alpha, emissive ordering, HUD clarity and pointer ta
 Exercise resize and context loss/restoration, and record which rendering path ran.
 Benchmark the whole frame under the same browser/device/scene, with effects on and
 off; a software renderer or timing only shader submission is weaker performance
-evidence. No runtime shader, sample scene or speedup has been verified by this guide.
+evidence.
+
+**Tested here:** Cyberpunkt's custom Canvas renderer now uses a native 384x216
+WebGL 2 chem pass with direct presentation and separate bitmap HUD/messages.
+Hardware Chromium on an NVIDIA RTX 5070 Ti Laptop verified byte-exact identity,
+all twelve chems and stacked effects against CPU output (small warp-boundary
+differences), trail resets, resize, CPU fallback and context recovery. The game's
+`tests/gpu-postfx.test.mjs` records the checks; test-only readback is not part of
+gameplay. Repeated same-scene frame-callback measurements showed roughly 7–19%
+lower median time for GPU effects, with CPU world/lighting still dominant. This
+does not establish complete presentation latency, mobile speed or a general
+engine performance claim. Other custom renderers still require their own proof.
 
 ## Documentation
 
