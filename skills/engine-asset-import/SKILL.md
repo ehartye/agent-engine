@@ -251,6 +251,8 @@ Built and run in the sample scene; scripts in `examples/godot`.
 
 ## Unity 6.3 (tested)
 
+Building a game rather than the sample scene? Read [Unity as a long-lived project](references/unity-project-workflow.md) first: the test and screenshot loop, sharing pure logic with .NET, and the traps hit on a real project.
+
 Built and run in the sample scene; scripts in `examples/unity`.
 
 - Unity needs an owner sign-in and licence before any headless launch works: unlicensed it exits 198 with "No valid
