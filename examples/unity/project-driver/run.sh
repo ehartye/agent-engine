@@ -53,7 +53,10 @@ case "${1:-}" in
     compile_errors "$LOGS/import.log"
     grep -q "error CS" "$LOGS/import.log" && { echo "IMPORT FAIL"; exit 1; } || echo "IMPORT OK" ;;
   test-editmode) run_tests EditMode "$EDITMODE_ASSEMBLIES" -nographics || exit 1; summarize_tests "$LOGS/EditMode.xml" ;;
-  test-playmode) run_tests PlayMode "$PLAYMODE_ASSEMBLIES" -nographics || exit 1; summarize_tests "$LOGS/PlayMode.xml" ;;
+  test-playmode)
+    # Screenshot tests need a GPU, so the no-GPU tier must never run them.
+    run_tests PlayMode "$PLAYMODE_ASSEMBLIES" -nographics -testCategory '!Screenshot' || exit 1
+    summarize_tests "$LOGS/PlayMode.xml" ;;
   shot)
     rm -f "$LOGS"/shot_*.png
     run_tests PlayMode "$PLAYMODE_ASSEMBLIES" -testCategory Screenshot || exit 1

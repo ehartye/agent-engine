@@ -66,6 +66,39 @@ render has nothing to draw on. No window is needed.
 - glTFast kept a model authored facing +Z facing +Z in Unity (checked with a knight's muzzle).
   Do not add a 180 degree turn for the handedness change; it is already handled on import.
 
+- Screenshot tests share an assembly with the other PlayMode tests, so `test-playmode` runs them too
+  unless you filter them out (`-testCategory '!Screenshot'`). Worse, a test that builds scene objects and
+  does not destroy them leaks into the next test: here a leftover `NetworkObject` made the next Netcode
+  test fail at SetUp with "pre-instantiated GameObject ... not a registered prefab". Destroy what a
+  screenshot test creates in `[TearDown]`.
+- A screenshot test that builds its own scene can hide a bad real scene. Here the test added its own light
+  and the generated scene had none, so every screenshot looked right while the headset build would have
+  been unlit. Assert the real scene file separately (next section).
+
+## Re-importing a model breaks references to it
+
+A `ScriptableObject` (a piece set, a prefab table) that points at a glTFast-imported model stores an
+internal object ID derived from the model's node hierarchy. Re-import a model whose hierarchy changed (a
+different exporter, extra nodes) and the reference silently becomes null, while unchanged models keep
+theirs. Symptom: some entries render as the fallback (grey capsules here) and the importer logged no
+error. Regenerate such assets from code (load by path, assign, `SetDirty`) as part of the scene build
+instead of trusting what is stored, and check the real scene after any asset swap.
+
+## Passthrough mixed reality: check the scene file, not just the code
+
+Two defects were in the generated scene and neither was visible in a test or a screenshot:
+
+- **No light.** An empty generated scene has none, and the default ambient is near black. The headset
+  cannot see the room's real light, so give the virtual objects a fixed key light and an ambient floor.
+- **Opaque camera clear.** The rig prefab's camera clears to a skybox, which paints over the passthrough
+  layer. The camera must be `SolidColor` with background alpha 0. Meta's SDK sets this only in an editor
+  helper, not at runtime.
+
+Guard both with EditMode tests that open the generated scene additively and assert a shadow-casting
+directional light, a bright enough ambient, and the transparent clear. Write them first: here all three
+failed before the fix, which is how the defects were found. The shadow cost (fill rate on Quest) and how
+a fixed light looks in a real room were not measured; both need a headset.
+
 ## Multiplayer in tests
 
 Netcode for GameObjects' own `NetcodeIntegrationTest` runs a host and a client in one process. Add
