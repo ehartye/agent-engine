@@ -46,7 +46,9 @@ The receipt binds the probe source hash and before/after protected-state digests
 3. Identify the specific project-owned module, its resolved `__file__` and
    `__spec__.origin`, and the expected source hash. A same-named module from
    another folder is a path problem, not permission to reload it. Review imports
-   and module-level code: reloading executes that code again. Keep layout helpers
+   and module-level code: reloading resolves the module again and executes that
+   code. Check the next resolution, not only the cached module's old origin.
+   Keep layout helpers
    free of actor edits, imports of assets, saves and callback registration.
 4. Reload only that helper, then obtain its function from the returned module.
    Repeating the old `from helper import function` binding *before* reload leaves
@@ -57,11 +59,15 @@ The receipt binds the probe source hash and before/after protected-state digests
 
 This excerpt assumes `module_name`, `expected_file` and `expected_sha256` came
 from a reviewed project preflight, and the already imported helper has a pure
-`build_plan` function. It does not import an unknown module or perform a mutation.
+`build_plan` function. It supports only top-level Python source modules with the
+standard import finders; custom hooks and package helpers need a separately
+reviewed resolver. Keep import paths/hooks unchanged throughout this synchronous
+block. It does not import an unknown module or perform a native mutation.
 
 ```python
 import hashlib
 import importlib
+from importlib.machinery import BuiltinImporter, FrozenImporter, PathFinder, SourceFileLoader
 from pathlib import Path
 import sys
 
@@ -78,14 +84,24 @@ def check_source(module):
         raise RuntimeError('Helper source changed since preflight')
 
 check_source(helper)
+if '.' in module_name or sys.meta_path != [BuiltinImporter, FrozenImporter, PathFinder]:
+    raise RuntimeError('This example requires standard top-level import resolution')
+next_spec = PathFinder.find_spec(module_name, sys.path)
+if (next_spec is None or type(next_spec.loader) is not SourceFileLoader
+        or Path(next_spec.origin).resolve() != expected_file):
+    raise RuntimeError('Reload would resolve a different helper; stop before execution')
 helper = importlib.reload(helper)
 check_source(helper)
 build_plan = helper.build_plan  # bind AFTER reload
 # Inspect build_plan(...) before any native edit; retain mutation receipt guards.
 ```
 
-The probe exercised the import/reload and origin-check behavior, not this
-project-specific `build_plan` excerpt as a universal loader. Reload is not a
+The native probe exercised the import/reload and origin-check behavior. A
+separate host Python 3.13 regression executed this excerpt with temporary
+helpers: a shadowing path and custom finder were rejected before helper code
+ran, while the intended reload/rebind succeeded. The standard-finder constraint
+has not been established for every UEFN interpreter; inspect it and stop if it
+does not hold. This is not a universal loader. Reload is not a
 fresh-interpreter reset: removed names and old references can survive. The
 experiment deliberately changed helper source size to avoid a same-size,
 same-timestamp bytecode ambiguity; it did not test every loader/cache variant.
