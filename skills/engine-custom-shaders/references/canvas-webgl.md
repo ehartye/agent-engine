@@ -1,7 +1,8 @@
 # Canvas to WebGL passes
 
-Status: **documented architecture**, not a verified shader sample or performance
-result. Check APIs against the project's WebGL version. WebGL 1 and 2 differ in
+Status: **documented architecture**, with a tested Cyberpunkt implementation
+recorded below. This is not the engine sample-scene acceptance pass. Check APIs
+against the project's WebGL version. WebGL 1 and 2 differ in
 GLSL syntax and texture/framebuffer capabilities; don't mix shader versions.
 
 ## Keep the renderer boundary small
@@ -85,7 +86,8 @@ WebGL 2 chem pass with direct presentation and separate bitmap HUD/messages.
 Hardware Chromium on an NVIDIA RTX 5070 Ti Laptop verified byte-exact identity,
 all twelve chems and stacked effects against CPU output (small warp-boundary
 differences), trail resets, resize, CPU fallback and context recovery. The game's
-`tests/gpu-postfx.test.mjs` records the checks; test-only readback is not part of
+[GPU regression test](https://github.com/ehartye/cyberpunkt/blob/main/tests/gpu-postfx.test.mjs)
+records the checks; test-only readback is not part of
 gameplay. Repeated same-scene frame-callback measurements showed roughly 7–19%
 lower median time for GPU effects, with CPU world/lighting still dominant. This
 does not establish complete presentation latency, mobile speed or a general
