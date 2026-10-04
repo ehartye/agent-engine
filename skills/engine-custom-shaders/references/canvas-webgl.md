@@ -86,7 +86,7 @@ WebGL 2 chem pass with direct presentation and separate bitmap HUD/messages.
 Hardware Chromium on an NVIDIA RTX 5070 Ti Laptop verified byte-exact identity,
 all twelve chems and stacked effects against CPU output (small warp-boundary
 differences), trail resets, resize, CPU fallback and context recovery. The game's
-[GPU regression test](https://github.com/ehartye/cyberpunkt/blob/main/tests/gpu-postfx.test.mjs)
+[GPU regression test](https://ehartye.github.io/cyberpunkt/tests/gpu-postfx.test.mjs)
 records the checks; test-only readback is not part of
 gameplay. Repeated same-scene frame-callback measurements showed roughly 7–19%
 lower median time for GPU effects, with CPU world/lighting still dominant. This
