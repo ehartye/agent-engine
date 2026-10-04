@@ -71,6 +71,44 @@ or use an explicit, verified fallback; stopping with a useful error is valid whe
 the project requires WebGL and has no fallback. Log compile/link diagnostics and
 check framebuffer completeness at creation/recreation.
 
+## CPU profiling and bounded caches
+
+Warm asset uploads, shader compilation and caches before sampling steady play;
+report startup separately. Time world drawing, lighting, emissives, post effects
+and HUD, then the complete frame callback including simulation and input. Within
+a CPU pixel pass, separate light-map readback, world readback, pixel math and write.
+Canvas drawing can defer work until a later readback: cheap drawing submission and
+an expensive `getImageData` do not by themselves locate the underlying cost. Keep
+the combined stages and complete callback as the comparison that matters.
+
+Record browser/version, device, actual hardware/software renderer, native/output
+sizes and CPU/GPU effect path. Use reproducible opening and crowded combat scenes;
+record visible enemies, projectiles, particles, hazards and active effect counts,
+not only total entities on the map. Keep scene, camera, seed, effect state and
+sample duration matched; repeat alternating baseline/candidate runs. Report median
+and p95 stage/callback times alongside animation-frame intervals and missed-frame
+counts. A 60 FPS target allows about 16.67 ms per frame, including work outside the
+callback. Faster CPU submission does not establish presentation latency or a
+mobile result; when both versions sustain 60 FPS, report added frame headroom.
+
+Try one measured hotspot at a time and reject flat or worse comparisons. Treat
+`willReadFrequently` as a context-creation choice to benchmark across the real
+drawing/readback/upload path, not a blanket speed fix. Compare fresh contexts;
+calling `getContext` again does not recreate the existing context. Making a ground
+cache CPU-backed need not improve a subsequent world readback. Keep a successful
+pixel-parity result separate from evidence of a performance gain.
+
+For a cache, declare every input in its key, its lifetime, invalidation on source
+or parameter changes, and maximum entries/bytes. Prefer finite tables over
+unbounded caches keyed by continuously changing colors, radii or effect values.
+A finite lookup indexed by light-map channel byte and Bayer phase can remove
+repeated rounding and division while preserving the original multiplier; retain its precision and
+the final byte clamping behavior. Verify all channel/phase/source-byte combinations
+against the uncached formula when exhaustive checking is practical, preserve alpha,
+and compare complete rendered pixel buffers across representative scenes. Verify
+cache reset/rebuild where needed; do not quantize moving inputs just to improve a
+cache hit rate without treating that as a visible behavior change.
+
 ## Useful proof
 
 Capture an identity frame with corner markers, a representative warp/color frame
@@ -99,3 +137,5 @@ engine performance claim. Other custom renderers still require their own proof.
 - [WebGL best practices: uploads, blocking calls and resource costs](https://developer.mozilla.org/en-US/docs/Web/API/WebGL_API/WebGL_best_practices)
 - [WebGL context attributes and creation](https://developer.mozilla.org/en-US/docs/Web/API/HTMLCanvasElement/getContext)
 - [WebGL context restoration](https://developer.mozilla.org/en-US/docs/Web/API/HTMLCanvasElement/webglcontextrestored_event)
+- [Canvas reuse, layering and drawing optimization](https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API/Tutorial/Optimizing_canvas)
+- [Animation-frame scheduling and refresh rates](https://developer.mozilla.org/en-US/docs/Web/API/Window/requestAnimationFrame)
