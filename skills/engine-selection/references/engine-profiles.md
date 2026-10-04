@@ -4,7 +4,7 @@ Dated 2026-09-30. Tags: **[tested]** ran on the dev machine (Windows 11, RTX-cla
 read in vendor or project docs, **[general]** general knowledge not checked here. Re-check anything
 not tagged [tested] before relying on it.
 
-Contents: [Sessions](#before-any-of-these-is-the-shell-interactive) | [Unreal](#unreal-engine-57) | [UEFN](#uefn-unreal-editor-for-fortnite) | [Godot](#godot-47) |
+Contents: [Sessions](#before-any-of-these-is-the-shell-interactive) | [Custom](#custom-engine-owned-canvaswebgl-runtime) | [Unreal](#unreal-engine-57) | [UEFN](#uefn-unreal-editor-for-fortnite) | [Godot](#godot-47) |
 [Unity](#unity) | [Web stacks](#web-stacks) | [What to check first](#what-to-check-first)
 
 ## Before any of these: is the shell interactive?
@@ -18,6 +18,28 @@ Contents: [Sessions](#before-any-of-these-is-the-shell-interactive) | [Unreal](#
 - [tested] A GUI app can be started on the user's desktop from session 0 with a one-shot scheduled task that
   runs interactively as the user (`schtasks /create /tn <name> /tr <cmd> /sc once /st 23:59 /it /ru <user>`, then
   `/run`, then `/delete`). It cannot click for you: sign-ins and "new project" dialogs still need the user.
+
+## Custom engine (owned Canvas/WebGL runtime)
+
+Added 2026-10-04. This is an engine type for a project's own game loop, gameplay
+systems and renderer, not a new packaged engine.
+
+- [documented] WebGL accepts Canvas/OffscreenCanvas texture sources through
+  [`texImage2D`](https://developer.mozilla.org/en-US/docs/Web/API/WebGLRenderingContext/texImage2D).
+  An existing Canvas world can feed a GPU shader stage without adopting Phaser.
+- [general] Text code, static hosting and browser inspection make this suitable for
+  agent-driven iteration, subject to verifying the actual run/log/screenshot loop.
+- [documented] GPU upload/composition and blocking readbacks have costs; see
+  [WebGL best practices](https://developer.mozilla.org/en-US/docs/Web/API/WebGL_API/WebGL_best_practices).
+  Shader execution alone is not evidence of improved complete frame times.
+- [general] The project retains exact pixel/palette control but owns input, scenes,
+  audio, physics, asset loading and GPU lifecycle to the extent it uses them.
+  Native distribution requires additional tooling; no native exporter is supplied.
+
+**Proof status:** custom GPU guidance is documented, not sample-tested. Existing
+Phaser/three.js sample results do not verify this route. For runtime effects, read
+[custom engine shaders](../../engine-custom-shaders/SKILL.md) and prove identity,
+effect appearance, temporal reset and complete-frame performance in the target game.
 
 ## Unreal Engine 5.7
 

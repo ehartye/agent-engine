@@ -1,6 +1,6 @@
 ---
 name: engine-selection
-description: Choose a game engine or web stack (Unity, Unreal, UEFN for Fortnite, Godot, Phaser, three.js, Babylon.js, PlayCanvas) for a project built with AI agents, weighing how easily an agent can drive and verify it against output quality and reach, with each option's limits.
+description: Choose a game engine or web stack (Custom, Unity, Unreal, UEFN for Fortnite, Godot, Phaser, three.js, Babylon.js, PlayCanvas) for a project built with AI agents, weighing how easily an agent can drive and verify it against output quality and reach, with each option's limits.
 when_to_use: Use when asked which engine to use, to compare engines, to start a new game or level project, about making Fortnite levels or UEFN, or whether three.js is an engine; also before promising that an agent can build or verify something in a given engine.
 ---
 
@@ -16,7 +16,7 @@ docs) or **general knowledge**. Never present the last two as the first.
 | Constraint | Consequence |
 |---|---|
 | The result must run inside Fortnite | UEFN is the only path. Go to its profile before promising anything. |
-| It must run in a browser, or anywhere with no install | Web stack (Phaser for 2D, three.js or an engine for 3D). |
+| It must run in a browser, or anywhere with no install | Web stack (Custom Canvas/WebGL, Phaser for 2D, three.js or an engine for 3D). |
 | Console or high-end 3D visuals | Unreal is the usual candidate (general knowledge). |
 | Must ship to many native platforms from one project | Unity or Godot. |
 | The owner must sign in or hold a licence for unattended runs to work | Note it now. It caps what an agent can do alone. |
@@ -38,6 +38,7 @@ play it. The profiles give what is known per option.
 
 | Stack | Agent autonomy | Quality and reach | Main limit |
 |---|---|---|---|
+| Custom: owned Canvas/WebGL runtime | General knowledge: text project and browser tooling suit unattended iteration; verify the actual project | Browser pixel games with complete control over the render contract | Own the engine systems and GPU lifecycle; custom shader path is documented, not sample-tested |
 | Web: Phaser, three.js | Highest, and tested: headless Chromium on the GPU, text project, no sign-in, about 12 s per pass | Any browser. 2D strong, 3D moderate | Browser performance ceiling; no native or console |
 | Godot | High, and tested: one-command install, headless build, windowed run in about 12 s | Strong 2D, good 3D | Smaller high-end 3D ceiling; best MCP needs Godot 4.7+ |
 | Unreal | Medium: works unattended, but heavy and slow to iterate | Highest visual ceiling | Install weight, minute-long loops, binary assets |
@@ -46,6 +47,11 @@ play it. The profiles give what is known per option.
 
 ## Rules
 
+- **Custom is an engine type, not another engine dependency.** For an existing game whose main
+  limitation is CPU pixel effects, consider a focused GPU stage before a full port. Use
+  [custom engine shaders](../engine-custom-shaders/SKILL.md) for runtime lighting, warps and trails.
+  Keeping gameplay may save migration time; it leaves scene/content tooling and engine maintenance
+  with the project. A shader addition does not establish a faster or fully GPU-rendered game.
 - **Three.js is a 3D library, and "not an engine" is a fair description, not a verdict.** It gives a scene graph,
   cameras, lights, materials, loaders, animation playback and thin Web Audio wrappers, and leaves physics,
   entities, input, flipbooks and game loop structure to you (tested: the web sample scene needed hand-written
