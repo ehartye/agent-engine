@@ -1,7 +1,7 @@
 ---
 name: engine-asset-import
 description: Import agent-sprites atlases, agent-meshes GLB models and agent-beeps WAV exports into a Unity, Unreal, UEFN or Godot project, using the known per-engine traps and stating exactly what has been verified.
-when_to_use: Use when bringing a sprite atlas, GLB, WAV or song export into a Unity, Unreal, UEFN or Godot project, by script or through an engine's MCP server; when an imported model is missing bones, morphs, meshes or animation clips, or its clips have different names; when an Unreal import splits one model into many meshes or leaves nothing on disk; when a sprite sheet imports with wrong frames, tags or pivot; or when asked whether an asset "works in" an engine.
+when_to_use: Use when bringing a sprite atlas, GLB, WAV or song export into a Unity, Unreal, UEFN or Godot project, by script or through an engine's MCP server; when an imported model is missing bones, morphs, meshes or animation clips, or its clips have different names; when an Unreal import splits one model into many meshes or leaves nothing on disk; when a sprite sheet imports with wrong frames, tags or pivot; when asked whether an asset "works in" an engine; or when edited native Python helpers still produce old values in a running UEFN editor.
 ---
 
 # Importing plugin assets into a game engine
@@ -184,6 +184,10 @@ disposable proof cleanup, typed Verse references,
 compact buttons or editor/client screenshots, read
 [UEFN saved controls and capture](references/uefn-native-operations.md).
 It separates saved assets, server controller tests and physical interaction evidence.
+
+When edited Python helpers still produce old values in a running UEFN editor,
+read [Python helper freshness](references/uefn-python-helper-freshness.md).
+Verify the resolved source, reload only the owned pure helper, and bind after reload.
 
 For native material pin failures, sky collision after property edits, unexpected
 LevelBounds changes or an extra dirty ActorFolder, read
