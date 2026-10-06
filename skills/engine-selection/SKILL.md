@@ -49,7 +49,8 @@ play it. The profiles give what is known per option.
 
 - **Custom is an engine type, not another engine dependency.** For an existing game whose main
   limitation is CPU pixel effects, consider a focused GPU stage before a full port. Use
-  [custom engine shaders](../engine-custom-shaders/SKILL.md) for runtime lighting, warps and trails.
+  [custom engine shaders](../engine-custom-shaders/SKILL.md) for runtime lighting, warps and trails. Once Phaser is chosen,
+  use [engine-phaser](../engine-phaser/SKILL.md) for structure, tilemaps, known bugs and GPU verification.
   Keeping gameplay may save migration time; it leaves scene/content tooling and engine maintenance
   with the project. A shader addition does not establish a faster or fully GPU-rendered game.
 - **Three.js is a 3D library, and "not an engine" is a fair description, not a verdict.** It gives a scene graph,

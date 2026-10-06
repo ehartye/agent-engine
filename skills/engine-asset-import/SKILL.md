@@ -214,7 +214,8 @@ reimporting or transforming the whole scene.
 
 ## Web: Phaser and three.js (tested)
 
-Built in the sample scene; pages and verifier in `examples/web`.
+Built in the sample scene; pages and verifier in `examples/web`. For a real Phaser game (tilemaps, terrain overlays,
+creatures, audio direction, GPU verification) use the [engine-phaser skill](../engine-phaser/SKILL.md).
 
 - Phaser loads the agent-sprites atlas unchanged: `load.aseprite(key, png, json)` then `anims.createFromAseprite(key)`.
   It followed the tag into the mixed frames array (the campfire's texture frames were "8" to "15") and kept the
