@@ -12,7 +12,7 @@ across the asset plugins' docs.
 
 ## Status
 
-Early (0.6.3). Four skills. Four targets are tested with the sample scene (a fox, a pixel campfire, a pixel courier,
+Early (0.7.0). Four skills. Four targets are tested with the sample scene (a fox, a pixel campfire, a pixel courier,
 a music bed and a one-shot): Unreal Engine 5.7.3 and 5.8.3, Godot 4.7.2, Unity 6000.3.25f1 and the web tier (Phaser
 3.90.0 and three.js 0.186.1). Each imports the assets, runs with no errors, renders on the GPU and produces a screenshot;
 the web and Unity passes also record which pickup variants played. The scene loops use scripts, not an MCP server.
@@ -64,7 +64,7 @@ from current Fortnite cook, navigation and performance acceptance.
 |---|---|
 | `engine-selection` | Choose an engine or web stack (Custom, Unity, Unreal, UEFN, Godot, Phaser, three.js, Babylon.js, PlayCanvas) by weighing how easily an agent can drive and verify it against quality and reach, with evidence labels and limits per option. |
 | `engine-asset-import` | Import sprite atlases, GLB models and WAV exports into an engine project, with the known traps per engine and a strict line between verified and documented. |
-| `engine-phaser` | Build, structure, debug and verify a Phaser 3 or 4 game: a headless sim with Phaser as the view, chunked tilemap streaming, the Phaser 4.2.1 GPU-layer bugs and their workarounds, real-GPU pixel verification, and how agent-sprites and agent-beeps output wires in. Backed by a large Phaser 4 game (Fallow Valley). |
+| `engine-phaser` | Build, structure, debug and verify a Phaser 3 or 4 game: a headless sim with Phaser as the view, chunked tilemap streaming, the Phaser 4.2.1 GPU-layer bugs and their workarounds, real-GPU pixel verification, and how agent-sprites and agent-beeps output wires in. Includes a one-page Phaser best-practices reference (scenes, the fixed-step loop, tilemaps, lighting, particles, pixel-perfect UI, input, audio directors, performance) with the 4.2.1 evidence behind each rule. Backed by a large Phaser 4 game (Fallow Valley). |
 | `engine-custom-shaders` | Add GPU effects to an owned renderer, starting with Canvas/WebGL: pixel sampling, pass order, trails, context lifecycle and screenshot/performance proof. Custom is an engine type; this path is documented, not sample-tested. |
 
 ## Sample scene
