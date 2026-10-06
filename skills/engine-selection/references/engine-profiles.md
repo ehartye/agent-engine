@@ -193,6 +193,10 @@ MCP tool. See the UEFN authoring reference linked directly from the engine-selec
   full verification pass takes about 12 seconds, with no install of an engine and no sign-in. Phaser loaded the
   agent-sprites atlas unchanged through its Aseprite loader. three.js kept the GLB's clip names. The
   agent-beeps player picked all 4 pickup variants with no immediate repeat.
+- [tested] Phaser 4.2.1 (the `latest` release, 2026-07-09) carried a large procedural game (Fallow Valley): chunked GPU
+  tilemaps, particles, parallel scenes, an Aseprite creature and terrain pipeline, on the GPU in headless Chromium. It also
+  exposed two Phaser 4 rendering bugs (GPU tilemap layers draw at twice their position; empty tiles in a GPU layer draw as
+  tile 0) and a tile-animation trap; see the [engine-phaser skill](../../engine-phaser/SKILL.md) for workarounds.
 - [documented] Phaser is a 2D HTML5 framework; agent-beeps ships a browser player.
 - [documented] three.js describes itself as a 3D library. A vendor comparison says "it gives you a scene graph,
   cameras, lights, materials, geometry, loaders, and a renderer, and then it stops"; the wiki records "not a game
