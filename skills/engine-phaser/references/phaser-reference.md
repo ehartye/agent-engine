@@ -75,3 +75,9 @@ Read Phaser's own skills in `node_modules/phaser/skills` first. When a render lo
 scene, read a pixel whose value you know, toggle layers one at a time, print the data to separate a data bug from a render bug, read the
 renderer source once you have a suspect, and prove the regression test by mutation ([gotchas](phaser-4-gotchas.md), "How these were found").
 Write down limits honestly: what the view still reads from the sim, which fixes patch Phaser's data, what only a human playtest can judge.
+
+## Process rules from the architecture review
+
+Shipping code must not import the debug tooling (load it through a gated dynamic `import()` and reach the loop through one hook); turn on
+`noUnusedLocals` and `noUnusedParameters`; keep architecture tests for layer imports and host globals; keep an audit record of what was
+reviewed, fixed and deferred with reasons (fallow-valley-next `docs/ARCH-REVIEW.md`, on the arch-review branch).
