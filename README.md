@@ -12,7 +12,7 @@ across the asset plugins' docs.
 
 ## Status
 
-Early (0.7.0). Four skills. Four targets are tested with the sample scene (a fox, a pixel campfire, a pixel courier,
+Early (0.7.3). Four skills. Four targets are tested with the sample scene (a fox, a pixel campfire, a pixel courier,
 a music bed and a one-shot): Unreal Engine 5.7.3 and 5.8.3, Godot 4.7.2, Unity 6000.3.25f1 and the web tier (Phaser
 3.90.0 and three.js 0.186.1). Each imports the assets, runs with no errors, renders on the GPU and produces a screenshot;
 the web and Unity passes also record which pickup variants played. The scene loops use scripts, not an MCP server.
@@ -68,6 +68,10 @@ from current Fortnite cook, navigation and performance acceptance.
 | `engine-custom-shaders` | Add GPU effects to an owned renderer, starting with Canvas/WebGL: pixel sampling, pass order, trails, context lifecycle and screenshot/performance proof. Custom is an engine type; this path is documented, not sample-tested. |
 
 ## Sample scene
+
+The [Phaser WebGL reference](skills/engine-phaser/references/webgl-backends.md) distinguishes official WebGL 2 support from
+4.2.1's default WebGL 1 context, covers ES3 custom-shader setup and keeps Phaser AE's separate API clear. The linked
+Cyberpunkt GL1/GL2 probe is bounded pixel/API evidence, not a full sample-scene or performance claim.
 
 [`docs/sample-scene.md`](docs/sample-scene.md) defines one scene built from reused assets (a fox, a pixel courier, a
 pixel campfire, a music bed and a one-shot) and a ladder of checks: import, clean run, screenshot, audio state. It is the
