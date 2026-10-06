@@ -12,10 +12,17 @@ Read the reference that matches the work. Do not load all of them.
 
 | You are about to | Read |
 | --- | --- |
+| Scan every rule on one page (index with evidence and examples) | [phaser reference](references/phaser-reference.md) |
 | Create a project or split a game into layers | [architecture](references/architecture.md) |
+| Boot, scenes, a global plugin, the fixed-step loop and interpolation | [scenes, loop and plugins](references/scenes-loop-and-plugins.md) |
 | Draw a tilemap, chunk a world, add overlays or animated tiles | [tilemaps and terrain](references/tilemaps-and-terrain.md) |
 | Hit a render that is blank, doubled, stale, wrong-coloured or throws | [Phaser 4 gotchas](references/phaser-4-gotchas.md) |
+| Add day and night, lights, fog, saturation or heat shimmer without blurring pixel art | [lighting and atmosphere](references/lighting-and-atmosphere.md) |
+| Make the canvas pixel-exact at any devicePixelRatio, or build a pixel-only UI | [pixel-perfect and UI](references/pixel-perfect-and-ui.md) |
+| Drive sound from sim events, write a music state machine | [audio directors](references/audio-directors.md) |
+| Measure and fix frame cost, draw calls, pooling | [performance](references/performance.md) |
 | Add drifting shadows, wind, particles, weather or footsteps to a strict pixel game | [ambient motion](references/ambient-motion.md) |
+| Add gamepad or controller support, glyph prompts, or on-screen keyboards | [gamepad and input](references/gamepad-and-input.md) |
 | Prove a change works on a real GPU | [verifying on a real GPU](references/verifying-on-a-gpu.md) |
 | Load agent-sprites or agent-beeps output | [asset wiring](references/asset-wiring.md) |
 
@@ -46,7 +53,11 @@ Read the reference that matches the work. Do not load all of them.
 - **Prove a regression test by mutation.** Re-introduce the bug, watch the test fail, restore the fix.
 - **Every runtime use of a Phaser value needs `import Phaser from 'phaser'`.** Phaser's types are a global namespace, so
   a missing import compiles and then throws `Phaser is not defined`. Add a test that scans for it.
-- **Never use wall-clock or `Math.random` in rules.** Use a seeded generator and a fixed timestep.
+- **Never use wall-clock or `Math.random` in rules.** Use a seeded generator and a fixed timestep, and save the generator's
+  state in the snapshot: otherwise a loaded game restarts the random stream and drifts from the original (test it by stepping a
+  saved and a restored sim side by side).
+- **Every scene restart must be leak-tested.** Restart the scene ten times in a browser spec and require listener counts,
+  textures and display objects not to grow (gotchas 14 and 15); a WebGL context loss/restore spec belongs beside it (gotcha 13).
 - **Games for this owner use a strict pixel-only UI.** Every visible UI and message pixel comes from agent-sprites bitmap
   fonts, skins and icons (no browser text, no Phaser `Text`); the UI layer may have a higher resolution than the gameplay
   layer, but each layer uses one integer scale. Ban `Text` creation with a test.

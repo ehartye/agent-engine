@@ -145,6 +145,58 @@ Keep a `WeakSet` so it is applied once per tileset. Verify by animating three di
 same frames started a quarter apart. Phase tiles need their own cells in the sheet because `tileData` is keyed by tile index.
 Put sparse animated content (plants, glow, drips) in its own sparse GPU layer (gotcha 2 refinement); the CPU layers stay static.
 
+## 11. Restarting scenes: a loading scene ignores `start`, and the sim must change in `init`, not before
+
+Found building a title screen that plays the real world scene behind its menu, then starts a game over it (Phaser 4.2.1).
+
+* `scene.start('world')` on a scene that is **running, paused or sleeping** shuts it down and restarts it (`init`, `preload`, `create`
+  again). On a scene that is **starting, loading or creating** (statuses START to CREATING) `SceneManager.start` returns without doing
+  anything, so the data you passed never arrives. Gate a start on `scene.isActive(key)` and queue it for the first frame it is true.
+* Do not "fix" that with `stop` then `start`: stopping a scene mid-load leaves its queued files in the loader, and the second load
+  logs `Texture key already in use` for every atlas. Load the scene's assets in an earlier scene instead (one function that queues
+  them, called from the preload scene; the loader skips keys already cached, so the scene's own `preload` calling it again is free).
+* If a global object holds the game state (our `SimHost` plugin), do **not** swap it in the scene that decides to start. The running
+  scene keeps drawing for the rest of that frame and the next, one world's views with the other world's entities. Pass a `boot`
+  callback in the start data and call it first thing in the restarted scene's `init`.
+* A modal or panel that rebuilds its own window (a changed row, a new page) must re-centre it: only the stack that opened it knew
+  where it belonged, so the rebuilt window appeared at (0, 0). Put placement in the base class `layout`.
+
+## 12. Whole-pixel screen shake
+
+`camera.shake` offsets by fractions of a pixel, which smears pixel art. Use the camera's follow offset instead: every ~33 ms
+pick an integer offset (a hash of the step index, so it is repeatable), let the amplitude fall in whole steps to exactly 0, and set
+`camera.setLerp(1, 1)` while it rings so the offset lands on the frame it is set (restore the lerp after). Assert in a test that
+every sampled offset is an integer and that the last sample is `(0, 0)`. A hit stop is the same idea in time: skip the fixed-step
+advance for 60 to 110 ms and keep the last interpolation alpha, never touching the sim's clock.
+## 13. `generateLayerDataTexture()` leaves a dead GL wrapper, and that breaks WebGL context restore
+
+`TilemapGPULayer.generateLayerDataTexture()` replaces its data texture with `layerDataTexture.destroy()`, which frees the GL
+texture but leaves the wrapper in `renderer.glTextureWrappers` (its `renderer` is null). Each regeneration leaks one, and when the
+browser restores a lost context Phaser calls `createResource()` on every wrapper and throws
+`Cannot read properties of null (reading 'gl')`: the renderer never comes back. The layer's own `destroy()` also never frees the
+data texture. Workaround: before regenerating, `renderer.deleteTexture(layer.layerDataTexture)` and null the field; do the same
+when you destroy a chunk. Test: count `renderer.glTextureWrappers.filter(w => w.renderer === null)` (expect 0) and run
+`gl.getExtension('WEBGL_lose_context').loseContext()` then `restoreContext()` and assert the world draws again.
+
+## 14. Scene lifecycle: what survives stop/start
+
+`Systems.shutdown()` removes only the TRANSITION_* listeners and emits SHUTDOWN. A scene's own `events` emitter keeps every other
+listener (a `scene.events.on(WAKE)` in `create()` stacks one per visit); game-wide emitters (`game.events`, `scale`, `registry.events`),
+the global texture manager and the DOM obviously outlive the scene. The scene's input/keyboard plugins and display list do clean
+up. Also: the Scene *object* is reused, so a `WeakMap<Scene, Pool>` hands out images that were destroyed with the display list,
+field initialisers run once per Scene object (reset accumulators in `init()`), and canvas textures you made are yours to remove.
+Remove everything in one SHUTDOWN handler. Guard it with a browser spec that restarts the scene ten times and requires listener
+counts per event name (`emitter.eventNames()` / `listenerCount`), texture count and display-object count not to grow, plus a static
+test that a file subscribing to a long-lived emitter also unsubscribes. Prove it red by mutation.
+
+## 15. Focus, visibility, context loss, and unused audio
+
+Phaser pauses its loop in a hidden tab (and resets the delta on return) but keeps running when the window only loses focus, so a
+simulation plays on unseen: listen once per game for `Core.Events.BLUR/FOCUS/HIDDEN/VISIBLE` and stop stepping. On
+`renderer.on(Renderer.Events.LOSE_WEBGL)` Phaser disables the renderer but your update loop still runs, and creating a GL
+resource then throws (`Framebuffer Unsupported`): hold the frame until `RESTORE_WEBGL`. Dynamic textures (RenderTexture) must be
+redrawn after a restore. If sound comes from another engine, set `audio: { noAudio: true }` or Phaser builds an unused AudioContext.
+
 ## How these were found (do it this way)
 
 1. Build the smallest standalone version in the live scene (`scene.make.tilemap({ data })` plus a layer inside a
@@ -153,3 +205,35 @@ Put sparse animated content (plants, glow, drips) in its own sparse GPU layer (g
 3. Print the layer data and compare with the pixel: that separates a data bug from a render bug.
 4. Read Phaser's source for the render node (`src/renderer/webgl/renderNodes/submitter/`) once you have a suspect.
 5. Re-introduce the bug and confirm the regression test fails.
+
+## 16. `emitter.setFrequency()` resets the flow counter, so calling it every frame starves the emitter
+
+`ParticleEmitter.setFrequency(f)` sets `frequency` **and** `flowCounter = f` (`src/gameobjects/particles/ParticleEmitter.js#L1727`); each
+update does `flowCounter -= delta` and emits while it is `<= 0` (`#L2897`). If the wanted rate depends on something that changes (a camera
+size) and you call `setFrequency` every frame, a frame (16.7 ms) is shorter than the interval (21.7 ms), the counter never reaches 0 and
+nothing is ever emitted, while the emitter reports `emitting: true` and the right frequency. Change it only when the wanted rate has moved by
+a threshold. Reproduce: call `setFrequency(emitter.frequency)` in a loop of frames and watch `getAliveParticleCount()` drain to 0, then recover
+once you stop.
+
+A death zone is anything with `contains(x, y)`: `emitter.addDeathZone({ type: 'onEnter', source: { contains: (x, y) => underRoof(x, y) } })`.
+`DeathZone.willKill` tests `particle.worldPosition` every update (`src/gameobjects/particles/zones/DeathZone.js#L63`), so a function over your
+own world data makes weather stop at roofs with no per-particle allocation.
+
+## 17. The `delta` your scene receives is smoothed
+
+`TimeStep.step` hands scenes `smoothDelta(delta)` when `smoothStep` is true (the default): the mean of the last ten deltas, and any delta above
+`1000 / minFps` replaced by the last sane value (`src/core/TimeStep.js#L570`). Accumulators are fine with that; code that wants the real frame time
+should read `game.loop.rawDelta`. `game.step(time, delta)` bypasses smoothing, so a hand-driven test loop and the live loop differ slightly: test the
+pure stepper with raw numbers and trust the game loop for the rest.
+
+## 18. CPU tilemap layers inside a positioned container are culled as if the container were at the origin
+
+`CullBounds` subtracts the layer's *own* `x, y` from `camera.worldView` and never looks at a parent container
+(`src/tilemaps/components/CullBounds.js#L27`). A layer at (0, 0) inside a container at (2560, 0) is judged to be far from a camera looking
+at 2560, so only some of its tiles draw: landmarks, covers and wall pieces vanish at random while others show; a GPU ground layer is
+unaffected. `CullTiles` honours `layer.skipCull` by using the whole layer (`src/tilemaps/components/CullTiles.js#L28`), so set
+`layer.skipCull = true` on every CPU layer you put in a positioned container and do your own culling at chunk level (hide views that do not
+touch the camera). Cost: a visible CPU layer then walks all its tiles every frame, which is why hiding off-screen views and empty layers
+matters ([performance](performance.md)). Related: the CPU layer renderer reads `src.alpha` (the layer's own, `src/tilemaps/TilemapLayerWebGLRenderer.js#L50`),
+which is why a container's alpha does not reach it (gotcha 8). Test: read the pixel at a landmark tile in a far chunk (yellow hatch handle in the
+example), with and without `skipCull`.
