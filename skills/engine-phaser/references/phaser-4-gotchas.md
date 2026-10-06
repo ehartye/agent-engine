@@ -64,7 +64,24 @@ Phaser, and the page throws `Phaser is not defined` when that code runs. Add a t
 uses (`new Phaser.`, `Phaser.Math`, `Phaser.Scale`, `Phaser.BlendModes`, `Phaser.WEBGL`, key-code constants and so on)
 and requires the import.
 
-## 5. Smaller observations
+## 5. `anims.createFromAseprite` registers animations under the bare tag name, globally
+
+**Symptom.** The second creature or character looks frozen or plays another creature's animation.
+
+**Cause.** Every agent-sprites sheet has tags like `walk_right`. `createFromAseprite(key)` creates each animation with
+`key: <tag name>` in the single global animation table; a second atlas with the same tag names creates nothing new
+because the key already exists.
+
+**Fix.** Create the animations yourself, namespaced `<atlasKey>:<tag>`, from the cached Aseprite JSON: for each
+`meta.frameTags` entry, frames `from..to` as `{ key: atlasKey, frame: String(i), duration: data.frames[i].duration }`.
+`createFromAseprite(key, tags, sprite)` with a sprite target avoids the collision but builds per-sprite animation state.
+
+## 6. Phaser 4 removed `setTintFill`
+
+Use tint modes: `sprite.setTint(0xffffff).setTintMode(Phaser.TintModes.FILL)` for a hit flash, then
+`setTintMode(Phaser.TintModes.MULTIPLY)`. Modes are MULTIPLY, FILL, ADD, SCREEN, OVERLAY and HARD_LIGHT.
+
+## 7. Smaller observations
 
 - `Tilemap.createBlankLayer` has no GPU argument. Build GPU layers with `make.tilemap({ data })` and
   `createLayer(0, tileset, 0, 0, true)`. A 2D array of tile indices is enough; no Tiled file is needed.
