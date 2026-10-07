@@ -6,9 +6,11 @@ This is the engine side only: how R3F loads and assembles the GLBs. Authoring th
 
 ## Loading GLBs
 
-- [tested] Expect a wrapper root. An agent-meshes GLB has exactly one root node, named after the workspace project (`mesh new <id>`), with identity transform; parts and sockets are its direct children. Build each part in a workspace created with `mesh new <partId>`.
-- [tested] Find sockets by node name, never by mesh name. Every `group` part (`socket_engine` and the rest) exports as an empty named node with its translation intact; the meshes carry no names, only the nodes do.
-- [tested] GLTFExporter then GLTFLoader keeps node names, so `socket_*` nodes survive a GLB round trip. In three, `gltf.scene` is that wrapper `Group`.
+- [tested] Expect a wrapper root. An agent-meshes GLB has exactly one root node, named after the workspace project (`mesh new <id>`), with identity transform; parts and sockets are its direct children. The Sector Run kit builds each part with `mesh new <partId>`, so that name is the part id; authoring belongs to the agent-meshes skills.
+- [tested] Find sockets by node name, never by glTF mesh name. Every `group` part (`socket_engine` and the rest) exports as an empty named node with its offset intact (written as a node `matrix`); the glTF meshes carry no names, only the nodes do.
+- [tested] The sockets in the kit: `socket_engine` and `socket_cannon` on each hull, `socket_exhaust` on each engine, `socket_muzzle` on each cannon. The part library checks every GLB for the sockets its catalog entry promises and reports a missing one in `errors` (read from the 12 GLBs and `src/render/partLibrary.ts`, 2026-10-07).
+- [tested] GLTFExporter then GLTFLoader keeps node names, so `socket_*` nodes survive a GLB round trip.
+- [tested] In three, `gltf.scene` is not the wrapper root: it is a `Group` named after the glTF scene (the part id), and the wrapper root is its one child, renamed with a suffix (`hull-dart_1`) because the names clash. Each `Mesh` takes its node's name (`body`, `nose`, `accent_canopy`). Look sockets up from `gltf.scene` with `getObjectByName` and nothing changes (`parseAsync` on `hull-dart.glb`, three 0.186.1, 2026-10-07).
 - [tested] The real part GLBs parse in plain Node with `GLTFLoader` (`parseAsync`), no browser or DOM, so loading and assembly can be unit-tested (`tests/realParts.test.ts`).
 
 ## Assembling by socket

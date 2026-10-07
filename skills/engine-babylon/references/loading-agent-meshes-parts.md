@@ -15,7 +15,7 @@ const container = await LoadAssetContainerAsync(`/parts/${partId}.glb`, scene);
 ```
 
 - [tested] agent-meshes exports every glTF mesh without a `name` (71 meshes, 3 to 8 per part) but names every node. Babylon 9.29.0's glTF loader names each `Mesh` after its node, so the empty mesh names do not matter: `hull-dart` loads as `__root__`, `body`, `nose`, `wing_l`, `wing_r`, `fin`, `accent_canopy`, `mount_cannon`, `mount_engine`.
-- [tested] The hierarchy after loading: the loader's `__root__` wrapper (no flip in a right-handed scene), one child named after the agent-meshes workspace project (the part id when built with `mesh new <partId>`) with identity transform, and the parts and sockets below it. Socket `group` parts arrive as empty named nodes with their translation intact.
+- [tested] The hierarchy after loading: the loader's `__root__` wrapper (no flip in a right-handed scene), one child named after the agent-meshes workspace project (the part id when built with `mesh new <partId>`) with identity transform, and the parts and sockets below it. Socket `group` parts arrive as empty named nodes with their translation intact (the GLB stores it as a node `matrix`).
 - [tested] Look parts, sockets and accents up by node name (or the mesh name, which equals it), never by the glTF mesh name.
 
 ## Assembling by socket
