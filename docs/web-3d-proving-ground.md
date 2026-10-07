@@ -23,7 +23,7 @@ It asserts state, not pixels, and it asserts the renderer backend, because scree
 - The scenario passes on both stacks with zero errors.
 - The backend is asserted, and the renderer string is not a software renderer.
 - Frame rate is recorded and compared with the gate.
-- A skill-following agent can name, for each topic the logs record (frame loop, parts by socket, outline, particles, physics, audio, probe, WebGPU and headless, versions), the reference that answers it. The skill lint passes: `node scripts/lint-skills.mjs skills/engine-r3f skills/engine-babylon --require-claims --skill-md-labels`.
+- A skill-following agent can name, for each topic the logs record (frame loop, parts by socket, outline, particles, physics, audio, probe, WebGPU and headless, versions, and the later R3F systems: flight controls, reticle and streaks, ship classes and weapons, kit-ship assembly and paint, controller menus, varied asteroids, engine-loop and voice audio), the reference that answers it. The skill lint passes: `node scripts/lint-skills.mjs skills/engine-r3f skills/engine-babylon --require-claims --skill-md-labels`.
 
 ## Status
 
