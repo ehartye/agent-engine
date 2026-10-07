@@ -86,6 +86,10 @@ Documented by agent-beeps, not verified here:
   explicitly and confirm it after import.
 - You cannot hear the result. In an engine, claim only that the source exists, plays, loops where
   it should, and logs no errors.
+- Wiring an app (the lock, the store, the catalog, the Opus-only web format, the unsupported-browser notice, decoded-buffer
+  memory) is [audio integration](references/audio-integration.md). Building and fetching it in CI, for audio or any
+  generated asset, is [CI for generated assets](references/ci-for-generated-assets.md) with the workflow template
+  `examples/web/ci/pages-audio.yml`. The mechanism itself lives in agent-beeps (`docs/build-lock-and-store.md`, the `beeps-ship` skill).
 
 ## Unreal 5.7: sprites, audio and running it (tested)
 
