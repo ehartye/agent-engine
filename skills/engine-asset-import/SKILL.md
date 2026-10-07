@@ -223,10 +223,10 @@ creatures, audio direction, GPU verification) use the [engine-phaser skill](../e
 - three.js has no flipbook. Cut frames from the atlas with texture `offset` and `repeat`, follow the tag range, and
   use `Sprite.center` for the pivot. `GLTFLoader` kept the clip names (`walk`, `trot`), where Unreal prefixed them.
 - Pin three.js: 0.186 deprecated `THREE.Clock` for `THREE.Timer`.
-- Audio: the vendored agent-beeps player (`beeps player export`, `beeps bundle`). `unlock()` needs a real
+- The historical web sample uses the vendored agent-beeps player (`beeps player export`, `beeps bundle`). For exported recordings in a new Phaser integration, start with its native Loader/cache/SoundManager; see [native Phaser audio](../engine-phaser/references/native-audio.md). The sample is evidence for its chosen player, not a requirement to bypass Phaser. In the beeps route, `unlock()` needs a real
   gesture. `play()` returns a handle whose `file` is the chosen variant, so variants are checkable; it honours
-  `noRepeat`. It has an 8-voice budget and returns null when a burst exceeds it, which is correct behaviour,
-  not a failure.
+  `noRepeat`. That sample has an 8-voice budget; a full budget may steal a less-important voice or return null when none is eligible.
+  Let the released player make that decision; null is not by itself a load failure.
 - Headless Chromium with `--use-angle=d3d11 --ignore-gpu-blocklist` rendered on the RTX 5090 (the WebGL renderer
   string says so); check that string, since software rendering is the silent fallback.
 
