@@ -64,6 +64,16 @@ At boot, before loading any audio:
 
 A suspended `AudioContext` until a user gesture is normal, not a failure; unlock on the first pointer or key event.
 
+## Verifying the gesture gate
+
+- [tested] Do not read the gate from the `AudioContext` state under Playwright. `page.evaluate` counts as user
+  activation in Chromium, so a fresh context reports `running` before any click and a "locked until the first
+  gesture" check passes vacuously (Sector Run, React Three Fiber and Babylon.js apps, Chromium 153; repeated on the
+  `examples/web` sample pages). Launch without `--autoplay-policy=no-user-gesture-required`, keep the app's own
+  `unlocked` flag set only from a trusted (`event.isTrusted`) pointer or key event, assert it is false and nothing
+  played before one real `page.mouse.click`, and true after it. `examples/web/verify.mjs` checks this; a page that
+  unlocked from an evaluate failed it.
+
 ## Memory: decoded buffers are large
 
 Web Audio decodes whole files to uncompressed 32-bit float PCM, so memory is set by duration, not by file size.

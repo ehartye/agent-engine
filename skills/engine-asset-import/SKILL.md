@@ -231,8 +231,17 @@ creatures, audio direction, GPU verification) use the [engine-phaser skill](../e
   gesture. `play()` returns a handle whose `file` is the chosen variant, so variants are checkable; it honours
   `noRepeat`. That sample has an 8-voice budget; a full budget may steal a less-important voice or return null when none is eligible.
   Let the released player make that decision; null is not by itself a load failure.
-- Headless Chromium with `--use-angle=d3d11 --ignore-gpu-blocklist` rendered on the RTX 5090 (the WebGL renderer
-  string says so); check that string, since software rendering is the silent fallback.
+- Launch headless Chromium on Windows with `--use-angle=d3d11 --ignore-gpu-blocklist --force_high_performance_gpu`,
+  print the WebGL renderer string and fail when it matches `/swiftshader|llvmpipe|software|basic render/i`
+  (`webgl-fallback`); `examples/web/verify.mjs` does this, `--allow-software` relaxes it. [tested] On a hybrid laptop
+  (Intel integrated plus NVIDIA RTX 5070 Ti Laptop, Chromium 153), no flags gave SwiftShader, the first two flags alone
+  gave the Intel GPU, and all three gave the NVIDIA GPU (Sector Run, and repeated for this sample's verifier). Software
+  WebGL raises no error and the picture looks plausible, so only the string tells. [tested] Earlier, on another machine
+  with one GPU, the first two flags alone rendered the sample scene on an RTX 5090.
+- Verify the audio gesture gate without `--autoplay-policy=no-user-gesture-required`: assert audio is locked and
+  nothing played before one real click (`page.mouse.click`), and running after it. [tested] Playwright's
+  `page.evaluate` counts as user activation, so a fresh `AudioContext` reports `running` before any click and a
+  context-state check passes vacuously. See [audio integration](references/audio-integration.md#verifying-the-gesture-gate).
 
 ## Godot 4.7 (tested)
 
