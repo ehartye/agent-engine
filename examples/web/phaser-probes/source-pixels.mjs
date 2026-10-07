@@ -97,6 +97,7 @@ try {
         }
       }
       const fractionalUi = evidence.samples.find(value => value.artScale === 1 && value.zoom === 3.5);
+      for (const block of fractionalUi.blocks) assert(block.count > 0, 'Every fractional UI texel must remain visible');
       assert(new Set(fractionalUi.blocks.map(block => block.width)).size > 1, 'Fractional UI source blocks must expose uneven widths');
       assert.deepEqual(errors, []);
       results.push({dpr, renderer: evidence.renderer, samples: evidence.samples.length});
