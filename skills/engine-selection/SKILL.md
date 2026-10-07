@@ -40,6 +40,7 @@ play it. The profiles give what is known per option.
 |---|---|---|---|
 | Custom: owned Canvas/WebGL runtime | General knowledge: text project and browser tooling suit unattended iteration; verify the actual project | Browser pixel games with complete control over the render contract | Own the engine systems and GPU lifecycle; custom shader path is documented, not sample-tested |
 | Web: Phaser, three.js | Highest, and tested: headless Chromium on the GPU, text project, no sign-in, about 12 s per pass | Any browser. 2D strong, 3D moderate | Browser performance ceiling; no native or console |
+| Web 3D game: React Three Fiber, Babylon.js | High, and tested: the same game on both stacks was built, run, driven through a state probe and screenshotted in headless Chromium on the GPU with no person present; one verifier pass takes about 40 s (R3F) and 47 s (Babylon.js) | Any browser with WebGL 2. Tested: both held 60.0 fps averaged over 10 s at 1080p (the display's cap) on a laptop RTX 5070 Ti, 48 and 69 draw calls | Tested: headless Chromium renders on SwiftShader unless given GPU flags, and both needed hand-written glue (R3F: toon ramp patch, outlines, particle emitter; Babylon.js: side-effect imports, a 1.6 MB main chunk plus Havok's 2.1 MB WASM). WebGPU not tried |
 | Godot | High, and tested: one-command install, headless build, windowed run in about 12 s | Strong 2D, good 3D | Smaller high-end 3D ceiling; best MCP needs Godot 4.7+ |
 | Unreal | Medium: works unattended, but heavy and slow to iterate | Highest visual ceiling | Install weight, minute-long loops, binary assets |
 | Unity | Medium, and tested: headless build and run work once licensed, but the sign-in is a hard gate | Widest platform reach | Interactive licence sign-in; glTF needs a package; windows may not present in some sessions |
@@ -57,13 +58,13 @@ play it. The profiles give what is known per option.
   cameras, lights, materials, loaders, animation playback and thin Web Audio wrappers, and leaves physics,
   entities, input, flipbooks and game loop structure to you (tested: the web sample scene needed hand-written
   sprite animation, movement and triggers). Engines built on it exist: Needle Engine (Unity or Blender authoring)
-  is the closest; react-three-fiber is a React renderer over it. Babylon.js and PlayCanvas are separate engines,
-  not built on three.js.
+  is the closest; react-three-fiber is a React renderer over it (see [engine-r3f](../engine-r3f/SKILL.md) for a tested game structure). Babylon.js and PlayCanvas are separate engines,
+  not built on three.js; see [engine-babylon](../engine-babylon/SKILL.md) for a tested Babylon.js game.
 - Check whether the agent's shell has a desktop before promising a visual check (see the sessions section of the
   profiles): windowed rendering and screen capture fail in a non-interactive session, while offscreen modes work.
 - Recommend one option and say what it gives up. Do not list five and stop.
 - When a question is open (for example whether a GLB imports with its skin intact), propose a
-  one-hour spike with the [sample scene](../../docs/sample-scene.md) and say what it will settle.
+  one-hour spike with the [sample scene](../../docs/sample-scene.md) and say what it will settle. For a 3D game, use the [web 3D proving ground](../../docs/web-3d-proving-ground.md) instead.
 - A screenshot is the only check that catches wrong scale, facing and pivots. Require one.
 
 Per-engine evidence, traps and blockers: [engine profiles](references/engine-profiles.md).

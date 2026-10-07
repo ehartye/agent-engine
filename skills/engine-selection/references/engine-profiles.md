@@ -206,12 +206,22 @@ MCP tool. See the UEFN authoring reference linked directly from the engine-selec
   engine" as an unsourced claim, likely true. three.js does ship basic Web Audio classes. agent-meshes ships a
   three.js viewer for its GLBs.
 - [documented] Built on three.js: Needle Engine (its docs say all rendering goes through three.js and its
-  components revolve around three's scene graph; Unity and Blender authoring, cloud hosting), and
-  react-three-fiber (a React renderer producing the same three.js objects). A-Frame is also three.js-based
-  [general]. Not tested here.
-- [documented] Babylon.js (full engine, built-in Havok physics, free web editor) and PlayCanvas (engine
-  with entity-component model and a hosted editor; engine MIT, editor proprietary). The comparing source
-  is written by a web-engine vendor.
+  components revolve around three's scene graph; Unity and Blender authoring, cloud hosting). A-Frame is also
+  three.js-based [general]. Not tested here.
+- [tested] react-three-fiber 9.8.1 (three 0.186.1, react 19.3.0; `@react-three/rapier` 2.2.0 was measured and
+  dropped) carried Sector Run Slice 1, a procedurally generated arcade flight game with assembled parts, toon
+  outlines, particles and audio: the shared verifier passed 31 of 31 state checks in headless Chromium on the GPU
+  (backend `webgl2`, ANGLE D3D11 on an RTX 5070 Ti Laptop GPU), 60.0 fps averaged over 10 s at 1080p against a
+  55 fps gate (the display caps at 60), 48 draw calls, about 40 s per pass; one 1,234 kB JavaScript chunk (343 kB
+  gzip). Analytic swept-sphere hit tests replaced rapier (a rapier sensor missed 8 of 400 shots at 450 m/s), and the
+  toon ramp patch, outlines and particle emitter were written by hand. See [engine-r3f](../../engine-r3f/SKILL.md).
+- [tested] Babylon.js 9.29.0 with Havok 1.3.14 carried the same game from the same rules core: 31 of 31 checks on
+  the same GPU and backend, 60.0 fps over 10 s at 1080p, 69 draw calls, about 47 s per pass; a 1,578 kB main chunk
+  (380 kB gzip) plus Havok's 2.09 MB WASM. Havok handles ship-versus-rock contact, analytic tests the bolts; the
+  built-in particles, outline renderer and inspector were used, and features need hand-written side-effect imports.
+  WebGPU was not tried (the toon shader is GLSL only). See [engine-babylon](../../engine-babylon/SKILL.md).
+- [documented] PlayCanvas (engine with entity-component model and a hosted editor; engine MIT, editor
+  proprietary). The comparing source is written by a web-engine vendor. Not tested here.
 - [tested] three.js has no flipbook, entities or physics: the sprite animation, the walk-around and the trigger
   were written by hand. Its API moves (0.186 deprecated `THREE.Clock`), so pin the version.
 - [general] Limits are browser performance and memory, and no native or console target.
