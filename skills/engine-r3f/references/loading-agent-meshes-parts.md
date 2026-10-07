@@ -10,7 +10,9 @@ This is the engine side only: how R3F loads and assembles the GLBs. Authoring th
 - [tested] Find sockets by node name, never by glTF mesh name. Every `group` part (`socket_engine` and the rest) exports as an empty named node with its offset intact (written as a node `matrix`); the glTF meshes carry no names, only the nodes do.
 - [tested] The sockets in the kit: `socket_engine` and `socket_cannon` on each hull, `socket_exhaust` on each engine, `socket_muzzle` on each cannon. The part library checks every GLB for the sockets its catalog entry promises and reports a missing one in `errors` (read from the 12 GLBs and `src/render/partLibrary.ts`, 2026-10-07).
 - [tested] GLTFExporter then GLTFLoader keeps node names, so `socket_*` nodes survive a GLB round trip.
-- [tested] In three, `gltf.scene` is not the wrapper root: it is a `Group` named after the glTF scene (the part id), and the wrapper root is its one child, renamed with a suffix (`hull-dart_1`) because the names clash. Each `Mesh` takes its node's name (`body`, `nose`, `accent_canopy`). Look sockets up from `gltf.scene` with `getObjectByName` and nothing changes (`parseAsync` on `hull-dart.glb`, three 0.186.1, 2026-10-07).
+- [tested] In three, `gltf.scene` is not the wrapper root: `GLTFLoader.parseAsync` on `hull-dart.glb` returned a `Group` named after the part (`"hull-dart"`) whose one child is the agent-meshes wrapper root renamed `hull-dart_1` (an `Object3D`). Why the loader renames it was not read in source. Look sockets up from `gltf.scene` with `getObjectByName` and nothing changes: `getObjectByName('socket_engine')` found an `Object3D` whose parent is `hull-dart_1`, at (0, 0, -2.55) (three 0.186.1, 2026-10-07).
+- [tested] Each `Mesh` takes its node's name (`body`, `nose`, `wing_l`, `wing_r`, `fin`, `accent_canopy`, `mount_cannon`, `mount_engine` on `hull-dart`); geometry and material names are empty, and `gltf.animations` is empty.
+- [tested] Socket nodes store their offset as a node `matrix`, not `translation`, `rotation` and `scale`, in all 12 part GLBs. A tool that reads only `translation` from the glTF JSON sees no offset; three decomposes the matrix into `position`, so the app is unaffected.
 - [tested] The real part GLBs parse in plain Node with `GLTFLoader` (`parseAsync`), no browser or DOM, so loading and assembly can be unit-tested (`tests/realParts.test.ts`).
 
 ## Assembling by socket
@@ -18,6 +20,7 @@ This is the engine side only: how R3F loads and assembles the GLBs. Authoring th
 - [tested] When parts are chosen at runtime, build the model imperatively and add it to a `<group ref>` from an effect keyed on the equipped parts. `gltfjsx`-style JSX conversion does not apply.
 - [tested] Per-frame motion mutates that group, never props.
 - [tested] Parent each part's root to its parent's socket node; the part's origin then sits on the socket. All 64 hull x engine x cannon combinations of the real kit assembled (`tests/realParts.test.ts`).
+- [tested] The four socket names and their positions in the kit (the matrix's translation, metres): `socket_engine` and `socket_cannon` on every hull (dart (0, 0, -2.55) and (0, -0.6, 1); brick (0, 0, -2.7) and (0, -0.9, 1.6); hauler (0, 0, -3.8) and (0, -0.75, 2.2); wing (0, 0, -1.95) and (0, -0.5, 1)), `socket_exhaust` on every engine (z -1.6 pulse, -1.8 burner, -1.9 vector, -2 ion) and `socket_muzzle` on every cannon (z 1.4 pulse, 1.6 scatter, 2.15 twin, 2.6 rail). No part has animations or skins.
 
 ```ts
 const socket = parentNode.getObjectByName(part.attachesTo.socket); // e.g. 'socket_engine'
