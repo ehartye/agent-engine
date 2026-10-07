@@ -1,0 +1,17 @@
+# Probing and verifying an R3F game
+
+Evidence: Sector Run Slice 1, `docs/lessons/r3f.md` (private repository). Versions are in [versions and migrations](versions-and-migrations.md). `[tested]` ran there, `[documented]` was read in official docs or source, `[general]` was not checked.
+
+## The probe object
+
+## A scripted scenario
+
+## Flight axes and the verifier's own code
+
+## Screenshots and what they miss
+
+## Frame-rate gate
+
+## Zero errors
+
+## Tests without a renderer
