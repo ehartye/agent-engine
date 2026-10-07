@@ -27,11 +27,11 @@ cam.roundPixels = scene.game.renderer.type !== Phaser.CANVAS;
 example: fallow-valley-next `src/game/ui/UiScale.ts` (pure, tested), `UiCamera.ts`, `scenes/WorldScene.ts#fit`.
 
 For pinned Phaser 4.2.1 native Canvas, use explicit integer object geometry with `roundPixels=false`;
-WebGL uses `true`. The public Canvas `SetTransform` rounds affine matrix components when that flag is set,
-including scaled BitmapText glyph transforms. That is separate from snapping object placements. Cyberpunkt's
+WebGL uses `true`. Canvas `batchSprite` adds 0.5 to destination frame width and height when camera rounding
+is enabled; `BitmapTextCanvasRenderer` separately rounds glyph x/y. Those branches are separate from snapping object placements. Cyberpunkt's
 native bitmap, tiled panel and trimmed Image crop controls qualify both backends at integer UI camera zooms,
 including fractional DPR. Recheck actual source pixels when changing Phaser versions; do not patch the renderer
-or add a second text compositor. Source: Phaser 4.2.1 `src/renderer/canvas/utils/SetTransform.js`,
+or add a second text compositor. Source: Phaser 4.2.1 `src/renderer/canvas/CanvasRenderer.js` (`batchSprite`),
 `src/gameobjects/bitmaptext/static/BitmapTextCanvasRenderer.js`; project controls:
 Cyberpunkt `tests/phaser-ui-browser.test.mjs` and `src/phaser/pixel-camera.js` (accepted Task 13).
 
