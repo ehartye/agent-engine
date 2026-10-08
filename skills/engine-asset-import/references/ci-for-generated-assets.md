@@ -71,12 +71,14 @@ purpose, on the author's machine, then push. Never let CI regenerate everything 
     under `xvfb-run -a` with `LIBGL_ALWAYS_SOFTWARE=1` (Mesa llvmpipe). WebKit is fine with the same. Chromium is not:
     it has its own SwiftShader and gets several times slower under forced Mesa, so run it without.
   - Firefox's `AudioContext` stays `suspended` for ever with no sound card, so a playback spec never sees audio run.
-    Start PulseAudio with a null sink first (`pulseaudio --start` and `pactl load-module module-null-sink`). Chromium and
+    Install `pulseaudio` and `pulseaudio-utils`, then `pulseaudio --start --exit-idle-time=-1` and `pactl load-module module-null-sink`. The Firefox pref `media.cubeb.force_null_context` did not work. Chromium and
     WebKit do not need it.
   - Software GL draws about one frame a second, and frame-counted timers stretch with it. Specs wait on page time
     (`performance.now()`, an `elapsed` helper), never on N frames, and input-grace timers in the game are wall-clock.
   - A decode spec that does not boot the game still proves decode in a browser whose WebGL fails.
   - WebKit on Linux has no Ogg Opus: assert the unsupported notice there instead of skipping.
+  - Set `timeout-minutes` on the job: `playwright install --with-deps` hung for 40+ minutes twice. Upload `test-results` when the job fails.
+  - Promote a browser job to blocking only after 2 consecutive green runs with no retries, as a separate commit that can be reverted.
   The template `examples/web/ci/pages-audio.yml` has these steps. For the harness side (condition waits instead of
   sleeps, GPU-only tests tagged and skipped), see [verifying on a real GPU](../../engine-phaser/references/verifying-on-a-gpu.md).
 - **Lock gate.** After any step that rewrites the lock, fail on `git diff --exit-code <lock>`: a developer forgot
