@@ -8,7 +8,7 @@
     {
       "name": "agent-engine",
       "description": "Skills that help choose a game engine or web stack for agent-built projects and glue agent-sprites, agent-meshes and agent-beeps assets into Unity, Unreal, UEFN, Godot and the web",
-      "version": "0.11.4",
+      "version": "0.11.5",
       "source": "./",
       "license": "MIT"
     }
