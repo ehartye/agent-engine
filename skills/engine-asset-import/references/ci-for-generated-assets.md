@@ -65,10 +65,28 @@ purpose, on the author's machine, then push. Never let CI regenerate everything 
   shared runner. Mark it `continue-on-error: true` until it has been green on GitHub for a while, and make the
   deploy job not `needs:` it, so a green deploy means the site deployed. Promote it to blocking later. Running
   the real GPU suite stays a local, pre-merge step.
+- **Browsers on a headless Linux runner.** [tested] Fallow Valley's cross-browser job was red on every run until each of
+  these was found:
+  - Firefox has no WebGL there ("Exhausted GL driver options", then Phaser's "Cannot create WebGL context"). Run it
+    under `xvfb-run -a` with `LIBGL_ALWAYS_SOFTWARE=1` (Mesa llvmpipe). WebKit is fine with the same. Chromium is not:
+    it has its own SwiftShader and gets several times slower under forced Mesa, so run it without.
+  - Firefox's `AudioContext` stays `suspended` for ever with no sound card, so a playback spec never sees audio run.
+    Start PulseAudio with a null sink first (`pulseaudio --start` and `pactl load-module module-null-sink`). Chromium and
+    WebKit do not need it.
+  - Software GL draws about one frame a second, and frame-counted timers stretch with it. Specs wait on page time
+    (`performance.now()`, an `elapsed` helper), never on N frames, and input-grace timers in the game are wall-clock.
+  - A decode spec that does not boot the game still proves decode in a browser whose WebGL fails.
+  - WebKit on Linux has no Ogg Opus: assert the unsupported notice there instead of skipping.
+  The template `examples/web/ci/pages-audio.yml` has these steps. For the harness side (condition waits instead of
+  sleeps, GPU-only tests tagged and skipped), see [verifying on a real GPU](../../engine-phaser/references/verifying-on-a-gpu.md).
 - **Lock gate.** After any step that rewrites the lock, fail on `git diff --exit-code <lock>`: a developer forgot
   to commit it, and the cache key would not match what was built.
 - **Check before build.** A `--check` that renders nothing and lists stale assets with reasons is the cheap CI
   test, and the pre-push test locally.
+  Fetching by lock proves the files match the lock, not that the lock matches the recipes, so a job that only fetches cannot
+  see a stale lock. Add the check: check out the generator at a pinned commit, `npm ci --ignore-scripts`, run `build --check`
+  (no browser, no encoder, about a second). Bump the pin together with the lock or it stops with `E_TOOLCHAIN`. Run the
+  catalog tests with `REQUIRE_AUDIO=1` so a missing render fails instead of skipping.
 
 ## When the generator is sprites or meshes
 

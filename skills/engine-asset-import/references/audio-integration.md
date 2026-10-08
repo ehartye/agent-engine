@@ -40,10 +40,26 @@ format, and a probe that can misreport. Reasons Opus wins for loops:
 - Opus is byte-deterministic for one WAV and one ffmpeg build, so the lock can pin encoded bytes.
 - It is smaller at equal quality.
 
-The cost is reach: current Chromium and Firefox decode it, Safari only from the macOS and iOS versions that
-fixed `decodeAudioData` for Opus (consistent from 17.4; check the owner's minimum), and WebKit on Linux (GStreamer
-builds such as Playwright's WebKit) has no Opus at all. Do not paper over this with a fallback format. Probe and
-tell the player.
+The cost is reach: current Chromium and Firefox decode it, Safari and iOS only from 18.4 (macOS 15.4; Fallow Valley's
+floor, accepted by the owner and checked by ear on a device, not by frame count), and WebKit on Linux and Windows
+(GStreamer builds such as Playwright's WebKit) has no Opus at all. `canPlayType('audio/ogg; codecs=opus')` is `""` on
+those. Do not paper over this with a fallback format. Probe, state the floor in the notice, and tell the player.
+
+Choose the format by measuring frames, not by listening. [tested] `decodeAudioData` of one 68 s loop, frame delta against
+the source (Fallow Valley, Chromium 153 and Firefox 155):
+
+| Container | Chromium | Firefox |
+|---|---|---|
+| Ogg Opus, WebM Opus, MP3 with the LAME/Xing header kept | 0 | 0 |
+| AAC in m4a | -21 | 0 |
+| Opus in MP4 | -234 | -213 |
+| Opus in CAF | decode fails | decode fails |
+
+Two MP3 traps: WebKit on Linux decoded the MP3 twin 2139 frames long (encoder padding untrimmed), and ffmpeg `+bitexact`
+dropped the LAME header so Firefox decoded loops 1610 frames long. All 57 shipped loops decoded with delta 0 in both
+browsers; also report the worst loop-wrap seam in dB (11.7 dB), judged on the shipped encode, because a loop that starts
+on a loud pulse by design reads higher in the source (21.3 dB) than after Opus. Re-vendor the player after a beeps
+upgrade (player 3 ends a loop at the catalog's `frames` and reports `W_LOOP_LENGTH`).
 
 Other engines: Unity, Godot and UEFN import WAV (`wav-master` target) and let the engine compress. UEFN keeps WAV
 masters, often on Git LFS, and still benefits from the lock.
@@ -54,15 +70,24 @@ At boot, before loading any audio:
 
 1. Test Opus support with `canPlayType('audio/ogg; codecs="opus"')`. Treat `""` as no. Treat `"maybe"` and
    `"probably"` as unconfirmed: the probe is a hint, and it can misreport on some browsers.
-2. For a confirmed answer, decode one tiny Opus file from the catalog with `decodeAudioData` and catch the rejection.
-   That is the real test, and it is what the player's `E_DECODE` reports.
+2. For a confirmed answer, decode a tiny Opus clip with `decodeAudioData` and catch the rejection. That is the real
+   test, and it is what the player's `E_DECODE` reports. Embed the clip in the bundle (Fallow Valley: 170 bytes) and
+   decode it on a throwaway `OfflineAudioContext`: no gesture and no network are needed, and the callback-only and
+   `webkit`-prefixed forms are handled. Playwright's WebKit may have no `AudioContext` at all, so the decision has three
+   outcomes: ok, cannot-decode and no-web-audio.
 3. If unsupported, **show a notice and run silent**; do not crash and do not substitute a second format. In a
    pixel-only game the notice is drawn from the game's own bitmap font like every other message. The game must
-   stay playable without sound.
+   stay playable without sound. Log one console warning and silence the player's per-file errors afterwards. Make the
+   notice sticky, dismissed by a click, tap or key after a short wall-clock grace (about 1.5 s; frame-time timers
+   stall on a slow software-GL machine and leave it undismissable), and mirror it in the live region.
 4. Test it: a browser spec that runs WebKit on Linux and asserts the notice, and Chromium and Firefox specs that
    decode every music loop and compare the decoded frame count to the catalog's `frames` (delta 0).
 
-A suspended `AudioContext` until a user gesture is normal, not a failure; unlock on the first pointer or key event.
+A suspended `AudioContext` until a user gesture is normal, not a failure. Unlock on the first `pointerdown`, `keydown`,
+`touchend` or `click`: Safari counts a finished touch or a click as the gesture, and a touch-only phone may never send
+a `pointerdown` that qualifies. Give the player a context factory that falls back to `webkitAudioContext`. Let the
+decode spec run without booting the game (it needs only `fetch` and `AudioContext`), so a browser that cannot run the
+game still proves its decode.
 
 ## Verifying the gesture gate
 
@@ -82,7 +107,8 @@ Measured on Fallow Valley (48 kHz stereo):
 - **26.3 MB per decoded layer** of a song.
 - **131.6 MB for one 5-layer adaptive song**, because each layer is the whole song as its own buffer so the layers
   stay sample-aligned.
-- Compressed files are about 1 MB each; the 34 MB audio folder is not the budget. The decoded set is.
+- Compressed files are about 1 MB each; the 34 MB audio folder (214 MB as WAV) is not the budget. The decoded set is.
+  Gate the folder size in CI (Fallow Valley: 60 MB) and plan the decoded budget separately.
 
 Consequences:
 
@@ -101,5 +127,11 @@ Consequences:
 3. Load `index.json`; every cue the game fires must exist in it (test this against the recipes, and against the
    catalog when built).
 4. Gesture unlock, the Opus probe and notice, and decode-failure reporting.
+   A hosted smoke test closes the loop: build with the Pages base, serve it with `vite preview --base=...`, expose a
+   production handle behind a query flag (`?audiodebug`), and assert that every audio response is 200 from under the
+   base, 0 audio bytes arrive before the gesture, after one gesture the context, beds, music and a cue's
+   `AudioBufferSourceNode` start, the console is clean and first-load bytes stay in budget (Fallow Valley: 14 files,
+   4.1 MB). Skip it when the audio folder is absent, and run the catalog tests with `REQUIRE_AUDIO=1` in CI so a
+   missing render fails instead of skipping.
 5. Decoded-memory budget and a release policy (the player does not evict).
 6. CI from the template, fetching by lock, plus an advisory browser job.
