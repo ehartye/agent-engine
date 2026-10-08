@@ -20,6 +20,6 @@ jobs:
         with:
           node-version: '20.11'
       - name: Lint and release-consistency tests
-        run: node --test scripts/lint-skills.test.mjs scripts/release-consistency.test.mjs tests/phaser-audio-decode.test.mjs tests/phaser-gamepad-lifecycle.test.mjs examples/web/harness/tests/no-sleeps.test.mjs tests/phaser-framebuffer-restore.test.mjs tests/phaser-audio-visibility.test.mjs
+        run: node --test scripts/lint-skills.test.mjs scripts/release-consistency.test.mjs tests/phaser-audio-decode.test.mjs tests/phaser-gamepad-lifecycle.test.mjs examples/web/harness/tests/no-sleeps.test.mjs tests/phaser-framebuffer-restore.test.mjs tests/phaser-audio-visibility.test.mjs tests/phaser-dynamic-texture.test.mjs
       - name: Strict lint of the web 3D skills
         run: node scripts/lint-skills.mjs skills/engine-r3f skills/engine-babylon --require-claims --skill-md-labels
