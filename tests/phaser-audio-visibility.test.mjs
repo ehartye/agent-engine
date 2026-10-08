@@ -93,10 +93,10 @@ if(process.env.PHASER_VISIBILITY_PRISTINE)for(const order of ['visibility-first'
     await cp(process.env.PHASER_VISIBILITY_PRISTINE,directory,{recursive:true});
     const heldFiles=['src/input/gamepad/Gamepad.js','dist/phaser.esm.js','dist/phaser.js'];
     const gate=`        if (pad.timestamp < this._created)\n        {\n            return;\n        }\n`;
-    for(const file of heldFiles){const body=await readFile(join(directory,file),'utf8'),newline=body.includes('\r\n')?'\r\n':'\n',target=gate.replaceAll('\n',newline);assert.equal(body.split(target).length,2);await writeFile(join(directory,file),body.replace(target,'        // Existing held-input correction; native Button owns edges.'+newline));}
-    const heldBodies=await Promise.all(heldFiles.map(file=>readFile(join(directory,file),'utf8')));
+    const held=async()=>{for(const file of heldFiles){const body=await readFile(join(directory,file),'utf8'),newline=body.includes('\r\n')?'\r\n':'\n',target=gate.replaceAll('\n',newline);assert.equal(body.split(target).length,2);await writeFile(join(directory,file),body.replace(target,'        // Existing held-input correction; native Button owns edges.'+newline));}};
     const others=async()=>{await patchAudioDecode(directory);await patchGamepadLifecycle(directory);await patchFramebufferRestore(directory);};
-    if(order==='visibility-first'){await installer()(directory);await others();}else{await others();await installer()(directory);}
+    if(order==='visibility-first'){await installer()(directory);await held();await others();}else{await held();await others();await installer()(directory);}
+    const heldBodies=await Promise.all(heldFiles.map(file=>readFile(join(directory,file),'utf8')));
     const after=await contents(directory);
     for(const body of after){const n=native(body.toString());n.schedule();n.manager.game=null;n.flush();assert.deepEqual(n.calls,[]);}
     for(const file of heldFiles){const body=await readFile(join(directory,file),'utf8');assert.equal(body.includes(gate),false);assert.ok(body.includes('// Existing held-input correction; native Button owns edges.'));}
