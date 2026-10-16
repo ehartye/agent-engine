@@ -1,6 +1,6 @@
 # Native Unreal game build and capture loop
 
-This recipe comes from DEAD REDLINE on Windows, 2026-10-16. **Tested here:** Unreal **5.8.2**, changelist **56702186**, VS2022 Build Tools **17.14.37516.0**, actual MSVC **14.44.35228**, SDK **10.0.26100.0**, bundled **.NET 10**, D3D12 on an **RTX 5070 Ti Laptop GPU**. This is separate from the older 5.8.3 sample-scene evidence. Header inspection is marked separately from executed behavior. A delivered screenshot can reveal a rendering failure; it does not establish reference fidelity.
+DEAD REDLINE, Windows, 2026-10-16. **Tested:** Unreal **5.8.2 CL56702186**, VS2022 Build Tools **17.14.37516.0**, actual MSVC **14.44.35228**, SDK **10.0.26100.0**, bundled **.NET 10**, D3D12 **RTX 5070 Ti Laptop GPU**. This differs from the older5.8.3 sample. Source inspection and execution are labeled separately. Screenshots reveal rendering failures; delivery alone does not establish reference parity.
 
 ## Native module and source geometry
 
@@ -23,7 +23,7 @@ $uproject = "$projectRoot/MyGame.uproject"
 if ($LASTEXITCODE -ne 0) { throw 'Native compile failed' }
 ```
 
-Use Epic's installed wrappers and bundled dotnet. Preserve failed logs and success receipts. Record HEAD, dirty status, a source fingerprint and whether source changed while compiling; HEAD alone does not identify a working build.
+Use Epic's wrappers and bundled dotnet. Preserve logs and receipts. Record HEAD, dirty status, source hash and changes during compile; HEAD alone cannot identify the build.
 
 ## Editor assets and presentation
 
@@ -38,6 +38,7 @@ The tested [content-only pipeline](unreal-native-content-pipeline.md) separates 
 - [documented] Installed-source inspection, not runtime proof: `FScreenshotRequest::RequestScreenshot(absolutePng, false, false)` lets the engine save the game render target. Wait for screenshot processing **and** file existence before writing success/quitting. Binding `UGameViewportClient::OnScreenshotCaptured()` replaces automatic disk saving; explicitly save delegate pixels if using that path.
 - [tested] Canvas HUD rendered in the world-target capture with showUI=false. This does not establish offscreen Slate/UMG capture; that separate path needs showUI=true and a valid Slate window.
 - [documented] Installed-source inspection, not runtime proof: `FInputKeyEventArgs::CreateSimulated` and `APlayerController::InputKey(FInputKeyEventArgs)` are the current 5.8.2 input route. The old `FInputKeyParams` overload is deprecated and final. Native control-command replay proves gameplay interfaces separately from physical input mapping/focus behavior.
+- [tested] [Native input replay](unreal-native-input.md) records the retained-trigger failure, corrected per-frame sample schedule and11-check native controller run; it separates simulated events from human controller acceptance.
 
 Custom `DRScenario`/`DRCaptureDir` flags below belong to the game harness; they are not built-in engine flags. Implement a finite in-game scenario that drives the same command interface as normal player/AI input, records actual state, captures and exits only after completion.
 
