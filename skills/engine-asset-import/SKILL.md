@@ -20,6 +20,7 @@ strict line between what was verified and what was only read in documentation.
 | Separate content-only asset construction from native gameplay, preserve cooked provenance | [Native content pipeline](references/unreal-native-content-pipeline.md) |
 | Replay mapped input and diagnose retained trigger state during native tests | [Native input replay](references/unreal-native-input.md) |
 | Reject default-material cook fallbacks and verify imported UV channel meaning | [Material and UV validation](references/unreal-native-material-validation.md) |
+| Diagnose procedural-road loss and keep collision regression evidence separate | [Native contact case study](references/unreal-native-contact.md) |
 
 ## Before you claim anything
 
