@@ -55,6 +55,14 @@ effect appearance, temporal reset and complete-frame performance in the target g
   loops still use scripts. [documented] Community MCP servers exist; several need a C++ plugin built into the project.
 - [tested] Unreal 5.8.3 passes the same scene after three fixes (the fox splits into 48 meshes by default, automated
   imports are not saved, FBX clips need frame-aligned lengths); see the `engine-asset-import` skill.
+- [tested] A separate Unreal 5.8.2 native C++ game compiled with VS2022, generated materials/fonts through full Editor Python,
+  ran source-built procedural cars/track with Chaos primitive bodies in `-game -RenderOffScreen`, and delivered real
+  1920×1080 game-camera PNGs. A failed automation test still exited zero, so the loop parses fresh JSON. See
+  [the native game recipe](../../engine-asset-import/references/unreal-native-game.md) for exact versions and limits.
+- [tested] The same 5.8.2 project built a native Game EXE, cooked/staged with native engine tools and actually ran packaged
+  title/race/jump frames. A separate content-only asset bake also succeeded when host policy refused its Editor module.
+  See [packaging](../../engine-asset-import/references/unreal-native-packaging.md) and
+  [content construction](../../engine-asset-import/references/unreal-native-content-pipeline.md); visual acceptance remained GAP.
 
 **Import** ([tested] unless noted)
 - GLB and PNG: `InterchangeManager.import_asset` with `is_automated = True`. Do not use
@@ -74,7 +82,9 @@ effect appearance, temporal reset and complete-frame performance in the target g
 - Git Bash rewrites an argument like `/Game/Maps/X` into a Windows path. Set `MSYS_NO_PATHCONV=1`.
 - Python arguments differ from C++: `Rotator(roll, pitch, yaw)`, `Color(r=, g=, b=)` (positional order
   gave a blue light), some properties are not exposed (`initial_texture`).
-- [documented] The Unreal build tool needs Perforce even with `-noP4`; matters for CI, not for this loop.
+- [documented] A community RebuildLightmaps recipe reports a Perforce dependency. Do not generalize that to UnrealBuildTool:
+  the native C++ `Build.bat` module compile above completed without a Perforce workflow. Native cook/package evidence is tracked
+  separately in the linked recipe.
 
 **Quality and limits**: [general] highest visual and simulation ceiling of the options; heaviest install;
 binary assets, so scenes cannot be reviewed as text diffs.

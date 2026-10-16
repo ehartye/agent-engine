@@ -1,5 +1,7 @@
 # Unreal sample scene scripts
 
+For a native C++ game rather than this import sample, see [native Unreal build and capture](../../skills/engine-asset-import/references/unreal-native-game.md). It records a separate Unreal 5.8.2 execution path and its observed build, material, font and capture traps. Do not assume this sample's PIE evidence establishes a packaged game.
+
 Verified on Unreal Engine 5.7.3 and 5.8.3, Windows (5.8.3 needed three changes, listed under "Unreal 5.8.3" in the `engine-asset-import` skill). They build the [sample scene](../../docs/sample-scene.md) and
 run it with real rendering. Read the traps in the `engine-asset-import` and `engine-selection` skills
 before changing them.
