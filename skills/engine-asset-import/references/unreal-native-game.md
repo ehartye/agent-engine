@@ -4,7 +4,7 @@ DEAD REDLINE, Windows, 2026-10-16. **Tested:** Unreal **5.8.2 CL56702186**, VS20
 
 ## Native module and source geometry
 
-- [tested] A C++ Runtime game module compiled, loaded in native `UnrealEditor.exe -game`, built eight source-authored cars and a 192788 cm track, ran physical Chaos chassis motion and delivered game-camera PNGs. Geometry came from `ProceduralMeshComponent`; no FBX, Blender, skeletal importer or external MCP server was necessary for this construction.
+- [tested] The initial C++ Runtime module loaded in `UnrealEditor.exe -game`, built eight procedural cars and a192788cm track, simulated Chaos chassis and saved game-camera PNGs using ProceduralMeshComponent.
 - [tested] Explicit project plugins were `ProceduralMeshComponent`, `PythonScriptPlugin` and `EditorScriptingUtilities`. Runtime used Core, CoreUObject, Engine, InputCore, ProceduralMeshComponent and PhysicsCore, plus JSON/UI modules used by the actual game. Editor-only material graph creation stayed in Python.
 - [documented] Installed-source inspection, not runtime proof: ProceduralMeshComponent is a Runtime module in 5.8.2. It does not automatically provide a skeletal rig, Nanite or authored LODs. Use a few simple collision bodies, not collision on decorative trim. Bake accepted repeated geometry into static meshes when instancing/LODs are needed.
 - [tested] The first native compile caught an ambiguous conditional between `Parent->Mobility` (`TEnumAsByte`) and `EComponentMobility::Movable`. `Parent->GetMobility()` supplies the exact enum. A test source in a nested module folder could not include the parent's header through a legacy implicit include path; its explicit relative include fixed compilation. Do not widen global include paths to hide a local ownership mistake.
@@ -12,7 +12,7 @@ DEAD REDLINE, Windows, 2026-10-16. **Tested:** Unreal **5.8.2 CL56702186**, VS20
 ## Exact compiler and engine versions
 
 - [tested] Read `Engine/Build/Build.version`, `Engine/Config/Windows/Windows_SDK.json` and the compiler's actual ProductVersion. The VS2022 folder was named **14.44.35207**, which looks banned, but `cl.exe` ProductVersion was **14.44.35228.0**, above the banned ceiling. UBT selected and logged the correct actual version.
-- [documented] Installed-source inspection, not runtime proof: UBT's `MicrosoftPlatformSDK.cs::IsValidToolChainDirMSVC` reads compiler ProductVersion first and retains folder-family separately. This installation also had VS2026 14.51, outside the 5.8.2 preferred families. Pin the tested compiler instead of trusting the newest installed IDE.
+- [documented] Installed UBT `MicrosoftPlatformSDK.cs::IsValidToolChainDirMSVC` reads ProductVersion before folder-family. VS2026 14.51 was outside5.8.2 preferred families; pin the tested compiler. This is source inspection, not runtime proof.
 - [documented] Installed-source inspection, not runtime proof: Pin `DefaultBuildSettings = BuildSettingsVersion.V7` and `IncludeOrderVersion = EngineIncludeOrderVersion.Unreal5_8` in both Target.cs files. Using `Latest` changes defaults on upgrade; V7 adds error-level dangling/return/unreachable diagnostics.
 
 ```powershell
@@ -24,6 +24,11 @@ if ($LASTEXITCODE -ne 0) { throw 'Native compile failed' }
 ```
 
 Use Epic's wrappers and bundled dotnet. Preserve logs and receipts. Record HEAD, dirty status, source hash and changes during compile; HEAD alone cannot identify the build.
+
+## Commit and hash boundaries
+
+- [tested] A dirty adaptive-unity build passed; committing regrouped files and exposed duplicate anonymous-namespace names. Distinctive helper/constants fixed the normal committed build. Recheck after working-set changes.
+- [tested] A concurrent art-audit writer locked a hashed input after compile. Receipt/stage correctly failed; stopping all source/art writers then rerunning succeeded. An engine-only lease does not freeze every hashed input.
 
 ## Editor assets and presentation
 
@@ -53,7 +58,7 @@ Use a fresh output directory. Reject stale/missing PNG or JSON, invalid PNG dime
 
 - [tested] A failing `DeadRedline.Vehicle.FrozenPresentation` test returned **process exit code 0** under `-TestExit="Automation Test Queue Empty"`. Fresh `index.json` correctly reported failed=1: paused/static presentation consumed nitro, fired three rounds and reduced its magazine. The engine's queue-empty exit is not a passing test result.
 - [tested] The project wrapper therefore parses fresh automation JSON and rejects failed, incomplete, zero-test or unexpected-filter reports, in addition to checking process exit/timeout. Dependency-free tooling checks exercise those rejection paths using deliberate invalid artifacts.
-- [tested] After the frozen-physics guard fix and a new native compile, the same FrozenPresentation test passed together with CombatOwnership: fresh report **2 succeeded, 0 failed**. This establishes those two native behaviors; it does not replace complete race, handling, jump or physical-input checks.
+- [tested] After the frozen-physics guard fix, fresh FrozenPresentation/CombatOwnership automation reported **2 succeeded,0 failed**. These bounded behaviors do not replace race, handling, jump or physical-input checks.
 
 ```powershell
 & "$ueRoot/Engine/Binaries/Win64/UnrealEditor-Cmd.exe" $uproject "-ExecCmds=Automation RunTests MyGame" "-TestExit=Automation Test Queue Empty" "-ReportExportPath=$projectRoot/Saved/Verification/fresh-tests" -unattended -nullrhi -nosound -notraceserver
@@ -66,4 +71,4 @@ Use nullrhi for nonvisual automation, never for a rendered acceptance frame. Eng
 
 Read [native Windows packaging](unreal-native-packaging.md) for the exact Application Control UAT failure and the separately tested Build.bat/direct-Cook/UnrealPak route. The actual Game executable delivered three native capture scenarios from an immutable commit; this is distinct from Editor-game evidence.
 
-- [general] Still unproven by this exercise: a complete three-lap eight-car race, physical keyboard/gamepad input, audible audio, handling across frame-rate extremes, cross-machine portability and screenshot-reference parity. The packaged build was explicitly labeled a visual GAP baseline.
+- [general] The initial packaged baseline did not establish full racing, hardware input, audible audio, frame-rate robustness, portability or reference parity. Later guides carry their own bounded proofs.
