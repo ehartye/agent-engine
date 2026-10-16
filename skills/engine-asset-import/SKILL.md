@@ -10,6 +10,18 @@ The three asset plugins export plain files. The engines import them with their o
 that is where things go wrong quietly. This skill lists the traps that are known, and keeps a
 strict line between what was verified and what was only read in documentation.
 
+## Native Unreal references
+
+| You are about to | Read |
+|---|---|
+| Build native C++, run real gameplay, verify screenshots and automation results | [Native game loop](references/unreal-native-game.md) |
+| Generate materials/fonts, draw crisp Canvas text and diagnose exposure/palette | [Native presentation](references/unreal-native-presentation.md) |
+| Cook/stage Windows, distinguish UAT policy failures from real Game EXE proof | [Native packaging](references/unreal-native-packaging.md) |
+| Separate content-only asset construction from native gameplay, preserve cooked provenance | [Native content pipeline](references/unreal-native-content-pipeline.md) |
+| Replay mapped input and diagnose retained trigger state during native tests | [Native input replay](references/unreal-native-input.md) |
+| Reject default-material cook fallbacks and verify imported UV channel meaning | [Material and UV validation](references/unreal-native-material-validation.md) |
+| Diagnose procedural-road loss and keep collision regression evidence separate | [Native contact case study](references/unreal-native-contact.md) |
+
 ## Before you claim anything
 
 - Say what you checked: "imports into UE 5.7 via Interchange with names intact", not "works in
@@ -92,6 +104,8 @@ Documented by agent-beeps, not verified here:
   `examples/web/ci/pages-audio.yml`. The mechanism itself lives in agent-beeps (`docs/build-lock-and-store.md`, the `beeps-ship` skill).
 
 ## Unreal 5.7: sprites, audio and running it (tested)
+
+Building a native C++ game? Read [the native Unreal build and capture loop](references/unreal-native-game.md): exact 5.8.2 toolchain selection, procedural geometry, editor font/material generation, actual game-camera captures and automation results that cannot be inferred from exit code zero. Its current Editor-game evidence is separate from packaged/cook acceptance.
 
 Built and run in the [sample scene](../../docs/sample-scene.md); scripts in `examples/unreal`.
 

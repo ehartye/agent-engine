@@ -1,9 +1,10 @@
 """Run the sample scene with the real renderer, sample state, take a screenshot and quit.
 
-  UnrealEditor.exe SampleScene.uproject /Game/Maps/SampleScene -RenderOffScreen -ExecutePythonScript=<this file>
+  UnrealEditor.exe SampleScene.uproject /Game/Maps/SampleScene -RenderOffScreen -ExecCmds="py <absolute-path-to-this-file>"
       -log=run.log -notraceserver   (in Git Bash set MSYS_NO_PATHCONV=1 or /Game/... is rewritten)
 Writes unreal/report-run.json. It claims only what it measures: actor counts, whether the music component
 reports playing, whether the courier flipbook position and the fox animation position advance, and a screenshot path.
+The callback must keep the editor alive. Do not use -ExecutePythonScript: that mode exits when the script ends.
 """
 import json
 import os
@@ -90,7 +91,7 @@ def tick(dt):
     if state["done"]:
         return
     state["t"] += dt
-    # -ExecutePythonScript only runs in the editor, so start Play-In-Editor once the map has loaded
+    # The ExecCmds callback runs in the editor; start Play-In-Editor after the map loads.
     if not state.get("pie"):
         if state["t"] > 5.0:
             unreal.get_editor_subsystem(unreal.LevelEditorSubsystem).editor_request_begin_play()
