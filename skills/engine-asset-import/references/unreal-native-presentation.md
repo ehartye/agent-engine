@@ -42,4 +42,5 @@ Keep editor asset creation separate from shipped runtime modules. Explicitly sav
 
 ## Record native audio
 
+- [documented] In5.8.2, AudioComponent copies priority into ActiveSound at Play. Configure priority/concurrency before Play; SpawnSoundAtLocation already starts playback.
 - [tested] In5.8.2, `UAudioMixerBlueprintLibrary::StartRecordingOutput`/`StopRecordingOutput` wrote20s stereo PCM from the game's master mix. Offscreen sound voices played into silence: the default unfocused volume was0. A capture-only `-ini:Engine:[Audio]:UnfocusedVolumeMultiplier=1.0` made the unchanged EXE audible, peak−6.70dBFS with zero clipped samples. WAV export is asynchronous: require fresh complete PCM, duration and nonzero data, then bind WAV/EXE hashes before capture completion. Fixed-step race state may advance faster than audio wall time; label that recording scope and keep owner listening acceptance separate.
