@@ -12,7 +12,7 @@ across the asset plugins' docs.
 
 ## Status
 
-Early (0.11.16). Seven skills. Four targets are tested with the sample scene (a fox, a pixel campfire, a pixel courier,
+Early (0.11.17). Eight skills. Four targets are tested with the sample scene (a fox, a pixel campfire, a pixel courier,
 a music bed and a one-shot): Unreal Engine 5.7.3 and 5.8.3, Godot 4.7.2, Unity 6000.3.25f1 and the web tier (Phaser
 3.90.0 and three.js 0.186.1). A web 3D proving ground, Sector Run Slice 1, was built on React Three Fiber 9.8.1 and Babylon.js 9.29.0 and is the acceptance test for the web 3D skills (see [docs/web-3d-proving-ground.md](docs/web-3d-proving-ground.md)). Each imports the assets, runs with no errors, renders on the GPU and produces a screenshot;
 the web and Unity passes also record which pickup variants played. The scene loops use scripts, not an MCP server.
@@ -78,6 +78,7 @@ from current Fortnite cook, navigation and performance acceptance.
 | `engine-r3f` | Build, structure, debug and verify a React Three Fiber game: the frame loop beside React state, agent-meshes parts assembled by socket, toon shading with outlines and instancing, particles, physics (rapier measured, analytic hit tests chosen), audio, a state probe with an asserted backend, WebGPU and headless Chromium, and the versions and migrations met; plus the Sector Run feel-pass systems: flight controls, reticle and speed streaks, ship classes and weapon families, kit-ship assembly and paint, controller-navigable menus, varied asteroids and an engine-loop and voice-priority audio mixer. Backed by Sector Run Slice 1 and its follow-on systems (the [web 3D proving ground](docs/web-3d-proving-ground.md)). |
 | `engine-babylon` | Build, structure, debug and verify a Babylon.js game: handedness, agent-meshes parts assembled by socket, cell shading and outlines, Havok, particles, observables, the inspector, audio, bundle size, a state probe with an asserted backend, and versions. Backed by the same game built from the same rules core. |
 | `engine-custom-shaders` | Add GPU effects to an owned renderer, starting with Canvas/WebGL: pixel sampling, pass order, trails, context lifecycle and screenshot/performance proof. Custom is an engine type; this path is documented, not sample-tested. |
+| `engine-visual-polish` | Improve genre-specific visual quality in an existing game through composition/material diagnosis, authored effect families and one matched runtime slice. Includes racer, shooter and platformer craft plus a focused Unreal materials/Niagara/AA/scalability reference. Documentation and craft guidance; runtime integration and quality improvement remain unverified. |
 
 ## Sample scene
 
@@ -92,7 +93,7 @@ acceptance test for the skills. Each engine has to pass it. Scripts are in `exam
 
 ## Checking the skills
 
-`scripts/lint-skills.mjs` checks the structure of a skill: frontmatter, relative links, the "You are about to / Read" table, size budgets, unfilled placeholders and, with `--require-claims`, an evidence label on every claim. Run it on the web 3D skills with `node scripts/lint-skills.mjs skills/engine-r3f skills/engine-babylon --require-claims --skill-md-labels`. The tests are `node --test scripts/lint-skills.test.mjs scripts/release-consistency.test.mjs`; they also check that the plugin version, the README and the keywords agree. Node 20.11 or newer. CI (`.github/workflows/lint-skills.yml`) runs both commands on pull requests and on pushes to `main`; the older skills do not pass the label rules yet and are not linted there.
+`scripts/lint-skills.mjs` checks the structure of a skill: frontmatter, relative links, the "You are about to / Read" table, size budgets, unfilled placeholders and, with `--require-claims`, an evidence label on every claim. Run it on the scoped skills with `node scripts/lint-skills.mjs skills/engine-r3f skills/engine-babylon skills/phaser-architecture skills/engine-visual-polish --require-claims --skill-md-labels`. The tests are `node --test scripts/lint-skills.test.mjs scripts/release-consistency.test.mjs`; they also check that the plugin version, the README and the keywords agree. Node 20.11 or newer. CI (`.github/workflows/lint-skills.yml`) runs both commands on pull requests and on pushes to `main`; the older skills do not pass the label rules yet and are not linted there. Structural checks do not establish that a skill improves an agent's work or that a visual slice passes runtime review.
 
 ## Install
 
