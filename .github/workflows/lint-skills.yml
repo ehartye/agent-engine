@@ -1,6 +1,6 @@
 # Lint and release checks for the skills. No dependencies: Node only.
 # The older skills (engine-selection, engine-asset-import, engine-phaser, engine-custom-shaders) do not pass the
-# evidence-label rules yet; they are backlog, so only the web 3D skills are linted here.
+# evidence-label rules yet; they are backlog, so only the scoped newer skills are linted here.
 name: lint-skills
 
 on:
@@ -21,5 +21,5 @@ jobs:
           node-version: '20.11'
       - name: Lint and release-consistency tests
         run: node --test scripts/lint-skills.test.mjs scripts/release-consistency.test.mjs tests/phaser-audio-decode.test.mjs tests/phaser-gamepad-lifecycle.test.mjs examples/web/harness/tests/no-sleeps.test.mjs tests/phaser-framebuffer-restore.test.mjs tests/phaser-audio-visibility.test.mjs tests/phaser-dynamic-texture.test.mjs tests/phaser-texture-units.test.mjs
-      - name: Strict lint of the web 3D and Phaser architecture skills
-        run: node scripts/lint-skills.mjs skills/engine-r3f skills/engine-babylon skills/phaser-architecture --require-claims --skill-md-labels
+      - name: Strict lint of the scoped newer skills
+        run: node scripts/lint-skills.mjs skills/engine-r3f skills/engine-babylon skills/phaser-architecture skills/engine-visual-polish --require-claims --skill-md-labels
