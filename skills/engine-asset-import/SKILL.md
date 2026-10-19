@@ -18,6 +18,7 @@ strict line between what was verified and what was only read in documentation.
 | Generate materials/fonts, draw crisp Canvas text and diagnose exposure/palette | [Native presentation](references/unreal-native-presentation.md) |
 | Cook/stage Windows, distinguish UAT policy failures from real Game EXE proof | [Native packaging](references/unreal-native-packaging.md) |
 | Separate content-only asset construction from native gameplay, preserve cooked provenance | [Native content pipeline](references/unreal-native-content-pipeline.md) |
+| Reuse a saved-project GLB import while protecting generated assets and owner edits | [Guarded Unreal import reuse](references/unreal-import-reuse.md) |
 | Replay mapped input and diagnose retained trigger state during native tests | [Native input replay](references/unreal-native-input.md) |
 | Reject default-material cook fallbacks and verify imported UV channel meaning | [Material and UV validation](references/unreal-native-material-validation.md) |
 | Diagnose procedural-road loss and keep collision regression evidence separate | [Native contact case study](references/unreal-native-contact.md) |
