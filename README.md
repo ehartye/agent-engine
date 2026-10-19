@@ -10,11 +10,11 @@ It is deliberately small. It adds no runtime, importer framework or scene format
 existing MCP servers and the engines' own importers, and they collect the import traps that are otherwise scattered
 across the asset plugins' docs.
 
-Release 0.12.0 adds [guarded Unreal project import reuse](skills/engine-asset-import/references/unreal-import-reuse.md): an unchanged delivered GLB and matching native outputs skip the Editor launch. Import settings, project/tool identities and all generated package files participate; owner-edited outputs are refused. This is a small orchestration helper using Unreal's importer, with Windows/self-contained GLB scope.
+Release 0.13.0 lets the same helper state a per-mesh Unreal import policy in its config (explicit Nanite, vertex-colour mode, uncombined kits, asset names, CPU access, full-precision UVs, a project material, double-sided complex collision) and reads every setting back from the saved asset into the receipt, failing the import with every mismatch listed; it documents what a game with a regenerated project must change to benefit from reuse. Release 0.12.0 adds [guarded Unreal project import reuse](skills/engine-asset-import/references/unreal-import-reuse.md): an unchanged delivered GLB and matching native outputs skip the Editor launch. Import settings, project/tool identities and all generated package files participate; owner-edited outputs are refused. This is a small orchestration helper using Unreal's importer, with Windows/self-contained GLB scope.
 
 ## Status
 
-Early (0.12.0). Eight skills. Four targets are tested with the sample scene (a fox, a pixel campfire, a pixel courier,
+Early (0.13.0). Eight skills. Four targets are tested with the sample scene (a fox, a pixel campfire, a pixel courier,
 a music bed and a one-shot): Unreal Engine 5.7.3 and 5.8.3, Godot 4.7.2, Unity 6000.3.25f1 and the web tier (Phaser
 3.90.0 and three.js 0.186.1). A web 3D proving ground, Sector Run Slice 1, was built on React Three Fiber 9.8.1 and Babylon.js 9.29.0 and is the acceptance test for the web 3D skills (see [docs/web-3d-proving-ground.md](docs/web-3d-proving-ground.md)). Each imports the assets, runs with no errors, renders on the GPU and produces a screenshot;
 the web and Unity passes also record which pickup variants played. The scene loops use scripts, not an MCP server.
