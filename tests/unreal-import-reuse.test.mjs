@@ -63,6 +63,15 @@ test('failed import preserves pending evidence and blocks replay',async()=>{
   const f=fixture(); await assert.rejects(importGlb(join(f.root,'import.json'),{runEditor:async()=>{throw new Error('native died');}}),/native died/);
   await assert.rejects(f.execute({force:true}),/PENDING_OPERATION/); assert.equal(f.launches(),0);
 });
+test('pending inspect still exposes recovery evidence after the source GLB is removed',async()=>{
+  const f=fixture();
+  await assert.rejects(importGlb(join(f.root,'import.json'),{runEditor:async()=>{throw new Error('native died');}}),/native died/);
+  unlinkSync(join(f.root,'model.glb'));
+  const result=await f.execute({inspect:true});
+  assert.equal(result.status,'pending');
+  assert.equal(result.pending.request.source,join(f.root,'model.glb'));
+  assert.equal(f.launches(),0);
+});
 test('rejects unknown options, external GLB dependencies and unsafe destinations',async()=>{
   for(const patch of [{options:{mystery:true}},{destination:'/Game/OwnerStuff'},{destination:'/Game/Generated/../OwnerStuff'}]) {
     const f=fixture(); const path=join(f.root,'import.json');put(path,JSON.stringify({...JSON.parse(readFileSync(path)),...patch})); await assert.rejects(f.execute({}),/CONFIG/); assert.equal(f.launches(),0);

@@ -122,9 +122,10 @@ async function nativeEditor(request,c) {
 
 export async function importGlb(configPath,{ifChanged=false,force=false,inspect=false,runEditor=nativeEditor}={}) {
   if(ifChanged&&force)fail('CONFIG','--if-changed and --force are mutually exclusive');
-  const c=configAt(configPath),initial=identity(c),key=hash(canonical(initial));
+  const c=configAt(configPath);
   const pendingPath=existsSync(c.projectPending)?c.projectPending:join(c.state,'pending.json');
   if(inspect&&existsSync(pendingPath))return {status:'pending',state:c.state,pending:json(pendingPath)};
+  const initial=identity(c),key=hash(canonical(initial));
   if(inspect) { const p=preflight(c);return {status:p.previous?.key===key&&!p.missing.length?'reusable':'needs-import',key,state:c.state,missing:p.missing,outputs:p.outputs}; }
   mkdirSync(c.state,{recursive:true});const lock=join(c.projectRoot,'Saved','AgentEngineImports','lock');
   try { mkdirSync(lock); } catch { fail('IMPORT_LOCKED',lock); }
