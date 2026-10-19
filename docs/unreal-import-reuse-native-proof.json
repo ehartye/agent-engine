@@ -1,0 +1,369 @@
+{
+  "complete": true,
+  "engine": "5.8.2-56702186+++UE5+Release-5.8",
+  "scope": "disposable project only; saved import, no gameplay/cook/render",
+  "results": [
+    {
+      "name": "cold",
+      "seconds": 16.401896999999998,
+      "result": {
+        "status": "built",
+        "key": "dae0e75684e30a445fffcc530f10a6b4700d53a16144c960737fc77466e9f6ce",
+        "outputs": [
+          {
+            "path": "_Import/Pipeline.uasset",
+            "size": 4147,
+            "sha256": "419978b832e84fdfc2161e30d9620b5363510e757a8fe52b80317278488590d1"
+          },
+          {
+            "path": "model.uasset",
+            "size": 28916,
+            "sha256": "6bfd0cf7cc74b1ad26662c91e52674a327710f6af6ee93688898f2181ee3cf0d"
+          }
+        ],
+        "receipt": "C:\\Users\\ehart\\AppData\\Local\\Temp\\ae-import-r3-20261019\\Project\\Saved\\AgentEngineImports\\12b16bb27844a61a3d44\\receipt.json",
+        "nativeReport": "C:\\Users\\ehart\\AppData\\Local\\Temp\\ae-import-r3-20261019\\Project\\Saved\\AgentEngineImports\\12b16bb27844a61a3d44\\operations\\19fed927-56ae-4473-8202-fee46afd992e\\native-report.json",
+        "backup": null
+      }
+    },
+    {
+      "name": "unchanged",
+      "seconds": 0.2737471000000005,
+      "result": {
+        "status": "reused",
+        "key": "dae0e75684e30a445fffcc530f10a6b4700d53a16144c960737fc77466e9f6ce",
+        "outputs": [
+          {
+            "path": "_Import/Pipeline.uasset",
+            "size": 4147,
+            "sha256": "419978b832e84fdfc2161e30d9620b5363510e757a8fe52b80317278488590d1"
+          },
+          {
+            "path": "model.uasset",
+            "size": 28916,
+            "sha256": "6bfd0cf7cc74b1ad26662c91e52674a327710f6af6ee93688898f2181ee3cf0d"
+          }
+        ],
+        "receipt": "C:\\Users\\ehart\\AppData\\Local\\Temp\\ae-import-r3-20261019\\Project\\Saved\\AgentEngineImports\\12b16bb27844a61a3d44\\receipt.json"
+      }
+    },
+    {
+      "name": "changed-glb",
+      "seconds": 16.120885799999996,
+      "result": {
+        "status": "built",
+        "key": "eaec0cffc56f3d02d968c9257907b1194e7e25b51f56a6345c59b178b7a6b93a",
+        "outputs": [
+          {
+            "path": "_Import/Pipeline.uasset",
+            "size": 4147,
+            "sha256": "ddf6b83116759a2347b219d906ccccc31f922910de90cb437116cec46f3b8f17"
+          },
+          {
+            "path": "model.uasset",
+            "size": 28916,
+            "sha256": "b2359b1c7bd08a92b9d47630d9f422f88312c8452b41b79a061dd900e6d50760"
+          }
+        ],
+        "receipt": "C:\\Users\\ehart\\AppData\\Local\\Temp\\ae-import-r3-20261019\\Project\\Saved\\AgentEngineImports\\12b16bb27844a61a3d44\\receipt.json",
+        "nativeReport": "C:\\Users\\ehart\\AppData\\Local\\Temp\\ae-import-r3-20261019\\Project\\Saved\\AgentEngineImports\\12b16bb27844a61a3d44\\operations\\95017fb4-d6ba-47f0-b4a2-d035c10dee2c\\native-report.json",
+        "backup": "C:\\Users\\ehart\\AppData\\Local\\Temp\\ae-import-r3-20261019\\Project\\Saved\\AgentEngineImports\\12b16bb27844a61a3d44\\operations\\95017fb4-d6ba-47f0-b4a2-d035c10dee2c\\previous-output"
+      }
+    },
+    {
+      "name": "missing-uasset",
+      "seconds": 15.972546299999994,
+      "result": {
+        "status": "built",
+        "key": "eaec0cffc56f3d02d968c9257907b1194e7e25b51f56a6345c59b178b7a6b93a",
+        "outputs": [
+          {
+            "path": "_Import/Pipeline.uasset",
+            "size": 4147,
+            "sha256": "d2457ea8261c9dddafd23c6cc2ccfbdf11967243416efeb3cf7fd41c20066053"
+          },
+          {
+            "path": "model.uasset",
+            "size": 28916,
+            "sha256": "3bad3921eb39fce087b41d00071254b0ce021fc3d3d9b62ad34eb53dbcea9929"
+          }
+        ],
+        "receipt": "C:\\Users\\ehart\\AppData\\Local\\Temp\\ae-import-r3-20261019\\Project\\Saved\\AgentEngineImports\\12b16bb27844a61a3d44\\receipt.json",
+        "nativeReport": "C:\\Users\\ehart\\AppData\\Local\\Temp\\ae-import-r3-20261019\\Project\\Saved\\AgentEngineImports\\12b16bb27844a61a3d44\\operations\\d5f8126f-234c-4d04-baa5-765f97ecedd5\\native-report.json",
+        "backup": "C:\\Users\\ehart\\AppData\\Local\\Temp\\ae-import-r3-20261019\\Project\\Saved\\AgentEngineImports\\12b16bb27844a61a3d44\\operations\\d5f8126f-234c-4d04-baa5-765f97ecedd5\\previous-output"
+      }
+    },
+    {
+      "name": "forced",
+      "seconds": 15.963846900000004,
+      "result": {
+        "status": "built",
+        "key": "eaec0cffc56f3d02d968c9257907b1194e7e25b51f56a6345c59b178b7a6b93a",
+        "outputs": [
+          {
+            "path": "_Import/Pipeline.uasset",
+            "size": 4147,
+            "sha256": "5e0ada6ea10205ab86baf4b54a568fc82813a47adac2ff80912bcf63ee012864"
+          },
+          {
+            "path": "model.uasset",
+            "size": 28916,
+            "sha256": "6f66357b13ade19da9cb0189d923398c9fa70f7246162aa401d1590a29237cfb"
+          }
+        ],
+        "receipt": "C:\\Users\\ehart\\AppData\\Local\\Temp\\ae-import-r3-20261019\\Project\\Saved\\AgentEngineImports\\12b16bb27844a61a3d44\\receipt.json",
+        "nativeReport": "C:\\Users\\ehart\\AppData\\Local\\Temp\\ae-import-r3-20261019\\Project\\Saved\\AgentEngineImports\\12b16bb27844a61a3d44\\operations\\7e8a9f98-9b7f-493e-9aad-a26a62982143\\native-report.json",
+        "backup": "C:\\Users\\ehart\\AppData\\Local\\Temp\\ae-import-r3-20261019\\Project\\Saved\\AgentEngineImports\\12b16bb27844a61a3d44\\operations\\7e8a9f98-9b7f-493e-9aad-a26a62982143\\previous-output"
+      }
+    },
+    {
+      "name": "after-force",
+      "seconds": 0.1943827999999994,
+      "result": {
+        "status": "reused",
+        "key": "eaec0cffc56f3d02d968c9257907b1194e7e25b51f56a6345c59b178b7a6b93a",
+        "outputs": [
+          {
+            "path": "_Import/Pipeline.uasset",
+            "size": 4147,
+            "sha256": "5e0ada6ea10205ab86baf4b54a568fc82813a47adac2ff80912bcf63ee012864"
+          },
+          {
+            "path": "model.uasset",
+            "size": 28916,
+            "sha256": "6f66357b13ade19da9cb0189d923398c9fa70f7246162aa401d1590a29237cfb"
+          }
+        ],
+        "receipt": "C:\\Users\\ehart\\AppData\\Local\\Temp\\ae-import-r3-20261019\\Project\\Saved\\AgentEngineImports\\12b16bb27844a61a3d44\\receipt.json"
+      }
+    },
+    {
+      "name": "owner-edit",
+      "status": "conflict-preserved"
+    },
+    {
+      "name": "skeletal-material-companions",
+      "seconds": 15.973550599999996,
+      "result": {
+        "status": "built",
+        "key": "fe5132a63e9f96277e32ced8c5b9d99c71c2c7d71be1efa40060fb312ac64a46",
+        "outputs": [
+          {
+            "path": "Image_0.uasset",
+            "size": 56129,
+            "sha256": "b321e53495530c8000655369a17f3ac0f67eb76a1c275fd3cc7fda578cafcd65"
+          },
+          {
+            "path": "_Import/Pipeline.uasset",
+            "size": 4139,
+            "sha256": "16f72031fcc36ddc70a76c514472abc64d9ede36adad39e7727ca58298af87af"
+          },
+          {
+            "path": "fox.uasset",
+            "size": 354126,
+            "sha256": "13a9eb207a2aaf91df488bf06a1d35dd083d1ac20518739225cf37d0c8e0ab64"
+          },
+          {
+            "path": "foxBark.uasset",
+            "size": 328275,
+            "sha256": "e4fde84fd588a01569252157efc32834081935374f7512263c9fe7839f7eb333"
+          },
+          {
+            "path": "foxBite.uasset",
+            "size": 205875,
+            "sha256": "617b40d27d5bd1e9842e0bae6b16a178d02028ebf8b1d9aef55c6e44d224cfb4"
+          },
+          {
+            "path": "foxDeath.uasset",
+            "size": 264928,
+            "sha256": "e5e105facb23ec43d0a188c39aba5bb34f333bb3cb84d65402cff5f4274fb1a6"
+          },
+          {
+            "path": "foxFall.uasset",
+            "size": 166227,
+            "sha256": "3ae6b45f6f489c78e4c0ca6ca8abeae105b7af7350345e8ca8de99d565679897"
+          },
+          {
+            "path": "foxFetch.uasset",
+            "size": 208832,
+            "sha256": "2fce787b6dd61cac465178bb2bc7d630b1b81d55fe9489b4745de9503ac0cb01"
+          },
+          {
+            "path": "foxHowl.uasset",
+            "size": 259667,
+            "sha256": "cd991ac73f8da15ef2b033e73dcd2cad2dcb7afc85943e4a4a2b78d0eccd97ec"
+          },
+          {
+            "path": "foxIdle.uasset",
+            "size": 220339,
+            "sha256": "bcd8a5eb1dbefa71f7762440fb18501cc3d4b3120f70ac60a37b8fe61439aedd"
+          },
+          {
+            "path": "foxIdle_Alert.uasset",
+            "size": 275201,
+            "sha256": "dffa03d086d0b86e57af8a8f9199890e40f319fa2a95d35959fb3f7c11107e6c"
+          },
+          {
+            "path": "foxJump.uasset",
+            "size": 295379,
+            "sha256": "211412c9072940a086fd64fafe1cc9cefb3d6bc36ca15fd31b88a3faaae88a8f"
+          },
+          {
+            "path": "foxRest_Pose.uasset",
+            "size": 132500,
+            "sha256": "60f446281c1ee23a422055cb316c2e9f526896357cc57c2fb1411e7382d4ea47"
+          },
+          {
+            "path": "foxRun.uasset",
+            "size": 161803,
+            "sha256": "2b4f369a52a1b0c979fa3da8a4420cbdf20b354b2cb994d08e8891686fa8d221"
+          },
+          {
+            "path": "foxSit.uasset",
+            "size": 181067,
+            "sha256": "bb6f0cb8e13792979126ba75a7ed112d8221bb2ebeb581687a4d5d3a153db9c6"
+          },
+          {
+            "path": "foxSneak.uasset",
+            "size": 206789,
+            "sha256": "fb5cb22ebe4a6e630b632ab306fb0184d512294d803d9bb4b546eb68089f3d25"
+          },
+          {
+            "path": "foxWalk.uasset",
+            "size": 201976,
+            "sha256": "30cb681ee973cf3840b0aac52b04a97f0b5bb0e5914c55f40cad7960296e6eed"
+          },
+          {
+            "path": "fox_PhysicsAsset.uasset",
+            "size": 49990,
+            "sha256": "a976526bba3c26b3279bdd806441a86d2eac27bf2190490d0cb795a90424cfc9"
+          },
+          {
+            "path": "fox_Skeleton.uasset",
+            "size": 11714,
+            "sha256": "59813f71d054a65f7e1732260364a2414c956aad8e4fb15abb3289d1edf1a822"
+          },
+          {
+            "path": "fox_material_002.uasset",
+            "size": 50785,
+            "sha256": "fce4afb5c7a938eee30c5f45fd8c7d62155c648586c2ecfe83b2767e8991ccc1"
+          }
+        ],
+        "receipt": "C:\\Users\\ehart\\AppData\\Local\\Temp\\ae-import-r3-20261019\\Project\\Saved\\AgentEngineImports\\869c030c1917b3a32f2e\\receipt.json",
+        "nativeReport": "C:\\Users\\ehart\\AppData\\Local\\Temp\\ae-import-r3-20261019\\Project\\Saved\\AgentEngineImports\\869c030c1917b3a32f2e\\operations\\d743419c-2e45-4778-93d9-208b748a5d65\\native-report.json",
+        "backup": null
+      }
+    },
+    {
+      "name": "skeletal-unchanged",
+      "seconds": 0.24995870000000286,
+      "result": {
+        "status": "reused",
+        "key": "fe5132a63e9f96277e32ced8c5b9d99c71c2c7d71be1efa40060fb312ac64a46",
+        "outputs": [
+          {
+            "path": "Image_0.uasset",
+            "size": 56129,
+            "sha256": "b321e53495530c8000655369a17f3ac0f67eb76a1c275fd3cc7fda578cafcd65"
+          },
+          {
+            "path": "_Import/Pipeline.uasset",
+            "size": 4139,
+            "sha256": "16f72031fcc36ddc70a76c514472abc64d9ede36adad39e7727ca58298af87af"
+          },
+          {
+            "path": "fox.uasset",
+            "size": 354126,
+            "sha256": "13a9eb207a2aaf91df488bf06a1d35dd083d1ac20518739225cf37d0c8e0ab64"
+          },
+          {
+            "path": "foxBark.uasset",
+            "size": 328275,
+            "sha256": "e4fde84fd588a01569252157efc32834081935374f7512263c9fe7839f7eb333"
+          },
+          {
+            "path": "foxBite.uasset",
+            "size": 205875,
+            "sha256": "617b40d27d5bd1e9842e0bae6b16a178d02028ebf8b1d9aef55c6e44d224cfb4"
+          },
+          {
+            "path": "foxDeath.uasset",
+            "size": 264928,
+            "sha256": "e5e105facb23ec43d0a188c39aba5bb34f333bb3cb84d65402cff5f4274fb1a6"
+          },
+          {
+            "path": "foxFall.uasset",
+            "size": 166227,
+            "sha256": "3ae6b45f6f489c78e4c0ca6ca8abeae105b7af7350345e8ca8de99d565679897"
+          },
+          {
+            "path": "foxFetch.uasset",
+            "size": 208832,
+            "sha256": "2fce787b6dd61cac465178bb2bc7d630b1b81d55fe9489b4745de9503ac0cb01"
+          },
+          {
+            "path": "foxHowl.uasset",
+            "size": 259667,
+            "sha256": "cd991ac73f8da15ef2b033e73dcd2cad2dcb7afc85943e4a4a2b78d0eccd97ec"
+          },
+          {
+            "path": "foxIdle.uasset",
+            "size": 220339,
+            "sha256": "bcd8a5eb1dbefa71f7762440fb18501cc3d4b3120f70ac60a37b8fe61439aedd"
+          },
+          {
+            "path": "foxIdle_Alert.uasset",
+            "size": 275201,
+            "sha256": "dffa03d086d0b86e57af8a8f9199890e40f319fa2a95d35959fb3f7c11107e6c"
+          },
+          {
+            "path": "foxJump.uasset",
+            "size": 295379,
+            "sha256": "211412c9072940a086fd64fafe1cc9cefb3d6bc36ca15fd31b88a3faaae88a8f"
+          },
+          {
+            "path": "foxRest_Pose.uasset",
+            "size": 132500,
+            "sha256": "60f446281c1ee23a422055cb316c2e9f526896357cc57c2fb1411e7382d4ea47"
+          },
+          {
+            "path": "foxRun.uasset",
+            "size": 161803,
+            "sha256": "2b4f369a52a1b0c979fa3da8a4420cbdf20b354b2cb994d08e8891686fa8d221"
+          },
+          {
+            "path": "foxSit.uasset",
+            "size": 181067,
+            "sha256": "bb6f0cb8e13792979126ba75a7ed112d8221bb2ebeb581687a4d5d3a153db9c6"
+          },
+          {
+            "path": "foxSneak.uasset",
+            "size": 206789,
+            "sha256": "fb5cb22ebe4a6e630b632ab306fb0184d512294d803d9bb4b546eb68089f3d25"
+          },
+          {
+            "path": "foxWalk.uasset",
+            "size": 201976,
+            "sha256": "30cb681ee973cf3840b0aac52b04a97f0b5bb0e5914c55f40cad7960296e6eed"
+          },
+          {
+            "path": "fox_PhysicsAsset.uasset",
+            "size": 49990,
+            "sha256": "a976526bba3c26b3279bdd806441a86d2eac27bf2190490d0cb795a90424cfc9"
+          },
+          {
+            "path": "fox_Skeleton.uasset",
+            "size": 11714,
+            "sha256": "59813f71d054a65f7e1732260364a2414c956aad8e4fb15abb3289d1edf1a822"
+          },
+          {
+            "path": "fox_material_002.uasset",
+            "size": 50785,
+            "sha256": "fce4afb5c7a938eee30c5f45fd8c7d62155c648586c2ecfe83b2767e8991ccc1"
+          }
+        ],
+        "receipt": "C:\\Users\\ehart\\AppData\\Local\\Temp\\ae-import-r3-20261019\\Project\\Saved\\AgentEngineImports\\869c030c1917b3a32f2e\\receipt.json"
+      }
+    }
+  ]
+}
