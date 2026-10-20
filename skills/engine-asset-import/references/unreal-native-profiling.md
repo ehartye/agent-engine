@@ -1,6 +1,6 @@
 # Profiling a native Unreal game against a frame budget
 
-DEAD REDLINE, Windows, 2026-10-20, Unreal **5.8.2 CL56702186**, packaged Development build, D3D12, RTX 5070 Ti Laptop GPU, 1920x1080 for rendered runs. The steps are the engine-neutral method in [profiling method](../../engine-phaser/references/profiling-method.md) (budget, ablation matrix, cost model, exactness ladder); this file is the Unreal harness and what it measured. [Profiling facts and traps](unreal-native-profiling-facts.md) holds the exactness proofs, engine-source facts and tooling traps. The overnight matrix was still running when this was written, so phase F numbers are interim.
+DEAD REDLINE, Windows, 2026-10-20, Unreal **5.8.2 CL56702186**, packaged Development build, D3D12, RTX 5070 Ti Laptop GPU, 1920x1080 for rendered runs. The steps are the engine-neutral method in [profiling method](../../engine-phaser/references/profiling-method.md) (budget, ablation for diagnosis, cost model, who approves a fix, right-sized verification); this file is the Unreal harness and what it measured. [Profiling facts and traps](unreal-native-profiling-facts.md) holds the shadow-check evidence, engine-source facts and tooling traps. The overnight matrix was still running when this was written, so phase F numbers are interim.
 
 ## Build the sampler into the game, and into the baseline
 
@@ -13,11 +13,11 @@ DEAD REDLINE, Windows, 2026-10-20, Unreal **5.8.2 CL56702186**, packaged Develop
 - [tested] Rendered, 60 Hz step, five repeats (`gpu-base`): GPU 0.78 to 1.02 ms on every route, render thread 1.9 to 2.9 ms, game thread within 0.01 to 0.04 ms of the wall frame (about 99.6%). Mean frame ms (p95): Cinder 5.4 (6.7), Foundry 6.5 (7.9), Red Mesa 7.9 (9.8), route 3 8.2 (10.2), route 2 9.1 (11.3), route 1 9.4 (12.7), Spill 13.5 (16.5). The budget is 8.33 ms: Cinder and Foundry pass on the mean, Spill needs about 5 ms back. The cost is game-thread CPU, so culling, instancing and Nanite choices cannot reach it alone.
 - [tested] Headless (`-nullrhi -DRBenchHeadless`, no GPU needed) means, traced: Cinder 4.06, Foundry 4.92, Spill 10.6 ms, spread under 0.5 ms. Rendered less headless is the cost of render state and submission: 1.4, 1.6 and 2.9 ms. An interim estimate of about 4 ms, from partial single runs, was not reproduced by the matrix. Use headless for attribution, rendered for acceptance.
 
-## The matrix harness (in the game repository)
+## The diagnosis harness (in the game repository; heavier than shipping a fix needs)
 
 - [tested] `Scripts/profile-race.ps1` runs one packaged race with `-trace=cpu,frame,counters,bookmark,region,log` (plus `gpu` when rendered), then exports per-timer statistics with `UnrealInsights.exe`. `Scripts/profile-matrix.ps1` loops phases and appends one line per race to `Saved/Bench/PROGRESS.md`; `summarize-matrix.py` and `summarize-profile.py` aggregate; `export-matrix-receipt.py` condenses the runs into a committed `runs.csv`.
 - [tested] One race at a time, never two rendered races at once. A race whose mean is over 1.25 times the median of its earlier repeats is flagged, and phase R reruns flagged races. A row that writes no receipt is logged as FAILED; a minimum-free-disk guard skips runs rather than failing mid-write.
-- [tested] Phases: A1/A2 baselines on all seven routes (60 Hz, plus 120 Hz on three), B rendered ablation on Spill, Cinder and Foundry (16, 8 and 3 rows, three repeats, interleaved), C headless baselines and ablation (four repeats), D Red Mesa rivals-only (the scripted human slot is wrecked at about 39 s there), E prototypes with proof runs, F fixes combined with +50% growth. Each experiment race is 100 s after warm-up; baselines run to 480 s.
+- [tested] Phases ran overnight: baselines on all seven routes, rendered and headless ablation on Spill, Cinder and Foundry, Red Mesa rivals-only (the scripted human slot is wrecked at about 39 s there), prototypes, and fixes combined with +50% growth. That scale answered "where does the time go"; it is not the bar for shipping a fix.
 - [tested] Switches (`-DRExp=noeffects,noscenery,nohazanim,nohazards,nopilothaz,noactors,noaudio,flames=0.5,scenery=1.5,effects=1.5,props=300,yards=1`) live on a branch marked EXPERIMENT ONLY and never merged. State what a scale switch scales: `effects=` scales the spawn rate only, because the pooled meshes are built per slot.
 
 ## What the ablation showed (Spill, headless, four repeats each)
@@ -59,3 +59,9 @@ DEAD REDLINE, Windows, 2026-10-20, Unreal **5.8.2 CL56702186**, packaged Develop
 
 - [tested] Headless Spill, prototypes alone: pilot hoist 7.33, puddle far-reject 9.01, nearest-distance memo 9.88, merged effect transform 10.61 (no gain, do not ship), all 5.03 ms against 10.57 off. Rendered, all exact prototypes cut Spill 13.06 to 7.18 ms, Cinder 5.36 to 4.72, Foundry 6.75 to 5.67.
 - [tested] With +50% growth the exact set gave 7.79 ms mean but p95 10.05, still above 8.33. A non-exact scenery-distance skip gave 7.23 against 7.19 without it (no gain, within noise). Foundry, Cinder and routes 1 to 3 growth rows were still running.
+
+## Right-sized verification
+
+- [general] Ship a fix when it is a good idea architecturally and you are reasonably sure it does not make the game worse. Verification scales with blast radius, not with the diagnosis harness above.
+- [general] The bar: the project's own automation tests, the in-game shadow check ([facts](unreal-native-profiling-facts.md)) when the fix is claimed exact, and before and after frame time on the three worst routes by frame time (here Spill, route 1, route 2), two runs each. One independent verifier per PR, merge when it passes, and a one-paragraph rollback note in the PR.
+- [general] Not required: per-route sweeps, noise-floor studies, multi-verifier panels. Behaviour-changing fixes need the owner's approval whatever the number of runs.

@@ -2,12 +2,13 @@
 
 Companion to [native profiling](unreal-native-profiling.md) (DEAD REDLINE, Unreal 5.8.2 CL56702186, Windows, 2026-10-20). The method is in [profiling method](../../engine-phaser/references/profiling-method.md). Read an engine fact from the installed source before predicting a cost from it.
 
-## Exactness ladder for performance fixes
+## Exact versus behaviour-changing, and the shadow check
 
-- [tested] Exact fixes were built as runtime switches (`-DRProto=pilot,hazfar,effects,memo` or `all`) that are off by default. With `-DRVerifyProto` each switch computes the original result beside the new one and counts mismatches into the race receipt. One Spill race checked 14,169,728 pilot cells, 2,217,072 puddle far-rejects (zero violations), 307,135 effect transforms and 227,819 memo hits, all with zero mismatches; one 60 s verify race on each of routes 0, 1, 2, 3, 5 and 6 reported zero mismatches and zero violations.
-- [tested] Whole-race trajectory file equality is not a usable proof here. `rivalrace-trajectory.csv` (one row per racer per second) differed between repeats of the same unchanged headless build: the first difference was an armor value of 158.4 against 160.0 at about 19 s of race clock. `-Deterministic -FPS=60` fixes the step and seed; it does not make the race reproducible. Check that two unchanged runs agree before using any comparison as proof, and prefer the side-by-side counters.
+- [general] The class decides who approves: exact fixes ship on the right-sized bar in [native profiling](unreal-native-profiling.md); behaviour changes need the owner. Re-architecting existing game AI is not something to build process around.
+- [tested] Exact fixes were built as runtime switches (`-DRProto=pilot,hazfar,effects,memo` or `all`), off by default. With `-DRVerifyProto` each computes the original result beside the new one, compares bitwise and counts mismatches and comparisons into the race receipt; zero mismatches over zero comparisons proves nothing. One Spill race checked 14,169,728 pilot cells, 2,217,072 puddle far-rejects (zero violations), 307,135 effect transforms and 227,819 memo hits, all with zero mismatches; one 60 s verify race on each of routes 0, 1, 2, 3, 5 and 6 reported zero mismatches and zero violations.
+- [tested] Trajectory or file equality between two runs is not an exactness proof when runs are not bit-reproducible. `rivalrace-trajectory.csv` (one row per racer per second) differed between repeats of the same unchanged headless build: the first difference was an armor value of 158.4 against 160.0 at about 19 s of race clock. `-Deterministic -FPS=60` fixes the step and seed; it does not make the race reproducible. Prefer the side-by-side counters.
 - [tested] Non-exact ideas stay prototypes until the owner approves: a scenery animation skip beyond 200 m of the camera (far items hold their last pose, `-DRProto=scenerylod`) measured 7.23 ms against 7.19 without it in the combined run, no measurable gain. A cached puddle penalty field and a lower AI planning rate change paths and outcomes and were held back for review.
-- [tested] Measure every fix alone and combined. The merged effect transform gave no gain headless; the pilot hoist gave 3.2 ms; together the exact set took Spill from 13.06 to 7.18 ms rendered.
+- [tested] Measure fixes alone and combined on the worst routes. The merged effect transform gave no gain headless; the pilot hoist gave 3.2 ms; together the exact set took Spill from 13.06 to 7.18 ms rendered.
 
 ## Engine facts read from the installed 5.8.2 source
 
