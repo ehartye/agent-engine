@@ -1,6 +1,6 @@
 # Engine profiles
 
-Dated 2026-09-30. Tags: **[tested]** ran on the dev machine (Windows 11, RTX-class GPU), **[documented]**
+Dated 2026-09-30. Tags: **[tested]** ran on the dev machine (Windows 11, a discrete GPU), **[documented]**
 read in vendor or project docs, **[general]** general knowledge not checked here. Re-check anything
 not tagged [tested] before relying on it.
 
@@ -142,7 +142,7 @@ MCP tool. See the UEFN authoring reference linked directly from the engine-selec
 
 - [tested] One command installs it on Windows (`winget install GodotEngine.GodotEngine`, 4.7.2). The sample
   scene built headless in seconds (`--import`, then a `--script` builder) and ran in a window on Vulkan,
-  Forward+, on the RTX 5090 (a window worked here, where Unreal's windowed D3D12 swap chain did not). A run
+  Forward+, on a discrete GPU (a window worked here, where Unreal's windowed D3D12 swap chain did not). A run
   to a screenshot and report takes about 12 seconds. No MCP server was used.
 - [tested] The 48-skin fox imported as one `Skeleton3D` (19 bones), 48 `MeshInstance3D` and one
   `AnimationPlayer` with `walk` and `trot` under their original names. The clips import with no loop.
@@ -199,11 +199,11 @@ MCP tool. See the UEFN authoring reference linked directly from the engine-selec
 ## Web stacks
 
 - [tested] Phaser 3.90.0 and three.js 0.186.1 builds of the sample scene ran in headless Chromium on the GPU
-  (WebGL renderer: RTX 5090 through ANGLE D3D11) with no console errors; a page loads in about a second and a
+  (WebGL renderer: a discrete GPU through ANGLE D3D11) with no console errors; a page loads in about a second and a
   full verification pass takes about 12 seconds, with no install of an engine and no sign-in. Phaser loaded the
   agent-sprites atlas unchanged through its Aseprite loader. three.js kept the GLB's clip names. The
   agent-beeps player picked all 4 pickup variants with no immediate repeat.
-- [tested] Phaser 4.2.1 (the `latest` release, 2026-07-09) carried a large procedural game (Fallow Valley): chunked GPU
+- [tested] Phaser 4.2.1 (the `latest` release, 2026-07-09) carried a large procedural 2D game: chunked GPU
   tilemaps, particles, parallel scenes, an Aseprite creature and terrain pipeline, on the GPU in headless Chromium. It also
   exposed two Phaser 4 rendering bugs (GPU tilemap layers draw at twice their position; empty tiles in a GPU layer draw as
   tile 0) and a tile-animation trap; see the [engine-phaser skill](../../engine-phaser/SKILL.md) for workarounds.
@@ -218,18 +218,8 @@ MCP tool. See the UEFN authoring reference linked directly from the engine-selec
 - [documented] Built on three.js: Needle Engine (its docs say all rendering goes through three.js and its
   components revolve around three's scene graph; Unity and Blender authoring, cloud hosting). A-Frame is also
   three.js-based [general]. Not tested here.
-- [tested] react-three-fiber 9.8.1 (three 0.186.1, react 19.3.0; `@react-three/rapier` 2.2.0 was measured and
-  dropped) carried Sector Run Slice 1, a procedurally generated arcade flight game with assembled parts, toon
-  outlines, particles and audio: the shared verifier passed 31 of 31 state checks in headless Chromium on the GPU
-  (backend `webgl2`, ANGLE D3D11 on an RTX 5070 Ti Laptop GPU), 60.0 fps averaged over 10 s at 1080p against a
-  55 fps gate (the display caps at 60), 48 draw calls, about 40 s per pass; one 1,234 kB JavaScript chunk (343 kB
-  gzip). Analytic swept-sphere hit tests replaced rapier (a rapier sensor missed 8 of 400 shots at 450 m/s), and the
-  toon ramp patch, outlines and particle emitter were written by hand. See [engine-r3f](../../engine-r3f/SKILL.md).
-- [tested] Babylon.js 9.29.0 with Havok 1.3.14 carried the same game from the same rules core: 31 of 31 checks on
-  the same GPU and backend, 60.0 fps over 10 s at 1080p, 69 draw calls, about 47 s per pass; a 1,578 kB main chunk
-  (380 kB gzip) plus Havok's 2.09 MB WASM. Havok handles ship-versus-rock contact, analytic tests the bolts; the
-  built-in particles, outline renderer and inspector were used, and features need hand-written side-effect imports.
-  WebGPU was not tried (the toon shader is GLSL only). See [engine-babylon](../../engine-babylon/SKILL.md).
+- [tested] react-three-fiber 9.8.1 (three 0.186.1, react 19.3.0) runs the [R3F example](../../../examples/web3d/r3f/README.md): its verifier passes 13 of 13 checks in headless Chromium on the GPU (backend `webgl2`, ANGLE D3D11): renderer string, ready means drawn, rendered axes, one key press fires once, toon ramp patch, outlines, instancing and a clean console. The toon ramp patch and the outline are hand-written, and fast shots use analytic swept tests. See [engine-r3f](../../engine-r3f/SKILL.md).
+- [tested] Babylon.js 9.29.0 runs the [Babylon.js example](../../../examples/web3d/babylon/README.md) from the same rules core: 5 Node convention tests and 16 of 16 verifier checks on the same machine, and a deep-import production build of about 1.6 MB of JavaScript. Havok, particles, GLB loading and WebGPU were not exercised there. See [engine-babylon](../../engine-babylon/SKILL.md).
 - [documented] PlayCanvas (engine with entity-component model and a hosted editor; engine MIT, editor
   proprietary). The comparing source is written by a web-engine vendor. Not tested here.
 - [tested] three.js has no flipbook, entities or physics: the sprite animation, the walk-around and the trigger

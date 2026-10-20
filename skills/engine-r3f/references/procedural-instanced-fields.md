@@ -6,7 +6,7 @@ How to draw a field of many obstacles or props (rocks, trees, crates) that look 
 
 ## Generate the field from a seed
 
-- [documented] Build positions, sizes and variant picks from a seeded generator ([rng.mjs](../../../examples/web3d/core/rng.mjs), a 32-bit PRNG), as [game.mjs](../../../examples/web3d/r3f/src/game.mjs) does with `createGame({ seed })`. The same seed gives the same field, so a test, a screenshot and a bug report all see one world.
+- [documented] Build positions, sizes and variant picks from a seeded generator ([rng.mjs](../../../examples/web3d/core/rng.mjs), a 32-bit PRNG), as [game.mjs](../../../examples/web3d/core/game.mjs) does with `createGame({ seed })`. The same seed gives the same field, so a test, a screenshot and a bug report all see one world.
 - [general] Vary a few things at once or the field reads as copies: a small set of base meshes (variants), a per-instance scale, a non-uniform stretch up to a chosen ratio, a brightness jitter from the instance seed, and a random spin axis and rate. Draw the seed for each property in a fixed order so adding a property later does not reshuffle the others.
 - [general] Give the field its own small rules module: spawn, drift, spin and shell/respawn bounds. Tests then assert ratios (maximum stretch), motion and determinism without a renderer.
 
