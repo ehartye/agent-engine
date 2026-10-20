@@ -1,47 +1,48 @@
 # Particles and explosions in Babylon.js
 
-Evidence: Sector Run Slice 1, `docs/lessons/babylon.md` (private repository). Versions are in [versions and migrations](versions-and-migrations.md). `[tested]` ran there, `[documented]` was read in official docs or source, `[general]` was not checked.
+Evidence: `examples/web3d` (core tests, the Babylon.js Node tests and verifier) plus library source. `[tested]` is reproduced by a command in this repo, `[documented]` was read in official docs or source, `[general]` is guidance not checked here. Pin: @babylonjs/core 9.29.0 (see [versions and migrations](versions-and-migrations.md)).
 
-Four of the findings below were made while the plan was written and re-run on 2026-10-07 on the NVIDIA GPU (a scratch page on the app's Vite and `@babylonjs/core`, no console errors or warnings).
+Bursts, sparks and smoke in a Babylon game come from `ParticleSystem` (CPU) and `GPUParticleSystem`, plus thin-instanced meshes for debris. The example has no particle systems, so almost all of this is read from `@babylonjs/core` source or carried as guidance; the pieces it does reproduce are the lockstep timing, hit-stop, and the thin-instance behaviour that debris relies on.
 
 ## CPU and GPU systems
 
-- [tested] `ParticleSystem` and `GPUParticleSystem` both render in headless Chromium, on the NVIDIA GPU and on SwiftShader.
-- [tested] A CPU system's `getActiveCount()` is the live count: 300 at 250 ms, 0 at 1,750 ms, 300 again after a re-armed burst. One draw call.
-- [tested] A GPU system's `getActiveCount()` is an emitted-so-far counter: 300 stayed 300 after the 0.9 s lifetime and became 600 after a second burst; with `emitRate` it climbed to the capacity of 2,000 while the lit pixel count went to 0. Two draw calls. Nothing can read GPU aliveness.
-- [tested] A GPU burst by `manualEmitCount` was still lit at 1,750 ms (about 15,000 lit pixels on both renderers), long past its lifetime. Use CPU systems for bursts.
-- [tested] Without `import '@babylonjs/core/Particles/webgl2ParticleSystem'`, `new GPUParticleSystem(...)` throws "The WebGL2ParticleSystem class is not available! Make sure you have imported it." although `GPUParticleSystem.IsSupported` is true (re-run 2026-10-07). The full import list is in [bundle size and imports](bundle-size-and-imports.md#tree-shaking-and-side-effect-imports).
+- [documented] A CPU system's `getActiveCount()` is `_particles.length`, the live count. A GPU system's `getActiveCount()` returns `_currentActiveCount`, the number of buffer slots in use (an emitted-so-far counter, bounded by roughly `emitRate * maxLifeTime` in `emitRateControl` mode), never the particles alive now (`Particles/thinParticleSystem.pure.js`, `gpuParticleSystem.pure.js`, 9.29.0). Nothing reads GPU aliveness back.
+- [general] An earlier project saw a GPU burst launched with `manualEmitCount` still lit well past its lifetime. Prefer CPU systems for one-shot bursts and keep GPU systems for continuous effects (speed lines, ambient dust) driven by `emitRate`. Check this on your version before relying on it.
+- [documented] `new GPUParticleSystem(...)` throws "The WebGL2ParticleSystem class is not available! Make sure you have imported it." unless `@babylonjs/core/Particles/webgl2ParticleSystem` was imported (`gpuParticleSystem.pure.js`, line 880), even when `GPUParticleSystem.IsSupported` is true. See [bundle size and imports](bundle-size-and-imports.md).
+- [general] Layers of one explosion (flash, ring, sparks, smoke, hit-sparks) work well as separate pooled CPU systems with different textures and gradients; debris as one thin-instanced mesh.
 
-## Layers of the explosion
+## Sizes
 
-- [tested] What shipped: the flash, ring, sparks, smoke and hit-spark layers are pools of CPU systems; debris is one thin-instanced mesh; the boost speed lines are the one GPU system, running continuously by `emitRate`.
-- [tested] With size gradients Babylon ignores `minSize` and `maxSize`, and the gradient values are world-unit sizes: `minSize = maxSize = 29` drew size 29, and adding `addSizeGradient(0, 1)` and `addSizeGradient(1, 1)` drew size 1 (a flash disc at 1 m instead of 29 m; re-run 2026-10-07). Write the sizes into the gradient, rewritten per burst.
+- [documented] With `addSizeGradient`, a new particle's size comes from the gradient factor and then interpolates between gradient factors: `minSize` and `maxSize` are no longer used (`_CreateSizeGradientsData`, `_ProcessSizeGradients` in `thinParticleSystem.function.js`). The gradient factors are world-unit sizes, not multipliers.
+- [general] Write the burst's size into the gradient factors, rewritten per burst. A flash that should be large but has `addSizeGradient(0, 1)` and `addSizeGradient(1, 1)` draws at size 1 whatever `minSize` says.
 
 ## Pooling and disposal
 
-- [tested] Arm each pooled system once and re-fire it by moving `emitter` and setting `manualEmitCount`; a re-armed CPU burst gave the full 300 again.
+- [documented] A CPU system emits `manualEmitCount` particles on its next update and then resets it to 0 (`thinParticleSystem.pure.js`). So arm each pooled system once, then re-fire it by moving `emitter` and setting the count:
 
-```ts
+```js
 ps.emitter = new Vector3(x, y, z);
 ps.manualEmitCount = count;
 ```
 
-- [tested] `ps.dispose()` also disposes the particle texture. With two systems sharing one `DynamicTexture`, after `a.dispose()` a second system on that texture was not ready after 60 frames; after `a.dispose(false)` it was. Same for `ParticleSystem` and `GPUParticleSystem` (re-run 2026-10-07). Dispose pooled systems with `dispose(false)` and the shared texture once.
-- [tested] Disable the debris mesh with `setEnabled(false)` when it has no instances, or Babylon draws its source mesh at the origin; see [disposal](scene-loop-and-observables.md#disposal).
+- [documented] `dispose(disposeTexture = true)` also disposes `particleTexture` (and the noise texture) for both system types. Pooled systems that share one texture must be disposed with `dispose(false)`, and the shared texture once, or the survivors lose it.
+- [tested] (babylon verify: thin instances) A thin-instanced mesh with zero instances still draws its source mesh at the origin, and `setEnabled(false)` hides it. Disable an empty debris mesh, as [`main.mjs`](../../../examples/web3d/babylon/src/main.mjs) does for its shots.
 
-## Hit stop and simulation time
+## Hit-stop and simulation time
 
-- [tested] `updateSpeed` ages particles per frame, and under `deterministicLockstep` `scene.getAnimationRatio()` is 1.000 every frame: 10 particles with a 1 s lifetime and the default `updateSpeed` 0.01 lived 1.68 s of wall time (twice). Setting `ps.updateSpeed = frame dt in seconds / scene.getAnimationRatio()` each frame gave 1.03 and 1.02 s (re-run 2026-10-07).
+- [documented] Particles age by `updateSpeed * scene.getAnimationRatio()` each rendered frame (`_scaledUpdateSpeed`), with `updateSpeed` defaulting to 0.01. Under `deterministicLockstep`, `Scene.animate` sets `_animationRatio = timeStep * (1 / timeStep) = 1` inside every step (`scene.pure.js`), so the ratio is always 1 and particles age per rendered frame, not per second. A 1 s lifetime at the default speed lasts 100 frames: 1.7 s at 60 fps, and longer on a slower display.
+- [general] Feed particles real time yourself: each frame set `updateSpeed = frameSeconds / scene.getAnimationRatio()` on every live system. An earlier project measured a 1 s lifetime lasting 1.7 s by default and about 1.0 s with this fix.
 
-```ts
+```js
 const speed = dtSeconds / Math.max(scene.getAnimationRatio(), 1e-3);
 for (const ps of systems) ps.updateSpeed = speed;
 ```
 
-- [tested] Take that frame time from the loop you actually run: on a page that called `scene.render()` itself, `engine.getDeltaTime()` never aged the particles, because that delta is measured by `engine.runRenderLoop`, which the page did not use. The app runs `engine.runRenderLoop`.
-- [tested] Hit-stop skips the gameplay step for 4 steps without advancing `simTime` (smoke `combat`: `hitStopSteps` >= 4), so hit-stop freezes gameplay while the verifier's simulation-time arithmetic stays exact.
+- [general] Take the frame time from the loop you actually run. `engine.getDeltaTime()` is measured by `engine.runRenderLoop`; a page that calls `scene.render()` itself gets a stale delta. The example uses `engine.runRenderLoop` ([`main.mjs`](../../../examples/web3d/babylon/src/main.mjs)).
+- [tested] (core tests: engine-owned steps honour a hit-stop; a tap during a hit-stop fires once when the simulation resumes) Hit-stop pauses the gameplay step through `session.runStep` without losing a tap.
+- [general] Particle time and gameplay time are separate clocks. To keep a hit-stop visible, let particles run on frame time (above) while gameplay stands still, or scale their speed on purpose.
 
 ## Cost
 
-- [tested] One draw call per CPU system and two per GPU system; the debris is a single thin-instanced mesh.
-- [tested] Count the live layers in the app (`Effects.counts()`), not from the GPU system, which reports emitted totals; see [the probe object](probe-and-verification.md#the-probe-object).
+- [general] Each CPU system is at least one draw call and each GPU system at least two (update and render); a thin-instanced debris mesh is one. Read `SceneInstrumentation.drawCallsCounter` into the probe ([probe and verification](probe-and-verification.md)) and set a budget for the sum of live layers.
+- [general] Count live layers in your own code (a small `Effects.counts()`), not from `getActiveCount()` on GPU systems.

@@ -1,57 +1,63 @@
 # Cell shading and outlines in Babylon.js
 
-Evidence: Sector Run Slice 1, `docs/lessons/babylon.md` (private repository). Versions are in [versions and migrations](versions-and-migrations.md). `[tested]` ran there, `[documented]` was read in official docs or source, `[general]` was not checked.
+Evidence: `examples/web3d` (core tests, the Babylon.js Node tests and verifier) plus library source. `[tested]` is reproduced by a command in this repo, `[documented]` was read in official docs or source, `[general]` is guidance not checked here. Pin: @babylonjs/core 9.29.0 (see [versions and migrations](versions-and-migrations.md)).
 
-The look: three toon bands from a palette ramp, plus an ink outline, on every ship part and on thin-instanced asteroids.
+A common stylised look is a few toon bands from a palette ramp plus an ink outline. The example uses Babylon's built-in outline renderer on a plain `StandardMaterial` mesh and on thin instances ([`main.mjs`](../../../examples/web3d/babylon/src/main.mjs), [`labs.mjs`](../../../examples/web3d/babylon/src/labs.mjs)); `cd examples/web3d/babylon && npm run verify` runs the checks named below. It has no toon shader, so the toon material is `[general]` or `[documented]`.
 
-## Options considered
+## Options for the bands
 
-- [tested] `CellMaterial` (`@babylonjs/materials/cell/cellMaterial`) renders on a GLB and on thin instances (2 draw calls each), but exposes only `diffuseColor`, `diffuseTexture` and `computeHighLevel`. Rejected: it cannot take a palette ramp.
-- [documented] Its brightness steps are a fixed table in `cell.fragment.js`: two levels split at N.L 0.5, or five levels at 0.95, 0.5, 0.2 and 0.03 with `computeHighLevel` (`@babylonjs/materials` 9.29.0 source).
-- [documented] The node-material block list has `gradientBlock` but no cell, toon, ramp or outline block (`@babylonjs/core` 9.29.0).
-- [tested] The outline renderer (`mesh.renderOutline`, from `@babylonjs/core/Rendering/outlineRenderer`) exists and works on GLB meshes and on thin instances. Kept.
+- [general] `CellMaterial` (`@babylonjs/materials/cell/cellMaterial`) is the stock option. It exposes `diffuseColor`, `diffuseTexture` and `computeHighLevel`, and its brightness steps are a fixed table in the fragment shader (two levels, or five with `computeHighLevel`), so it cannot take a palette ramp. Read the shader in your installed version before relying on this; `@babylonjs/materials` is not installed in this repo.
+- [documented] The node-material block list has `gradientBlock` but no cell, toon, ramp or outline block (`Materials/Node/Blocks`, 9.29.0).
+- [general] When the ramp must come from a palette, write a small `ShaderMaterial`: pick one of three ramp colours by N.L against two thresholds, and keep the ramp in uniforms so a palette change is a `setColor3` call, not a rebuild.
 
-## What worked
-
-- [tested] A custom `ShaderMaterial` with three bands chosen by N.L and three ramp uniforms, plus the outline renderer. To run on thin instances it uses the `instancesDeclaration` and `instancesVertex` includes, whose modules must be imported explicitly or the shader fails to compile (`src/render/toon.ts`):
-
-```ts
-import '@babylonjs/core/Shaders/ShadersInclude/instancesDeclaration';
-import '@babylonjs/core/Shaders/ShadersInclude/instancesVertex';
-import '@babylonjs/core/Rendering/outlineRenderer';
-// vertex:   #include<instancesDeclaration> ... main() { #include<instancesVertex> ... finalWorld * vec4(position, 1.0) }
+```js
+ramp.forEach((hex, i) => material.setColor3(`uRamp${i}`, Color3.FromHexString(hex)));
 // fragment: vec3 c = ndl > uBands.y ? uRamp2 : (ndl > uBands.x ? uRamp1 : uRamp0);
+```
+
+## Toon shader on thin instances
+
+- [documented] `ShaderMaterial` adds `#define INSTANCES` and, for thin-instanced meshes, `#define THIN_INSTANCES` itself and pushes the instance attributes (`Materials/shaderMaterial.pure.js`, 9.29.0). Your vertex shader only has to include the Babylon chunks and use `finalWorld`:
+
+```glsl
+#include<instancesDeclaration>
+void main() {
+  #include<instancesVertex>
+  gl_Position = viewProjection * finalWorld * vec4(position, 1.0);
+}
+```
+
+- [documented] The chunks are modules in `@babylonjs/core/Shaders/ShadersInclude/` that register themselves into the shader store when imported. An unregistered `#include` is not rejected at once: the shader processor tries to fetch `ShadersInclude/<name>.fx` from the shaders repository (`Engines/Processors/shaderProcessor.js`), which a bundled app does not serve. The built-in outline vertex shader imports the two chunks for itself.
+- [general] Import `instancesDeclaration` and `instancesVertex` explicitly in your own material module rather than relying on the outline module having loaded. More in [bundle size and imports](bundle-size-and-imports.md).
+
+## Built-in outline renderer
+
+- [tested] (babylon verify: built-in outline closes on a sphere, a hard-edged box and a thin plate with similar thickness) With `mesh.renderOutline = true` (side-effect import `@babylonjs/core/Rendering/outlineRenderer`), `outlineWidth` 0.04 and the camera 8 m away, the outline closes (at least 95 % of the silhouette edge has ink within 3 px) on a smooth sphere, a box with hard edges and a 0.1 m thick plate, and the ink thickness per edge pixel is within 0.6x to 1.4x of the sphere's.
+
+```js
+import '@babylonjs/core/Rendering/outlineRenderer';
 mesh.renderOutline = true;
-mesh.outlineWidth = 0.04; // metres, the same on every part
+mesh.outlineWidth = 0.04; // object-space units, see below
 mesh.outlineColor = Color3.FromHexString(palette.outline);
 ```
 
-## Outlines on hard-edged parts
+- [documented] `outline.vertex` draws `position + normal * offset` in object space (`Shaders/outline.vertex.js`), before the world matrix. So the width is in the mesh's own units: a scaled mesh gets a proportionally scaled outline, and the on-screen width shrinks with distance. Pick `outlineWidth` per scale and distance, not as a pixel width.
+- [documented] The outline is a second draw of the mesh, issued in a before-mesh scene stage with depth writes off; it also handles thin-instanced meshes (`Rendering/outlineRenderer.pure.js`). So an outlined mesh costs one extra draw call, per mesh and not per instance.
+- [general] Keep `outlineWidth` the same across the parts of one model; a smaller width on small parts can fall under 2 px at the chase-camera distance.
+- [general] A dark outline is invisible against a near-black background and only reads where parts overlap other parts or terrain. Choose the outline colour for the background, not only the model.
 
-- [tested] Symptom: with `outlineWidth` 0.04 the smooth-normal meshes (fuselage, canopies) got thick closed outlines, but wings, fins, vanes, boxes and the caps of every lathed cylinder got at most a 1 px hairline. At the chase camera the starter ship's wings and fin read as unoutlined. The spike had already shown the outline offset and open at the corners of a flat-shaded mesh.
-- [documented] Cause: the outline pass (`outline.vertex`) draws `position + normal * offset` in object space, normal not normalised. A split-normal mesh stores one copy of each corner per face, so the copies move apart and the shell opens along every hard edge.
-- [tested] Second cause: the same open-ended engine bell measured 0.69 or 0.99 outline coverage depending on which smoke stages had run before it.
-- [documented] Why: the renderer draws the shell in `_beforeRenderingMeshStage`, before the mesh's own material binds its state, so the shell inherits the previous draw call's face culling.
-- [tested] Workaround, at load time on the container (`src/render/outlineNormals.ts`, `withOutlineNormals` in `src/render/toon.ts`): copy the shading normals to a `shadeNormal` attribute, which the toon shader reads under a `SHADE_NORMAL` define, and replace `normal` with outline normals. Weld corners by position (1e-4 m), take one normal per corner from the distinct normals of the triangles meeting there, normalise it and lengthen it by 1 / min(n . face), capped at 1.5 widths, so the shell moves the full width out along every face (sqrt 2 on a right-angled edge). Clones share the geometry, so this runs once per GLB.
-- [tested] Workaround for the culling: per part mesh, `mesh.onBeforeRenderObservable.add(() => engine.setState(false))`, so the shell draws with no culling every frame. A welded clone, a second inverted hull or a new outline method were not needed.
-- [tested] Check (smoke `outline` stage, each mesh alone on grey from two sides; coverage is the share of silhouette pixels with ink within about 2 px): before, the flat or hard-edged meshes scored 0.37 to 0.89 and the smooth ones 0.975 to 0.983; after, all 71 meshes score 0.93 to 0.996 (dart wings 0.43 to 0.95, fin 0.51 to 0.98). Whole ship from close, side and front: 0.57 to 0.84 before, 0.98 to 0.995 after; at the chase distance 0.13 to 0.42 before, 0.80 to 0.91 after (gates 0.9, and 0.7 at the chase distance). Draw calls 54 before and after, 60 fps; no pixel changed toon band.
-- [tested] Still seen: a small black wedge where one part pokes into another (the shell's depth is written after the mesh), and no visible outline at the silhouette against the near-black space background; it reads where parts overlap parts or rocks. A mitre cap of 2 instead of 1.5 added spikes at tips and corners and closed nothing more.
-- [tested] Keep the width at 0.04 m on every part: scaled down on small parts it would drop under 2 px at the chase distance.
+## Hard-edged meshes
 
-## Palette ramps
+- [general] An earlier project reported hairline outlines on thin, hard-edged parts (wings, fins, cylinder caps) at the same width that closed on smooth meshes. This example did not reproduce it: the box and plate above closed like the sphere. Check your own parts with a lab like [`labs.mjs`](../../../examples/web3d/babylon/src/labs.mjs) before adding a fix.
+- [documented] Possible mechanism, from the shader above: a mesh with split (per-face) normals stores one vertex copy per face corner, and each copy moves along its own normal, so the shell can open along hard edges. Normals that are welded by position and averaged for the outline only would close it.
+- [general] If you do replace normals for the outline, keep the shading normals in a separate attribute for the toon shader, and do it once per GLB on the container's meshes, because clones share geometry ([loading agent-meshes parts](loading-agent-meshes-parts.md)).
+- [general] The earlier project also saw outline coverage on one open-ended mesh vary with what had rendered before it, and cured it with `mesh.onBeforeRenderObservable.add(() => engine.setState(false))`. The outline is drawn before the mesh binds its own state (`_beforeRenderingMesh` above), so it can inherit the previous draw's culling.
 
-- [tested] Two shared `ShaderMaterial`s (toon and accent) serve every part. A palette change sets the ramp uniforms and the outline colour on the existing materials and meshes, with no rebuild; the ember ramp, and after a repaint the azure ramp and outline, were found on screen by pixel count (smoke `boot`, `flight`, `outline`, `loop`).
+## Instances and cost
 
-```ts
-ramp.forEach((hex, i) => material.setColor3(`uRamp${i}`, Color3.FromHexString(hex)));
-```
+- [tested] (babylon verify: 1,000 meshes cost about 1,000 draw calls; one thin-instanced mesh costs 1) Thin instances keep many copies of a target or projectile at one draw call.
+- [general] An outlined mesh draws its outline as an extra pass, so plan for about two draw calls per outlined mesh; the example does not count it.
+- [tested] (babylon verify: thin instances) One thin instance draws only at its own position. `thinInstanceCount = 0` still draws the source mesh at the origin; `setEnabled(false)` hides it. Disable an empty pool, as `main.mjs` does for its shots.
+- [general] Measure the outline's frame cost with a GPU timer or a synchronous read; this repo does not ship timings, and an earlier project saw it as a small fraction of a millisecond at dozens of instances.
 
-## Outlines on instances
-
-- [tested] The outline renderer outlines thin instances with one extra draw call per outlined mesh, not per instance: 2,678 black outline pixels around 60 instances and 1,251 around a GLB wedge, identical on the NVIDIA and Intel GPUs.
-- [tested] The asteroids (thin instances of closed icospheres) need no outline-normal fix and were left unchanged.
-
-## Cost
-
-- [tested] 60 outlined thin instances: 0.071 ms per frame against 0.056 ms without the outline (NVIDIA).
-- [tested] Each outlined mesh adds one draw call, so every part mesh is drawn twice; the ship scene measured 54 draw calls (smoke `perf`) and 69 under the verifier with `engine-ion` fitted. The outline-normal fix added none.
+Related: [bundle size and imports](bundle-size-and-imports.md), [particles and explosions](particles-and-explosions.md).
