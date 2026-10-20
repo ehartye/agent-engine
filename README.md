@@ -95,7 +95,11 @@ acceptance test for the skills. Each engine has to pass it. Scripts are in `exam
 
 ## Checking the skills
 
-`scripts/lint-skills.mjs` checks the structure of a skill: frontmatter, relative links, the "You are about to / Read" table, size budgets, unfilled placeholders and, with `--require-claims`, an evidence label on every claim. Run it on the scoped skills with `node scripts/lint-skills.mjs skills/engine-r3f skills/engine-babylon skills/phaser-architecture skills/engine-visual-polish --require-claims --skill-md-labels`. The tests are `node --test scripts/lint-skills.test.mjs scripts/release-consistency.test.mjs`; they also check that the plugin version, the README and the keywords agree. Node 20.11 or newer. CI (`.github/workflows/lint-skills.yml`) runs both commands on pull requests and on pushes to `main`; the older skills do not pass the label rules yet and are not linted there. Structural checks do not establish that a skill improves an agent's work or that a visual slice passes runtime review.
+Run `node scripts/check.mjs` locally before pushing or merging (Node 20.11 or newer, no dependency install). It runs all Node tests in `scripts/` and `tests/`, the web verification and no-sleeps tests, and strict lint of the four scoped newer skills. It exits on failure and works from any current directory when invoked by its path.
+
+This project is in **dev** mode: local merge checks are the gate. CI (`.github/workflows/lint-skills.yml`) is one non-required Linux observer on ready pull requests, with path filters, cancellation of superseded runs and a five-minute job timeout. It also runs weekly, manually and on `v*` release tags. Merging does not start a duplicate run on `main`; draft pull requests skip the job until ready for review.
+
+`scripts/lint-skills.mjs` checks frontmatter, relative links, the "You are about to / Read" table, size budgets, placeholders and evidence labels. Strict lint covers `engine-r3f`, `engine-babylon`, `phaser-architecture` and `engine-visual-polish`; the older skills still have label-rule backlog. Browser/GPU sample-scene acceptance remains a separate, explicitly set up run. Structural checks do not establish that a skill improves an agent's work or that a visual slice passes runtime review.
 
 ## Install
 
