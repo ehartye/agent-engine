@@ -31,7 +31,7 @@ path; see the CI reference for why renders cannot be repeated.
 
 Host **one** format. For a browser game the default is Ogg Opus (`web-universal`: 44 kbps music, 48 ambience,
 72 sfx, 24 for the adaptive mix preview), one catalog, no twin folder, no format probe in the loader, no
-URL rewrite. Fallow Valley tried a second MP3 build and removed it: two encodes to keep in sync, a catalog per
+URL rewrite. One project tried a second MP3 build and removed it: two encodes to keep in sync, a catalog per
 format, and a probe that can misreport. Reasons Opus wins for loops:
 
 - Opus carries its length in the container (pre-skip and end granule position), so every browser trims alike.
@@ -40,13 +40,13 @@ format, and a probe that can misreport. Reasons Opus wins for loops:
 - Opus is byte-deterministic for one WAV and one ffmpeg build, so the lock can pin encoded bytes.
 - It is smaller at equal quality.
 
-The cost is reach: current Chromium and Firefox decode it, Safari and iOS only from 18.4 (macOS 15.4; Fallow Valley's
-floor, accepted by the owner and checked by ear on a device, not by frame count), and WebKit on Linux and Windows
+The cost is reach: current Chromium and Firefox decode it, Safari and iOS only from 18.4 (macOS 15.4; a floor one project
+accepted and checked by ear on a device, not by frame count), and WebKit on Linux and Windows
 (GStreamer builds such as Playwright's WebKit) has no Opus at all. `canPlayType('audio/ogg; codecs=opus')` is `""` on
 those. Do not paper over this with a fallback format. Probe, state the floor in the notice, and tell the player.
 
-Choose the format by measuring frames, not by listening. [tested] `decodeAudioData` of one 68 s loop, frame delta against
-the source (Fallow Valley, Chromium 153 and Firefox 155):
+Choose the format by measuring frames, not by listening. [general] `decodeAudioData` of one 68 s loop, frame delta against
+the source (Chromium 153 and Firefox 155; reported from one project, not reproduced here):
 
 | Container | Chromium | Firefox |
 |---|---|---|
@@ -71,7 +71,7 @@ At boot, before loading any audio:
 1. Test Opus support with `canPlayType('audio/ogg; codecs="opus"')`. Treat `""` as no. Treat `"maybe"` and
    `"probably"` as unconfirmed: the probe is a hint, and it can misreport on some browsers.
 2. For a confirmed answer, decode a tiny Opus clip with `decodeAudioData` and catch the rejection. That is the real
-   test, and it is what the player's `E_DECODE` reports. Embed the clip in the bundle (Fallow Valley: 170 bytes) and
+   test, and it is what the player's `E_DECODE` reports. Embed the clip in the bundle (about 170 bytes) and
    decode it on a throwaway `OfflineAudioContext`: no gesture and no network are needed, and the callback-only and
    `webkit`-prefixed forms are handled. Playwright's WebKit may have no `AudioContext` at all, so the decision has three
    outcomes: ok, cannot-decode and no-web-audio.
@@ -93,8 +93,8 @@ game still proves its decode.
 
 - [tested] Do not read the gate from the `AudioContext` state under Playwright. `page.evaluate` counts as user
   activation in Chromium, so a fresh context reports `running` before any click and a "locked until the first
-  gesture" check passes vacuously (Sector Run, React Three Fiber and Babylon.js apps, Chromium 153; repeated on the
-  `examples/web` sample pages). Launch without `--autoplay-policy=no-user-gesture-required`, keep the app's own
+  gesture" check passes vacuously (reproduced on the
+  `examples/web` sample pages, Chromium 153). Launch without `--autoplay-policy=no-user-gesture-required`, keep the app's own
   `unlocked` flag set only from a trusted (`event.isTrusted`) pointer or key event, assert it is false and nothing
   played before one real `page.mouse.click`, and true after it. `examples/web/verify.mjs` checks this; a page that
   unlocked from an evaluate failed it.
@@ -102,13 +102,13 @@ game still proves its decode.
 ## Memory: decoded buffers are large
 
 Web Audio decodes whole files to uncompressed 32-bit float PCM, so memory is set by duration, not by file size.
-Measured on Fallow Valley (48 kHz stereo):
+Reported from one project (48 kHz stereo; the arithmetic is reproducible: 4 bytes x 2 channels x 48,000 x seconds):
 
 - **26.3 MB per decoded layer** of a song.
 - **131.6 MB for one 5-layer adaptive song**, because each layer is the whole song as its own buffer so the layers
   stay sample-aligned.
 - Compressed files are about 1 MB each; the 34 MB audio folder (214 MB as WAV) is not the budget. The decoded set is.
-  Gate the folder size in CI (Fallow Valley: 60 MB) and plan the decoded budget separately.
+  Gate the folder size in CI (for example a 60 MB ceiling) and plan the decoded budget separately.
 
 Consequences:
 
@@ -130,8 +130,8 @@ Consequences:
    A hosted smoke test closes the loop: build with the Pages base, serve it with `vite preview --base=...`, expose a
    production handle behind a query flag (`?audiodebug`), and assert that every audio response is 200 from under the
    base, 0 audio bytes arrive before the gesture, after one gesture the context, beds, music and a cue's
-   `AudioBufferSourceNode` start, the console is clean and first-load bytes stay in budget (Fallow Valley: 14 files,
-   4.1 MB). Skip it when the audio folder is absent, and run the catalog tests with `REQUIRE_AUDIO=1` in CI so a
+   `AudioBufferSourceNode` start, the console is clean and first-load bytes stay in budget (for example 14 files,
+   4 MB). Skip it when the audio folder is absent, and run the catalog tests with `REQUIRE_AUDIO=1` in CI so a
    missing render fails instead of skipping.
 5. Decoded-memory budget and a release policy (the player does not evict).
 6. CI from the template, fetching by lock, plus an advisory browser job.

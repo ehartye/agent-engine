@@ -1,8 +1,9 @@
 # UEFN saved controls and capture
 
 Read this when native UEFN edits need scoped saves, disposable proof cleanup,
-Verse references, compact buttons or screenshots. First-hand evidence checked
-through 2026-10-03 in UEFN 42.30.
+Verse references, compact buttons or screenshots. Observed in one consuming
+UEFN project on UEFN 42.30; not reproduced in this repo. Every claim below is
+labelled `[general]` for that reason.
 Inspect the installed schemas after upgrades; these observations are not an API
 contract for every project. Use the authoring reference for connection setup.
 
@@ -35,11 +36,10 @@ physical interaction, third-person camera behavior, late joining or performance.
 
 ## Name rotation axes and check the visible component
 
-**Tested on UEFN 42.30:** `unreal.Rotator(0, 90, 0)` produced
-`pitch=90, yaw=0, roll=0` in the installed native Python API. A museum repair
-had treated the middle argument as yaw: ten active switches lay flat, and
-eighteen others were upside down. Twenty-four active switches were already
-correct. Do not infer this constructor's positional order from a displayed
+**[general] Observed on UEFN 42.30:** `unreal.Rotator(0, 90, 0)` produced
+`pitch=90, yaw=0, roll=0` in the installed native Python API. A repair that
+treated the middle argument as yaw left some switches lying flat and others
+upside down. Do not infer this constructor's positional order from a displayed
 Pitch/Yaw/Roll struct or an MCP JSON schema.
 
 Use explicit `pitch=`, `yaw=` and `roll=` arguments for every native constructor,
@@ -47,7 +47,7 @@ including camera and verification code. MCP rotation objects name their fields;
 that does not make positional Python constructors equivalent. Recheck the
 installed API after upgrades instead of assuming this observation is universal.
 
-The tested Military Switch ButtonMesh used local +X as its visible front and
+The observed Military Switch ButtonMesh used local +X as its visible front and
 +Z as its top. For an upright world yaw, verify **both** its world forward and
 up vectors. Forward alone accepts a switch rolled 180 degrees. Actor rotation
 alone can miss a rotated child component: inspect the current `buttonMesh`,
@@ -76,34 +76,25 @@ if (math.dist([front.x, front.y, front.z], expected_front) > .001
 Snapshot identities, positions, scales and interaction properties first. Apply
 only the audited rotation changes, preserve already-correct and retired devices,
 then read back the visible basis and protected state before scoped package saves.
-The museum repaired exactly 28 actors; all 52 active switches then passed both
-axis checks, while 614 positions/scales and 586 other rotations stayed unchanged.
-Three editor captures confirmed upright visible switches. These checks do not
-establish physical interaction, readable placards or full-artwork camera framing.
-
-The measured constructor result, protected-state checks and source/native hashes
-are in museum [PR #28](https://github.com/ehartye/art_explorers_fn/pull/28),
-`museum/controls/button-rotation-verification.json`, with
-`scripts/audit_button_rotation.py`, `repair_button_rotation.py` and
-`verify_button_rotation.py`. This is historical rotation-only evidence; later
-wall-layout changes intentionally alter pixel positions and visible scales.
-The living wiki record is
-`wiki/authored/art-explorers-fn/notes/native-button-rotation-repair.md`.
+A good repair receipt shows every active switch passing both axis checks while
+all other positions, scales and rotations stay unchanged, plus a few editor
+captures of upright switches. These checks do not establish physical
+interaction, readable placards or full-prop camera framing.
 
 ## Save only owned external actor packages
 
-**Tested:** `actor.get_package()` returned the external actor package in the
+**[general]** `actor.get_package()` returned the external actor package in the
 loaded island. Verify `actor.is_package_external()` and the actual package path;
 do not assume the returned object is the map or assume every actor is external.
 `EditorLoadingAndSavingUtils.save_packages(packages, False)` saved scoped sets
-of 19 and 122 named museum actors. Check its boolean result. Related external
+of named actors. Check its boolean result. Related external
 object packages may also change for an owned folder; inspect ownership before
 staging. A source commit does not back up native assets unless those files ship.
 
-The following function uses those tested native calls. Its arguments come from
+The following function uses those native calls. Its arguments come from
 a project-specific preflight: the exact island level, unique owned actor paths,
 and the verified external package prefix. It has not been run as a reusable
-function; the museum scripts separately exercised the calls and guards.
+function; the calls and guards were exercised separately in project scripts.
 
 ```python
 import unreal
@@ -137,91 +128,84 @@ def save_owned_actor_packages(expected_level, actor_paths, external_package_pref
 Do not replace this preflight with Save All. Empty target lists must fail closed.
 Retain the saved package names and pending-save state in a receipt. Reconcile a
 timeout against native package state before another mutation. Serialize native
-scripts and callback jobs: the tested remote entrypoint shared Python globals.
+scripts and callback jobs: the observed remote entrypoint shared Python globals.
 Do not call MCP from inside an editor Python script.
 
 For an extra dirty ActorFolder, derived LevelBounds, native material pins or sky
 collision readback, use [exterior materials and save scope](uefn-native-exterior.md).
-The tested folder follow-up identified the new package separately and preserved
-the original dirty external objects; a successful actor save was not replayed.
+In the observed folder follow-up the new package was identified separately and
+the original dirty external objects were preserved; a successful actor save was
+not replayed.
 
 ## Delete only reconciled disposable proof assets
 
-**Tested on 42.30:** immediate deletion failed while proof assets remained in
-use. Closing owned asset editors returned zero; Unreal GC alone did not release
-the assets. Python `gc.collect()` followed by
-`unreal.SystemLibrary.collect_garbage()` allowed twelve remaining disposable
-assets to be deleted. The Python return value was 33 **unreachable objects**,
-not 33 cycles. The exact retaining references/internal cause were not inspected.
-Later hardened cleanup returned 574 unreachable Python objects and removed an
-additional owned comparison sequence. Do not turn those observations into a
-universal cleanup guarantee or invent a reference-clearing fix.
+**[general] Observed on 42.30:** immediate deletion failed while proof assets
+remained in use. Closing owned asset editors returned zero; Unreal GC alone did
+not release the assets. Python `gc.collect()` followed by
+`unreal.SystemLibrary.collect_garbage()` allowed the remaining disposable
+assets to be deleted. The Python return value counts **unreachable objects**,
+not cycles. The exact retaining references/internal cause were not inspected.
+A later hardened cleanup returned hundreds of unreachable Python objects and
+removed an additional owned comparison sequence. Do not turn those observations
+into a universal cleanup guarantee or invent a reference-clearing fix.
 
 Treat deletion as a separate operation from experiment authoring. Before any
 delete, reconcile against current native state, not just a `removed` flag:
 
-1. Verify the exact loaded island and that editor Sequencer is idle. Stop or
-   finish the owned callback/job and remove its owned transient fixtures first.
-   Do not delete an asset still evaluated or used by a live fixture.
-2. Derive the complete expected proof set from the original experiment recipe:
-   exact role, version, package and object name. A folder, naming prefix or
-   glob is not deletion ownership. The museum expected five SK/PA/LS triplets
-   plus two explicitly named sequences, including one outside its Proof folder.
-   Accept an exact package path or its matching package.object form; refuse a
-   neighboring version, nested path, unknown role or mismatched object suffix.
-3. Preserve historical failed receipts verbatim. Write a separate read-only
-   reconciliation containing each original receipt's SHA-256, exact fixture
-   paths, current absence and idle evaluation evidence. Missing or incomplete
-   identities fail closed. The demonstrated set had eight original receipts.
-4. Immediately before deletion, re-hash every original receipt, require the
-   same complete set and recheck each recorded fixture path unoccupied. A path
+1. [general] Verify the exact loaded island and that editor Sequencer is idle.
+   Stop or finish the owned callback/job and remove its owned transient fixtures
+   first. Do not delete an asset still evaluated or used by a live fixture.
+2. [general] Derive the complete expected proof set from the original experiment
+   recipe: exact role, version, package and object name. A folder, naming prefix
+   or glob is not deletion ownership. The expected set may include named
+   sequences outside the proof folder. Accept an exact package path or its
+   matching package.object form; refuse a neighboring version, nested path,
+   unknown role or mismatched object suffix.
+3. [general] Preserve historical failed receipts verbatim. Write a separate
+   read-only reconciliation containing each original receipt's SHA-256, exact
+   fixture paths, current absence and idle evaluation evidence. Missing or
+   incomplete identities fail closed.
+4. [general] Immediately before deletion, re-hash every original receipt, require
+   the same complete set and recheck each recorded fixture path unoccupied. A path
    may have been reused after reconciliation: even a different actor there is
    a stop, not permission to destroy it. Verify protected original assets and
    the full exact asset set against the preflight. Refuse a prior cleanup-attempt
    receipt instead of overwriting it or treating elapsed time as reconciliation.
-5. Write a pending cleanup receipt before collection/deletion. Avoid loading
-   owned proof assets during the deletion pass. In the demonstrated recovery,
+5. [general] Write a pending cleanup receipt before collection/deletion. Avoid
+   loading owned proof assets during the deletion pass. In the observed recovery,
    collect unreachable Python wrappers before Unreal UObject collection; do
    not clear shared Python globals, force deletion or suppress references to
    make the operation pass. A GC count proves collection, not asset absence.
-6. Delete only exact owned targets with `EditorAssetLibrary.delete_asset`.
+6. [general] Delete only exact owned targets with `EditorAssetLibrary.delete_asset`.
    Record the currently attempted path and each successful deletion. Check
    the boolean result and `does_asset_exist` after each target. Stop on failure;
    retain the partial receipt and inspect/reconcile before a later operation.
    Refuse automatic retries, including after a client timeout.
-7. Check every expected destination absent, not merely those reported deleted.
-   Restore selection/evaluation state and verify protected native state. Record
-   explicit remaining targets, package-save state and the evidence boundary.
-   Never replace this process with Delete Directory, Save All or user-global
-   clearing. These are editor cleanup checks, not Fortnite behavior/performance.
+7. [general] Check every expected destination absent, not merely those reported
+   deleted. Restore selection/evaluation state and verify protected native state.
+   Record explicit remaining targets, package-save state and the evidence
+   boundary. Never replace this process with Delete Directory, Save All or
+   user-global clearing. These are editor cleanup checks, not Fortnite
+   behavior/performance.
 
-The museum final receipt covers all seventeen exact asset paths absent and
-eight hash-bound reconciliations; the hardened final pass itself deleted only
-the one extra sequence still present. Do not claim it deleted all seventeen in
-one operation. One earlier disposable physics package was saved and then deleted;
-the proof feature saved no production sculpture changes. Five source-scope
-regression tests exercise nearby/foreign names, roles/versions, fixture scope
-and stale hash/removed-state guards. They do not execute native GC or deletion.
+A final receipt should show every exact asset path absent and each hash-bound
+reconciliation; say which pass deleted what, and do not claim one operation
+deleted everything. A disposable physics package may be saved and then deleted;
+the proof feature should save no production changes. Source-scope tests of the
+ownership guards (nearby or foreign names, roles, versions, stale hashes) do not
+execute native GC or deletion.
 
 **API discovery is separate evidence:** installed `FortPhysicsAssetEditorSubsystem`
 exposed body creation, weighted bone vertices and primitive authoring/inspection;
 generic `PhysicsAsset.skeletal_body_setups` was not reflected. Shapes created in
-the failed chair PhysicsAsset experiments still produced zero query hits.
+failed PhysicsAsset experiments on a placed prop still produced zero query hits.
 Discover actual available APIs; neither the existence of authoring methods nor
 failed queries establishes universal runtime support or a performance budget.
-
-Source/negative receipts are in museum
-[PR #15](https://github.com/ehartye/art_explorers_fn/pull/15):
-`scripts/collision_proof_scope.py`, `reconcile_collision_proofs.py`,
-`cleanup_collision_proof_assets.py`, `tests/test_collision_proof_scope.py` and
-`museum/collision/editor-proof.json`. The owner's living wiki note is
-`wiki/authored/art-explorers-fn/notes/exhibit-collision-audit-and-proofs.md`.
-The later production chair installation uses a separate recipe and is not a
-disposable target; see the directly linked moving-cover reference in the skill.
+A production installation uses a separate recipe and is not a disposable target.
 
 ## Distinguish built-in adapters from custom Verse instances
 
-**Tested:** built-in device editables such as `button_device` and
+**[general]** Built-in device editables such as `button_device` and
 `cinematic_sequence_device` returned typed adapter objects through
 `DeviceTools.GetDeviceProperties`. Preflight each adapter with ObjectTools:
 its `savedActor` schema must identify `/Script/Engine.Actor`. Set `savedActor`
@@ -231,14 +215,14 @@ was rejected. Do not discard a working adapter to work around this.
 
 An obsolete built-in binding can be cleared by setting `savedActor` to JSON
 `null`, with readback. Preserve field names during a controller migration so
-existing saved devices retain their compatible schema. The reduced museum
-controls cleared 59 obsolete/default slots while preserving active references.
+existing saved devices retain their compatible schema. Clearing obsolete or
+default slots this way preserved the active references.
 
 Custom Verse-controller editables need their contained Verse instance, not the
-actor and not a built-in `savedActor` adapter. In the tested island, removing
+actor and not a built-in `savedActor` adapter. In the observed island, removing
 the final property component from an existing controller adapter path located
 that containing instance. `DeviceTools.SetDeviceProperty` accepted and read back
-the resulting reference; 35 actual references subsequently passed server QA.
+the resulting reference, and the actual references subsequently passed server QA.
 Validate the containing object and expected class in a new project. Do not
 hardcode a generated instance suffix or apply this path rule to arbitrary objects.
 
@@ -248,14 +232,14 @@ schema rather than treating every Fortnite device as the same object type.
 
 ## Compact switches without shrinking interaction targets
 
-**Tested:** the native Button exposed `buttonMesh`, a StaticMeshComponent.
+**[general]** The native Button exposed `buttonMesh`, a StaticMeshComponent.
 Changing its `relativeScale3D` to 0.10 reduced its visible mesh while retaining
-actor scale 1 and `interactionRadius` 1. All 24 surviving pixel controls had
-independent native readbacks. A visible mesh about 45.94 cm tall became about
+actor scale 1 and `interactionRadius` 1. Every compacted control had an
+independent native readback. A visible mesh about 45.94 cm tall became about
 4.59 cm. Other components expanded actor bounds to 128 cm; those bounds did not
 measure the visible switch.
 
-**Button component reconstruction (42.30):** a nested MCP write such as
+**[general] Button component reconstruction (42.30):** a nested MCP write such as
 `{"relativeScale3D":{"x":0.1,"y":0.1,"z":0.1}}` returned true but changed
 only the first supplied axis on the native Fortnite Button's `ButtonMesh`.
 Fresh unequal-axis fixtures reproduced this; changing JSON member order changed
@@ -269,7 +253,7 @@ and a different component occupied the same `ButtonMesh` path. Component
 reconstruction during nested member editing is observed; subsequent writes
 targeting the obsolete component is the likely mechanism, not inspected C++ proof.
 
-For this tested Button property, pass one whole-vector text value through MCP:
+For this Button property, pass one whole-vector text value through MCP:
 `{"relativeScale3D":"(X=0.1,Y=0.1,Z=0.1)"}`. Independent MCP and native readback
 confirmed all axes, including when their initial values were 1, 2 and 3. Native
 `mesh.set_relative_scale3d(unreal.Vector(.1,.1,.1))` also worked; read it with
@@ -285,12 +269,12 @@ and never saved or pushed. These editor tests do not establish physical reach.
 
 Logical radius readback is not a physical reach test. Confirm the real focus
 prompt, activation and camera view in Fortnite before claiming usability.
-Evaluate framing at interaction approaches, with actual painting dimensions;
-lowering art alone can still leave most of a large painting outside the frame.
+Evaluate framing at interaction approaches, with actual prop dimensions;
+lowering a large placed prop alone can still leave most of it outside the frame.
 
 The friendly native properties included `visibleDuringGame`,
 `enabledAtGameStart`, `interactionRadius` and `buttonMesh`. `bIsEnabled` was
-readable but **read-only on the tested instances**. A multi-property write
+readable but **read-only on the observed instances**. A multi-property write
 partly succeeded before failing on that field. Read back before retrying.
 Retire a button by clearing its controller binding, setting supported startup
 enablement and visibility false, and placing the obsolete prop out of view.
@@ -298,7 +282,7 @@ Verify its runtime inactivity; an underfloor transform alone is insufficient.
 
 ## Bounded editor screenshots when viewport capture stalls
 
-**Tested:** viewport screenshot tasks stalled after two images. Smaller batches
+**[general]** Viewport screenshot tasks stalled after two images. Smaller batches
 and uncovering the editor did not establish a cause. A temporary native
 `SceneCapture2D` with `SceneCaptureComponent2D` and a transient RGBA8 render
 target successfully exported 16 views at 1920 x 1080.
@@ -323,7 +307,7 @@ interaction. Do not label an editor SceneCapture image as a Fortnite screenshot.
 
 ## Actual client capture across Windows sessions
 
-**Tested:** the agent shell ran in Windows session 0 while UEFN and Fortnite
+**[general]** The agent shell ran in Windows session 0 while UEFN and Fortnite
 ran in session 1. Shell-side `EnumWindows` found no game windows. Running a
 read-only ctypes inspection through native editor Python found the sole window
 belonging to `FortniteClient-Win64-Shipping.exe` in the editor's session.
@@ -337,18 +321,18 @@ focusing another window or sending input.
 
 ## Runtime QA without leaking diagnostics into visits
 
-**Tested:** automatic startup advanced all eight kinetic and four animated
-pixel timelines. A second private probe invoked production controller methods
-and passed 156 expected server results: wrapping study cycles, held-frame
-pause/resume, reset and quiet behavior. It did not press physical devices or
-verify rendered poses, completed-clip reset, multiplayer or performance.
+**[general]** Automatic startup advanced the kinetic and animated timelines. A
+second private probe invoked production controller methods and passed its
+expected server results: cycle wrapping, held-frame pause/resume, reset and
+quiet behavior. It did not press physical devices or verify rendered poses,
+completed-clip reset, multiplayer or performance.
 
 Use one authoritative controller and timeline. Pause legacy Animated Mesh
 players and companions before starting the shared cinematic timeline. Match
-loop, everyone/always-relevant and completion settings to the intended exhibit.
-For timed picture animation, reset its next-frame clock on held-frame resume;
-do not catch up all elapsed pause time or restart the picture at frame zero.
-Shared quiet handlers must preserve a static station's chosen study and avoid
+loop, everyone/always-relevant and completion settings to the intended prop.
+For timed frame animation, reset its next-frame clock on held-frame resume;
+do not catch up all elapsed pause time or restart the animation at frame zero.
+Shared quiet handlers must preserve a static station's chosen state and avoid
 advertising motion controls that station does not have.
 
 A private QA device defaults disabled. Before a normal push, verify **every
@@ -358,9 +342,3 @@ a newer probe during review. Record fresh log offsets so old results cannot pass
 a new run. Keep one pending push receipt and reconcile uncertain operations;
 a completed content push and Connected/Running state are separate from a
 passing physical interaction or capacity test.
-
-First-hand implementations and limits are in the owner's wiki at
-`wiki/authored/agent-engine/reference/uefn-native-python.md` and
-`wiki/authored/agent-engine/reference/uefn-interaction-capture.md`.
-The museum control source/native changes shipped in private
-[PR #7](https://github.com/ehartye/art_explorers_fn/pull/7).

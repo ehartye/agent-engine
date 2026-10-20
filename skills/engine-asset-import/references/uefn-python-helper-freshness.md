@@ -2,17 +2,19 @@
 
 Read this when rerunning a native editor script still produces the old layout,
 an edited helper seems ignored, or a reloaded module's imported function stays
-old. Tested in UEFN 42.30 with embedded Python 3.11.8 on 2026-10-03.
+old. Observed in one consuming UEFN project on UEFN 42.30 with embedded Python
+3.11.8; not reproduced in this repo. The probe source and its recorded receipt
+are in `examples/uefn`.
 
 ## What the local experiment established
 
-The museum's return-sign refinement reran with an edited placement helper but
-retained the earlier coordinates. Fresh actor readback caught the discrepancy
-before save. Explicitly reloading that project-owned helper then applied the
-intended translation. The saved correction is in museum
-[PR36](https://github.com/ehartye/art_explorers_fn/pull/36).
+[general] A consuming project's placement refinement reran with an edited
+placement helper but retained the earlier coordinates. Fresh actor readback
+caught the discrepancy before save. Explicitly reloading that project-owned
+helper then applied the intended translation.
 
-A separate disposable probe in the same editor isolated the Python behavior:
+[tested] A separate disposable probe in the same editor isolated the Python
+behavior (`python_helper_freshness_probe.py`, recorded in the receipt below):
 
 | Step | Observed result |
 |---|---|
@@ -24,36 +26,36 @@ A separate disposable probe in the same editor isolated the Python behavior:
 | Bind the function from the module after reload | Returned the new literal |
 | Inspect a name removed from the new helper source | Old name remained in the module dictionary |
 
-The probe also rejected a mismatched source path before reload, restored
+[tested] The probe also rejected a mismatched source path before reload, restored
 `sys.path`, removed its unique fixture module and temporary directory, and
-preserved 777 actor identities/transforms, 1,605 `.uasset` files, selection and
+preserved actor identities/transforms, the `.uasset` file set, selection and
 clean package state. It created no Unreal actors or assets and sent no input.
 The experiment executed two entrypoint versions inside one interpreter; it does
 not establish that every remote command mode creates a fresh namespace.
 
-Source and recorded output are
+[tested] Source and recorded output are
 [`python_helper_freshness_probe.py`](../../../examples/uefn/python_helper_freshness_probe.py)
 and [`helper-freshness-receipt.json`](../../../examples/uefn/helper-freshness-receipt.json).
 The receipt binds the probe source hash and before/after protected-state digests.
 
 ## Apply the correction to the intended helper
 
-1. Verify the exact island and serialize native jobs. Finish or reconcile owned
+1. [general] Verify the exact level and serialize native jobs. Finish or reconcile owned
    capture callbacks before executing another script in the shared interpreter.
-2. Inspect the prior mutation's receipt and actual actor/asset state first.
+2. [general] Inspect the prior mutation's receipt and actual actor/asset state first.
    Stale helper output does not authorize replaying a creation/import script or
    replacing a pending receipt. Reconcile completed and incomplete changes.
-3. Identify the specific project-owned module, its resolved `__file__` and
+3. [general] Identify the specific project-owned module, its resolved `__file__` and
    `__spec__.origin`, and the expected source hash. A same-named module from
    another folder is a path problem, not permission to reload it. Review imports
    and module-level code: reloading resolves the module again and executes that
    code. Check the next resolution, not only the cached module's old origin.
    Keep layout helpers
    free of actor edits, imports of assets, saves and callback registration.
-4. Reload only that helper, then obtain its function from the returned module.
+4. [tested] Reload only that helper, then obtain its function from the returned module.
    Repeating the old `from helper import function` binding *before* reload leaves
    the caller with an old object. Call `helper.function(...)` or rebind afterward.
-5. Check a pure output against the intended source change, then independently
+5. [general] Check a pure output against the intended source change, then independently
    read back the actual native result and protected state before an owned save.
    A matching file hash identifies disk bytes, not the function already in memory.
 
@@ -96,10 +98,10 @@ build_plan = helper.build_plan  # bind AFTER reload
 # Inspect build_plan(...) before any native edit; retain mutation receipt guards.
 ```
 
-The native probe exercised the import/reload and origin-check behavior. A
-separate host Python 3.13 regression executed this excerpt with temporary
-helpers: a shadowing path and custom finder were rejected before helper code
-ran, while the intended reload/rebind succeeded. The standard-finder constraint
+[tested] The native probe exercised the import/reload and origin-check behavior.
+[general] A separate host Python 3.13 run of this excerpt with temporary
+helpers (not part of this repo) rejected a shadowing path and custom finder before
+helper code ran, while the intended reload/rebind succeeded. The standard-finder constraint
 has not been established for every UEFN interpreter; inspect it and stop if it
 does not hold. This is not a universal loader. Reload is not a
 fresh-interpreter reset: removed names and old references can survive. The
@@ -107,19 +109,19 @@ experiment deliberately changed helper source size to avoid a same-size,
 same-timestamp bytecode ambiguity; it did not test every loader/cache variant.
 Do not claim reload alone proves the intended code executed.
 
-Python documents finder-cache invalidation, module reload, retained dictionaries
+[documented] Python documents finder-cache invalidation, module reload, retained dictionaries
 and the need to rebind imported objects in its
 [3.11 importlib reference](https://docs.python.org/3.11/library/importlib.html#importlib.reload).
 These mechanisms are separate from UEFN asset caching or the MCP script sandbox.
 
-Do not clear all `sys.modules`, reload `unreal` or another engine extension,
+[general] Do not clear all `sys.modules`, reload `unreal` or another engine extension,
 delete project caches, restart the editor, or replay an uncertain mutation to
 make a stale-helper symptom disappear. Reloading a helper with import-time
 mutations is itself a mutation; separate computation from native execution
 before adopting this pattern. Existing instances or callbacks holding earlier
 objects need explicit lifecycle handling, not blanket reloading.
 
-Time and complexity are small for a side-effect-free helper. The material risks
+[general] Time and complexity are small for a side-effect-free helper. The material risks
 are wrong-path imports, repeated import-time effects and stale caller bindings.
 Source identity, a pure planning boundary and native readback fit the existing
 project scripts without introducing a resident loader service. This is editor
