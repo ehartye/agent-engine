@@ -60,6 +60,10 @@ try:
         actor.get_editor_property("niagara_component").set_editor_property("asset", duplicate)
         actor.get_editor_property("niagara_component").set_editor_property("auto_activate", True)
         x += 500
+    # A camera that niagara_view.py makes the view target. Actors cannot be spawned from Python once Play-In-Editor has started.
+    camera = unreal.EditorLevelLibrary.spawn_actor_from_class(unreal.CameraActor, unreal.Vector(500, -1700, 380))
+    camera.set_actor_label("ViewCamera")
+    camera.set_actor_rotation(unreal.MathLibrary.find_look_at_rotation(unreal.Vector(500, -1700, 380), unreal.Vector(500, 0, 150)), False)
     step("save_map", ok=bool(unreal.EditorLoadingAndSavingUtils.save_map(unreal.EditorLevelLibrary.get_editor_world(), MAP_PATH)))
 except Exception:
     step("error", traceback=traceback.format_exc()[-900:])

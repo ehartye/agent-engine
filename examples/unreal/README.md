@@ -2,6 +2,8 @@
 
 For a native C++ game rather than this import sample, see [native Unreal build and capture](../../skills/engine-asset-import/references/unreal-native-game.md). It records a separate Unreal 5.8.2 execution path and its observed build, material, font and capture traps. Do not assume this sample's PIE evidence establishes a packaged game.
 
+For comparing several implementations of one visible thing side by side in a native game, see [compare-scene](compare-scene/README.md).
+
 Verified on Unreal Engine 5.7.3 and 5.8.3, Windows (5.8.3 needed three changes, listed under "Unreal 5.8.3" in the `engine-asset-import` skill). They build the [sample scene](../../docs/sample-scene.md) and
 run it with real rendering. Read the traps in the `engine-asset-import` and `engine-selection` skills
 before changing them.
@@ -37,7 +39,7 @@ Do not use `-ExecutePythonScript` for the run: it quits the editor when the scri
 
 ## Niagara scripts
 
-Three scripts back [Niagara in Unreal](../../skills/engine-asset-import/references/unreal-niagara.md). They need a project with PythonScriptPlugin, EditorScriptingUtilities and Niagara, plus NiagaraToolsets (Experimental) for the second. Each writes a JSON report (`NIAGARA_PROBE_REPORT`, default under the project's `Saved/`).
+Six scripts back [Niagara in Unreal](../../skills/engine-asset-import/references/unreal-niagara.md). They need a project with PythonScriptPlugin, EditorScriptingUtilities and Niagara, plus NiagaraToolsets (Experimental) for the second. Each writes a JSON report (`NIAGARA_PROBE_REPORT`, default under the project's `Saved/`).
 
 ```text
 UnrealEditor-Cmd.exe Project.uproject -run=pythonscript -script=niagara_build.py -unattended -nullrhi -nosplash -nopause -nosound -notraceserver
@@ -45,4 +47,8 @@ UnrealEditor-Cmd.exe Project.uproject -run=pythonscript -script=niagara_toolset_
 UnrealEditor.exe Project.uproject /Game/Maps/NiagaraProbe -RenderOffScreen -ExecCmds="py <path>/niagara_verify.py" -log=niagara.log -notraceserver -nosplash -unattended
 ```
 
+`niagara_validate.mjs` runs all of them in order on a throwaway project in the OS temp folder, plus `niagara_traps.py` (the API facts and traps the reference states), and checks 15 claims, printing PASS or FAIL per claim: `node niagara_validate.mjs --engine "C:/Program Files/Epic Games/UE_5.8"`. Its pure checks have node tests in the merge lane (`niagara-validate.test.mjs`); the Unreal run takes about a minute and is a manual lane. The traps step exits 1 on purpose.
+
 `niagara_build.py` duplicates two engine template systems and places them in a level; `niagara_toolset_author.py` creates a system and adds an emitter through Epic's toolsets and places it; `niagara_verify.py` runs the level in Play-In-Editor, counts particles per emitter with a simulation cache and polls each system's compile state. They run on Unreal 5.8.2 only.
+
+To look at the probe level yourself, `niagara_view.py` frames the systems with the level's camera, labels them and restarts one-shot bursts every few seconds. In the editor: `UnrealEditor.exe Project.uproject /Game/Maps/NiagaraProbe -ExecCmds="py <path>/niagara_view.py"`. As a standalone game (no editor UI), set `NIAGARA_VIEW_GAME=1` and add `-game -windowed -ResX=1280 -ResY=720`. In a game process any `EditorLevelLibrary` call crashes with an access violation, so game mode finds the world with `ObjectIterator`; it was observed running for 25 seconds with no crash, and the window content was not checked by a person here. It is not part of the validation run.
