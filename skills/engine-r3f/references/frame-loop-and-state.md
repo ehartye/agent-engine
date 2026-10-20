@@ -1,48 +1,52 @@
 # R3F frame loop and React state
 
-Evidence: Sector Run Slice 1, `docs/lessons/r3f.md` (private repository). Versions are in [versions and migrations](versions-and-migrations.md). `[tested]` ran there, `[documented]` was read in official docs or source, `[general]` was not checked. All `[tested]` claims were observed on three 0.186.1, @react-three/fiber 9.8.1, react 19.3.0, zustand 5.0.15, vite 8.3.3 and Playwright 1.63.0 (Chromium 153), Windows 11, unless a bullet says otherwise.
+Evidence: `examples/web3d` (core tests and the R3F verifier) plus library source. `[tested]` is reproduced by a command in this repo, `[documented]` was read in official docs or source, `[general]` is guidance not checked here. Pins: three 0.186.1, @react-three/fiber 9.8.1, react 19.3.0 (see [versions and migrations](versions-and-migrations.md)).
 
-How the Sector Run R3F app split work between the frame loop, plain game code and React.
+How to split work between the frame loop, plain game code and React. The pattern is in [`core/session.mjs`](../../../examples/web3d/core/session.mjs) (the game as a plain object) and [`r3f/src/App.jsx`](../../../examples/web3d/r3f/src/App.jsx) (one `useFrame` that drives it). Run `node --test examples/web3d/core/core.test.mjs` for the loop and input tests.
 
 ## Where per-frame code goes
 
-- [tested] Put the game in a plain class, not in components. `GameSession` owns the core state, the world, effects, the fixed-step loop and the errors. `Sim` is the one `useFrame` that drives it: `session.frameUpdate(delta)` at priority -2. Views are thin components that read the session and mutate three.js objects (`ShipView`, `AsteroidsView`, `ProjectilesView`, `PickupsView`, `FxView`, `CameraRig`, `Backdrop`).
-- [tested] Order the frame with negative priorities: `Sim` at -2, `CameraRig` at -1, views at 0. The order held: ship, camera and effects stayed in step in every screenshot.
-- [documented] Do not give a `useFrame` a priority above 0 unless you mean to render by hand: it turns off R3F's automatic render (vault TSL guide, `renderPriority: 1`).
+- [general] Put the game in a plain object or class, not in components. It owns the rules, the fixed-step loop and the counters. One `useFrame` calls `session.frameUpdate(delta)`; views are thin components that read the session and mutate three.js objects.
+- [documented] `useFrame` callbacks run in ascending priority, so negative priorities order a frame: the simulation at -2, the camera at -1, views at 0 (R3F 9.8.1 `subscribe`: subscribers are sorted by priority, the highest renders last). The example's `Sim` and `Counters` share priority -2.
+- [documented] Never give a `useFrame` a priority above 0 unless you mean to render by hand. A positive priority turns off R3F's automatic render for the whole canvas (R3F 9.8.1 source: `internal.priority` counts positive-priority subscribers, and the automatic `gl.render` runs only when it is 0).
+- [tested] The example drives the whole session from one `useFrame` at priority -2 and measures about 60 fixed steps a second (r3f verify: fixed step).
 
-```tsx
+```jsx
 useFrame((state, delta) => {
-  session.drawCalls = state.gl.info.render.calls;   // previous frame's count
-  session.framesDrawn = state.gl.info.render.frame; // render() calls so far
-  frame.alpha = session.frameUpdate(delta);          // fixed steps, returns interpolation alpha
+  holder.alpha = game.session.frameUpdate(Math.min(delta, 0.25)); // fixed steps, returns the draw alpha
 }, -2);
 ```
 
 ## What must not be React state
 
-- [documented] R3F's hot-path rules: no `setState` in `useFrame` or in fast events; mutate refs and objects; read fast state with Zustand's `getState()`, not a reactive selector; avoid mounting and unmounting at runtime; share materials and geometries and use instancing (vault: R3F Docs, Performance Pitfalls).
-- [tested] Write fast HUD values (speed, boost, fps) straight to the DOM: register the elements once and write `textContent` about 12 times a second. React never sees them.
-- [tested] A one-off HUD effect can still be a React element: the comic word is mounted by a store event and animates itself with its own `requestAnimationFrame` writing `style` from the tested `popAt` timeline.
-- [tested] What belonged where, in the end: game logic in plain TypeScript on a fixed 60 Hz loop that `useFrame` feeds; three.js objects mutated in frames; Zustand only for UI that changes a few times a minute; DOM refs for fast readouts. What went wrong was not React re-rendering but the camera frame and the probe's `ready` flag.
-- [tested] Not measured: React render counts. "No wasted renders" holds by construction, not by profile.
+- [documented] R3F's hot-path rules: no `setState` in `useFrame` or in fast events; mutate refs and objects; read fast store state with `getState()`, not a reactive selector; avoid mounting and unmounting at runtime; share materials and geometries and use instancing (R3F docs, Performance Pitfalls).
+- [general] Write fast HUD values (speed, fps) straight to DOM nodes you registered once, a few times a second. React never sees them.
+- [general] A one-off HUD effect can still be a React element mounted by a store event, if it animates itself with its own `requestAnimationFrame` writing `style`.
+- [general] Where things belong: game logic in plain code on a fixed-rate loop that `useFrame` feeds; three.js objects mutated in frames; a store only for UI that changes a few times a minute; DOM refs for fast readouts. The bugs that cost time were not React re-renders but the camera frame and a `ready` flag that fired too early (below).
+- [general] "No wasted renders" was not profiled here. It holds by construction, not by measurement.
 
 ## Fixed step and interpolation
 
-- [tested] Draw ship and camera at a pose interpolated between the last two fixed steps (alpha from the loop). Draw shots backed off along their velocity by `(1 - alpha) x step`.
-- [tested] Use a critically damped SmoothDamp for the camera spring: it stayed stable at any frame time.
-- [tested] A display faster than the step runs no step on most frames: at 144 Hz most rendered frames run no 60 Hz step, and a hit-stop runs none for several frames. Anything consumed "per step" must survive frames that run no step (see the latch rule below).
+- [tested] A display faster than the step runs no step on most frames: at 144 Hz over a 60 Hz step at least 80 of 144 frames run none, and a long stall is capped instead of spiralling (core tests: 144 Hz display; long stall). Anything consumed "per step" must survive frames that run no step.
+- [general] Draw the ship and camera at a pose interpolated between the last two fixed steps with the loop's alpha. Draw fast projectiles backed off along their velocity by `(1 - alpha) x step`.
+- [tested] A critically damped spring (`smoothDamp`) is stable at any frame time and never overshoots from 1/240 s to 1 s frames, so use it for the camera (core test: smoothDamp).
+- [general] Clamp the delta you pass in (the example uses 0.25 s) so a backgrounded tab does not hand the loop a huge frame.
 
-## Input, core events and the UI store
+## Input latches
 
-- [tested] Feed React from rare notices only: the session updates a Zustand store on mission, ore, errors and unlocks; the HUD and loadout screen render from it.
-- [tested] Latch taps. Key and click events that start and end between two frames are invisible to a once-per-frame poll. `Tab` and `Space`/click are latched for one read (`InputState.latch`); without that, Playwright's `keyboard.press('Tab')` never opened the loadout.
-- [tested] Clear a latch only after a fixed step has run. The first `frameUpdate` read input and cleared latches before the loop advanced, so at 144 Hz and during hit-stop a latched fire was cleared before any step saw it (found by code review, fixed in commit `ae2cda5`). The commit gives no shot count for the old code, and it was not re-run here.
-- [tested] The fix: `frameUpdate` calls `input.clearLatches()` only when `loop.advance(frameDt) > 0` or the loop is paused, so a tap on the loadout screen does not fire when it closes. The loadout key is read per frame, so its latch is cleared every frame with `clearLatches(['loadout'])`.
-- [tested] Test the latch against the step phase: in `tests/session.test.ts` a latched fire at `frameUpdate(1 / 144)` for 30 frames gives exactly 1 shot from each of six accumulator phases (0 to 5 frames before the tap); a fire during a 0.06 s hit-stop at 1/60 s gives 1 shot once the simulation resumes; a fire latched with the loadout open gives 0 shots after it closes.
-- [tested] Real devices reach the game through the real path: keyboard `W` plus Shift flew the ship (z = 62 m after 1.5 s); a cursor at the right edge did not steer before a click (forward.x 0.000) and did after one (forward.x -0.974); a faked `navigator.getGamepads` pad thrust and steered left (42 m/s, forward.x 0.999). An actual gamepad was not available.
+- [tested] A key that goes down and up between two frames is invisible to a once-per-frame poll; a latch keeps it until read (core test: tap between frames).
+- [tested] Clear latches only after a step ran, or while paused. Clearing every frame loses taps at 144 Hz (core test: clearing latches every frame loses taps).
+- [tested] A tap fires exactly once from every accumulator phase at 144 Hz, once after a hit-stop, never after a pause closes, and goes to the first of two steps in one frame only (core tests: every accumulator phase; hit-stop; paused; two steps in one frame).
+- [tested] A real `keyboard.press('Space')` (down and up in one tick) fires one shot that sweeps into the target (r3f verify: one key press, one shot).
+- [general] A key that is read per frame rather than per step (a menu toggle) needs its own latch cleared every frame (`clearLatches(['menu'])`).
 
-## Mounting, StrictMode and asset loading
+## Mounting, StrictMode and readiness
 
-- [tested] `<Canvas>` mounts its renderer after the assets have loaded, so a `ready` flag set when assets finished reported `backend: 'unknown'` and `drawCalls: 0`. Make `ready` need the ship assembled, the backend identified and two frames drawn.
-- [tested] Count drawn frames separately from updates: `frameUpdate` runs in `useFrame` before that frame is drawn, so `ready` requires `framesDrawn >= 2`, set from `gl.info.render.frame` (commit `ae2cda5`). `tests/session.test.ts` withholds each of the four conditions in turn and checks that two updates with nothing drawn are not ready.
-- [documented] R3F v9 tightened StrictMode (vault: R3F Docs, v9 Migration Guide). This app does not use StrictMode, so nothing here was checked under it.
+- [tested] "Ready" must mean drawn: the model assembled, the backend identified and two frames drawn, with the frame count set after a draw (core tests: ready needs three conditions; two updates with nothing drawn; r3f verify: ready means drawn). See [probe and verification](probe-and-verification.md).
+- [general] `<Canvas>` children that suspend (asset loading) mount late, so a flag set when assets finish can precede the renderer and report an unknown backend and zero draw calls.
+- [general] Create the session outside React (the example does it at module scope in `main.jsx`). Then StrictMode's double-run effects cannot create it twice.
+- [documented] R3F 9.8.1 bridges React context and StrictMode into the canvas tree. The example does not use StrictMode, so nothing here was checked under it.
+
+## Related
+
+- [Hit tests and physics](hit-tests-and-physics.md), [flight controls](flight-controls.md), [audio](audio.md).

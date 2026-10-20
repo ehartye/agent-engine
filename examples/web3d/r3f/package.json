@@ -1,0 +1,22 @@
+{
+  "name": "agent-engine-web3d-r3f",
+  "private": true,
+  "version": "0.0.0",
+  "description": "A small React Three Fiber scene that uses the engine-neutral core and is checked in headless Chromium through a state probe",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "verify": "node verify.mjs"
+  },
+  "dependencies": {
+    "@react-three/fiber": "9.8.1",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "three": "0.186.1"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "6.1.2",
+    "playwright": "1.63.0",
+    "vite": "8.3.3"
+  }
+}

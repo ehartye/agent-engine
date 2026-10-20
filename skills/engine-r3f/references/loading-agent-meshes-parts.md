@@ -1,48 +1,45 @@
 # Loading agent-meshes parts in R3F
 
-Evidence: Sector Run Slice 1, `docs/lessons/r3f.md` and `docs/lessons/agent-meshes.md` (private repository). Versions are in [versions and migrations](versions-and-migrations.md). `[tested]` ran there, `[documented]` was read in official docs or source, `[general]` was not checked. All `[tested]` claims were observed on three 0.186.1 and @react-three/fiber 9.8.1, with part GLBs built by agent-meshes 0.13.1 (`manifest.json` `builtWith.agentMeshes`).
+Evidence: `examples/web3d` (core tests and the R3F verifier) plus library source. `[tested]` is reproduced by a command in this repo, `[documented]` was read in official docs or source, `[general]` is guidance not checked here. Pins: three 0.186.1, @react-three/fiber 9.8.1, react 19.3.0 (see [versions and migrations](versions-and-migrations.md)).
 
-This is the engine side only: how R3F loads and assembles the GLBs. Authoring them is the agent-meshes skills (`mesh-authoring`, `mesh-build`).
+This is the engine side only: how R3F loads and assembles GLBs that were authored as named parts with sockets. Authoring them is the agent-meshes skills (`mesh-authoring`, `mesh-build`). The example app draws a primitive cone with the same nose-along-+Z convention instead of loading a GLB, so the loading claims here are `[documented]` or `[general]`; only the axis conventions are reproduced.
 
 ## Loading GLBs
 
-- [tested] Expect a wrapper root. An agent-meshes GLB has exactly one root node, named after the workspace project (`mesh new <id>`), with identity transform; parts and sockets are its direct children. The Sector Run kit builds each part with `mesh new <partId>`, so that name is the part id; authoring belongs to the agent-meshes skills.
-- [tested] Find sockets by node name, never by glTF mesh name. Every `group` part (`socket_engine` and the rest) exports as an empty named node with its offset intact (written as a node `matrix`); the glTF meshes carry no names, only the nodes do.
-- [tested] The sockets in the kit: `socket_engine` and `socket_cannon` on each hull, `socket_exhaust` on each engine, `socket_muzzle` on each cannon. The part library checks every GLB for the sockets its catalog entry promises and reports a missing one in `errors` (read from the 12 GLBs and `src/render/partLibrary.ts`, 2026-10-07).
-- [tested] GLTFExporter then GLTFLoader keeps node names, so `socket_*` nodes survive a GLB round trip.
-- [tested] In three, `gltf.scene` is not the wrapper root: `GLTFLoader.parseAsync` on `hull-dart.glb` returned a `Group` named after the part (`"hull-dart"`) whose one child is the agent-meshes wrapper root renamed `hull-dart_1` (an `Object3D`). Why the loader renames it was not read in source. Look sockets up from `gltf.scene` with `getObjectByName` and nothing changes: `getObjectByName('socket_engine')` found an `Object3D` whose parent is `hull-dart_1`, at (0, 0, -2.55) (three 0.186.1, 2026-10-07).
-- [tested] Each `Mesh` takes its node's name (`body`, `nose`, `wing_l`, `wing_r`, `fin`, `accent_canopy`, `mount_cannon`, `mount_engine` on `hull-dart`); geometry and material names are empty, and `gltf.animations` is empty.
-- [tested] Socket nodes store their offset as a node `matrix`, not `translation`, `rotation` and `scale`, in all 12 part GLBs. A tool that reads only `translation` from the glTF JSON sees no offset; three decomposes the matrix into `position`, so the app is unaffected.
-- [tested] The real part GLBs parse in plain Node with `GLTFLoader` (`parseAsync`), no browser or DOM, so loading and assembly can be unit-tested (`tests/realParts.test.ts`).
+- [general] Expect a wrapper root. An agent-meshes GLB has one root node named after the workspace project, with an identity transform; parts and sockets are its direct children. Check this against your own export before relying on it.
+- [general] Find sockets by node name, never by glTF mesh name. Sockets are empty named nodes (for example `socket_engine`, `socket_muzzle`) whose transform is the attachment offset; meshes may be unnamed.
+- [documented] GLTFLoader names objects from the node names and makes them unique: `createUniqueName` appends `_1`, `_2` to a repeated name, and `PropertyBinding.sanitizeNodeName` replaces whitespace with `_` and strips reserved characters (three r186 `examples/jsm/loaders/GLTFLoader.js`, `src/animation/PropertyBinding.js`). So a scene and its root node that share a name come back as `name` and `name_1`.
+- [documented] The same loader reads a node `matrix` and applies it to the object (decomposed into `position`, `quaternion`, `scale`), so a socket exported with a `matrix` and one exported with `translation` both end up as an object with a position. A tool that reads only `translation` from the glTF JSON will miss the matrix form.
+- [general] Look sockets up with `gltf.scene.getObjectByName(...)` and do not assume `gltf.scene` is the wrapper root. Throw a clear error naming the part and the missing socket, so a bad export fails at load.
+- [general] `GLTFLoader.parseAsync` needs no DOM for geometry-only files, so loading and assembly can be unit-tested in plain Node. Verify this against your own files; it is not run in this repo.
 
 ## Assembling by socket
 
-- [tested] When parts are chosen at runtime, build the model imperatively and add it to a `<group ref>` from an effect keyed on the equipped parts. `gltfjsx`-style JSX conversion does not apply.
-- [tested] Per-frame motion mutates that group, never props.
-- [tested] Parent each part's root to its parent's socket node; the part's origin then sits on the socket. All 64 hull x engine x cannon combinations of the real kit assembled (`tests/realParts.test.ts`).
-- [tested] The four socket names and their positions in the kit (the matrix's translation, metres): `socket_engine` and `socket_cannon` on every hull (dart (0, 0, -2.55) and (0, -0.6, 1); brick (0, 0, -2.7) and (0, -0.9, 1.6); hauler (0, 0, -3.8) and (0, -0.75, 2.2); wing (0, 0, -1.95) and (0, -0.5, 1)), `socket_exhaust` on every engine (z -1.6 pulse, -1.8 burner, -1.9 vector, -2 ion) and `socket_muzzle` on every cannon (z 1.4 pulse, 1.6 scatter, 2.15 twin, 2.6 rail). No part has animations or skins.
+- [general] When parts are chosen at runtime, build the model imperatively and add it to a `<group ref>` from an effect keyed on the chosen parts. `gltfjsx`-style JSX conversion fits a fixed model, not a kit.
+- [general] Per-frame motion mutates that group (see [frame loop and state](frame-loop-and-state.md)), never props.
+- [general] Parent each part's root to its parent's socket node; the part's origin then sits on the socket. Test every combination of parts from the catalog in a Node test, because a missing socket is a data error, not a runtime surprise.
 
-```ts
+```js
 const socket = parentNode.getObjectByName(part.attachesTo.socket); // e.g. 'socket_engine'
-if (!socket) throw new AssemblyError(`part ${parentId} has no ${part.attachesTo.socket}`);
-socket.add(node); // node = a fresh clone of the part's scene root
+if (!socket) throw new Error(`part ${parentId} has no ${part.attachesTo.socket}`);
+socket.add(partRoot.clone(true)); // a fresh clone per placement
 ```
 
 ## Handedness and orientation
 
-- [tested] The kit holds the contract: nose +Z and up +Y for every one of the 12 parts (contact-sheet review, agent-meshes 0.13.1).
-- [tested] three.js cameras look down their local -Z, while glTF and the ship nose are +Z. The chase camera works in the ship's frame and `CameraRig` multiplies by a 180 degree yaw.
-- [tested] The failure looks like a working game with no ship in it: check the camera frame first when the ship is missing.
+- [tested] (core test: a glTF nose is +Z and an unrotated camera looks down -Z) glTF models point their nose down +Z with +Y up, while a three.js camera looks down its local -Z. A chase camera that follows the nose is therefore yawed pi further than the model.
+- [tested] (r3f verify: yaw > 0 turns the rendered nose toward +X; pitch > 0 points the rendered nose down) Read the rendered axes from the three.js object, as the verifier does with `getWorldDirection`, not from the rules code. Conventions live in [`flight.mjs`](../../../examples/web3d/core/flight.mjs).
+- [general] The failure looks like a working game with no model in it: when the model is missing, check the camera frame before the loader.
+- [general] Have the authoring side promise nose +Z and up +Y for every part, and check that in a review image before wiring a new part in.
 
 ## Replacing the neutral material
 
-- [tested] Expect one unnamed, unshared material per mesh: a hull with 7 solid parts in two greys exported 7 materials and empty mesh names. The manifest's material count is the number of meshes, not of colours.
-- [tested] Replace every material on load; the exported colours do not matter. The kit validator requires exactly one material per mesh and tolerates sharing, so the count may drop later without a code change.
-- [documented] agent-meshes `origin/main` commit `a508e3c` names materials and shares identical ones on export; not released at 0.13.1, not run (commit message).
-- [tested] One shared toon material and one shared outline material serve every part: assembly sets the toon material on each mesh and adds an outline child to it.
-- [tested] Repaint a palette without a new material: rewrite the ramp texture's 12 bytes and set `needsUpdate`. The ship changed colour and the scene still compiled 4 programs. Ramp and outline details are in [toon, outline and instancing](toon-outline-and-instancing.md).
+- [general] Expect neutral, unnamed materials, often one per mesh. Replace every material on load; the exported colours do not matter, and a manifest's material count may be per mesh rather than per colour.
+- [general] Use one shared toon material and one shared outline material for every part: set the toon material on each mesh and add an outline child. Palette swaps then rewrite a ramp texture instead of creating materials. Details are in [toon, outline and instancing](toon-outline-and-instancing.md).
 
 ## Clones and shared resources
 
-- [tested] `scene.clone(true)` shares geometry and materials with the source. That is why assembly replaces the material per mesh rather than editing the material it loaded.
-- [tested] Key any per-geometry cache (here the outline's smoothed geometry) by the source geometry, since clones share it.
+- [documented] `Mesh.copy` assigns `this.geometry = source.geometry` and copies the material reference, so `clone(true)` shares geometry and materials with the source (r186 `src/objects/Mesh.js`). Replace the material per mesh rather than editing the one the loader created.
+- [general] Key any per-geometry cache (such as a smoothed-normal outline geometry) by the source geometry, since clones share it. Dispose shared geometry only when the last user is gone.
+
+Related: [part kits and paint](part-kits-and-paint.md), [data-driven entities](data-driven-entities.md).
