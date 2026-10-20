@@ -15,7 +15,7 @@ Pinned: three 0.186.1, @react-three/fiber 9.8.1, react 19.3.0, vite 8.3.3, Playw
 
 | File | Role |
 | --- | --- |
-| `src/game.mjs` | The rules: a ship flying along its nose, shots swept through targets. No three.js, no React |
+| `../core/game.mjs` | The rules, shared with every renderer: a ship flying along its nose, shots swept through targets |
 | `src/App.jsx` | One `useFrame` at priority -2 drives the session; views mutate three.js objects at the interpolation alpha |
 | `src/toon.mjs`, `src/outline.mjs` | The `MeshToonMaterial` ramp patch (throws if three changes) and the clip-space or world-space inverted hull |
 | `src/labs.jsx` | Isolated scenes (`?scene=toon`, `outline`, `instancing`) that render once and read pixels or counters |

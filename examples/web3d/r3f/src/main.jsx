@@ -2,7 +2,7 @@ import React from 'react';
 import { createRoot } from 'react-dom/client';
 import * as THREE from 'three';
 import { createProbe } from '../../core/probe.mjs';
-import { createGame } from './game.mjs';
+import { createGame } from '../../core/game.mjs';
 import { App } from './App.jsx';
 import { ToonLab, OutlineLab, InstancingLab } from './labs.jsx';
 

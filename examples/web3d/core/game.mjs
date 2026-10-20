@@ -1,9 +1,9 @@
-// The rules, with no three.js and no React: a ship that flies along its nose, shots that sweep through targets.
-// Every view (R3F here, Babylon.js elsewhere) reads `state` and draws it at the session's alpha.
-import { createSession } from '../../core/session.mjs';
-import { noseDirection, steer } from '../../core/flight.mjs';
-import { segmentSphereHit } from '../../core/sweep.mjs';
-import { mulberry32 } from '../../core/rng.mjs';
+// The rules, with no renderer and no UI framework: a ship that flies along its nose, shots that sweep through targets.
+// Every view (React Three Fiber, Babylon.js) reads `state` and draws it.
+import { createSession } from './session.mjs';
+import { noseDirection, steer } from './flight.mjs';
+import { segmentSphereHit } from './sweep.mjs';
+import { mulberry32 } from './rng.mjs';
 
 export const SHIP_SPEED = 20;  // m/s along the nose
 export const SHOT_SPEED = 120; // m/s

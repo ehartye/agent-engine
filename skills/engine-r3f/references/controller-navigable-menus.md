@@ -1,46 +1,45 @@
 # Controller-navigable menus in R3F
 
-Evidence: Sector Run, `docs/lessons/r3f.md` (private repository). Versions are in [versions and migrations](versions-and-migrations.md). `[tested]` ran there (lessons, or unit tests re-run 2026-10-07), `[documented]` was read in the code only, `[general]` was not checked. All `[tested]` claims were observed on three 0.186.1, @react-three/fiber 9.8.1, react 19.3.0 and headless Chromium 153 with a faked `navigator.getGamepads`.
+Evidence: `examples/web3d` (core tests and the R3F verifier) plus library source. `[tested]` is reproduced by a command in this repo, `[documented]` was read in official docs or source, `[general]` is guidance not checked here. Pins: three 0.186.1, @react-three/fiber 9.8.1, react 19.3.0 (see [versions and migrations](versions-and-migrations.md)).
 
-A DOM overlay (the loadout screen) over the R3F canvas that works from a gamepad, keyboard and mouse: directional focus, A accept, B back, bumpers switch tabs, and B is boost in flight. Use it for any React menu that a controller player must reach. The navigation rules live in a pure, tested package (ui-kit's `NavModel` and `InputRouter`); the game adds only a thin DOM adapter.
+A DOM overlay (a loadout, settings or pause screen) over the R3F canvas that works from a gamepad, keyboard and mouse: directional focus, accept, back, bumpers to switch tabs, while the same buttons mean something else in flight. The example has no menu and no gamepad code, so the menu rules are `[general]` or `[documented]`; what is reproduced is how taps and pause interact with the fixed-step input (`node --test examples/web3d/core/core.test.mjs`).
 
 ## Structure
 
-- [tested] One adapter module is the whole integration. `MenuNavigator` owns a `NavModel` (focus, directional pick, tabs) and an `InputRouter` (turns raw pad and key state into actions with a stick deadzone, hysteresis and hold-to-repeat). The game has no navigation rules of its own.
-- [documented] Mark focusable elements `data-nav="<id>"` (optional `data-nav-group`). `refresh()` reads every element's `getBoundingClientRect()` into the model, skipping zero-size ones and passing `disabled`, and runs again before each action batch because the card scrolls and a tab or class change re-lays it out.
-- [tested] Model events become DOM calls: `focus` focuses the element and draws the ring, `activate` clicks it, `back` closes the screen, `tab` switches the tab. The component feeds the pad every animation frame (the raw `pressed` and `axes` the pad poll stored), forwards keys from a window listener, and calls the router's `tick(now)` for held-key repeats.
-- [tested] The focus ring (`data-nav-focus`, a gold outline plus glow) is hidden while the mouse was the last device; hover focuses the element and highlights instead. Equipped state is green so it does not read as the ring.
-- [documented] Router defaults: a stick press at 0.5 and release at 0.3, repeat after 400 ms then every 110 ms. In a menu: A activate, B back, LB/RB tabs, d-pad or left stick move, Enter/Space activate. In flight context only B (boost) and Start are mapped, and holds are dropped.
+- [general] Put the navigation rules in a pure module with tests: a focus model (focusable rectangles, directional pick, tab groups) and an input router (raw pad and key state to actions: move, activate, back, tab). One thin DOM adapter connects them. The game has no navigation rules of its own.
+- [general] Mark focusable elements with an attribute (`data-nav="<id>"`, optional `data-nav-group`). The adapter reads `getBoundingClientRect()` for each into the model, skips zero-size and disabled ones, and refreshes before each action batch, since a card scrolls and a tab change re-lays it out.
+- [general] Model events become DOM calls: focus focuses the element and draws a ring, activate clicks it, back closes the screen, tab switches. Feed the pad every animation frame, forward keys from a window listener and tick the router for held repeats.
+- [general] Router defaults that feel right: a stick counts as pressed at 0.5 and released at 0.3 (hysteresis), repeat after about 400 ms then every 100 ms or so. In a menu: accept, back, bumpers for tabs, d-pad or left stick to move, Enter and Space to activate. In flight context map only the buttons that flight uses, and drop holds.
+- [documented] The W3C Gamepad specification defines a "standard" mapping (`gamepad.mapping === 'standard'`) with fixed button indices for face buttons, bumpers, start and the d-pad. Check `mapping` and fall back to a remap screen otherwise. Poll `navigator.getGamepads()` each frame rather than caching the objects.
+- [general] Show the focus ring only when the last input was not the mouse; hover focuses and highlights instead. Give "selected/equipped" a different colour from the ring, or both read as one thing.
 
-```ts
-// the component's key listener: Esc and Tab belong to the game's input layer
-if (e.code === 'Escape' || e.code === 'Tab') return;
-nav.key(e.code, down, performance.now());
-if (/^(Arrow|Enter|Space|NumpadEnter|Backspace|PageUp|PageDown)/.test(e.code)) e.preventDefault();
-```
+## Pause and taps
+
+- [tested] A tap made while the simulation is paused must not fire when it unpauses, and a tap made between frames must not be lost: test "a tap made while paused does not fire after the pause closes", "a tap made between frames is invisible to a poll but survives in the latch" and "a tap during a hit-stop fires once when the simulation resumes". The mechanism is in [session.mjs](../../../examples/web3d/core/session.mjs) and [input.mjs](../../../examples/web3d/core/input.mjs): latches are cleared only after a step ran or while paused. Opening a menu by pausing the loop therefore needs no extra bookkeeping for keyboard taps.
+- [general] The pad is a different path. If the pad is polled once per frame into held state, a button held when the menu closes is still held in the first flight frame.
 
 ## Double handling and context traps
 
-- [tested] Esc and Tab already toggle the screen in the input layer. A router `back` on Esc closed it and the toggle reopened it. Do not pass Esc and Tab to the router.
-- [tested] Space and Enter are `activate` in the router and also a native click on the focused button. `preventDefault` them, or one press cycled an affix twice.
-- [tested] B is back in a menu and boost in flight, and the pad is polled once per frame for both. Closing with B held made the next frame read `boost = 1` (A would have fired). Keep the set of buttons pressed while a menu was open and zero them in the flight mapping until released. Exempt Start: it toggles the menu in both contexts. A fresh B press afterwards boosts. The set lookup allocates nothing and leaves the keyboard alone (the loop is paused and latched taps are cleared while paused). See [flight controls](flight-controls-reticle-and-streaks.md#input-traps).
-- [tested] The first version of that fix never ran: the edit that passed the menu flag to the pad poll sat in a shell command that failed to parse. The smoke check `B held after closing does not boost` showed the flag never arrived. Verify that an edit landed.
+- [general] Keys the game's input layer already owns (a pause or menu toggle) must not also go to the router: a router `back` on the same key closes the screen and the toggle reopens it.
+- [general] Space and Enter are `activate` in the router and also a native click on the focused button. Call `preventDefault` on them, or one press triggers twice.
+- [general] A button that is back in a menu and an action in flight (boost, fire): closing the menu with it held makes the next flight frame read it as pressed. Remember the buttons held while the menu was open and zero them in the flight mapping until released. Exempt a button that toggles the menu in both contexts. Look the set up without allocating each frame. See [flight controls](flight-controls.md).
+- [general] A fix applied by a shell edit that failed to parse never ran. After any edit, re-run the smoke check that exercises it ("B held after closing does not boost").
 
 ## Layout and environment traps
 
-- [tested] A mouse resting over a button focuses it again whenever the screen reopens under it (Chromium fires `pointerenter` on layout), so a keyboard check moved focus from the wrong place. Move the mouse away first in the test.
-- [tested] The package imports its own files with `.ts` extensions, so the app's `tsconfig.json` needs `allowImportingTsExtensions` and the package must be a workspace dependency (`pnpm install` in a worktree works offline).
-- [tested] The model has no notion of a DOM scroll container; the browser's focus scroll moves the card under the focused element. Make the stat panel `position: sticky`, or a hovered part's delta scrolls away with the card.
-- [tested] Ring and "equipped" mark were both gold and read as one thing in the screenshots. Give them different colours.
+- [general] A mouse resting over a button focuses it whenever the screen reopens under it (browsers fire `pointerenter` on layout), so a keyboard test starts from the wrong element. Move the mouse away first.
+- [general] A focus model has no notion of a DOM scroll container; the browser scrolls the card under the focused element. Make a stat panel `position: sticky` so a hovered item's stat delta does not scroll away.
+- [general] If the navigation package imports its own files with `.ts` extensions, the app's `tsconfig.json` needs `allowImportingTsExtensions`.
+- [general] Set `role="dialog"` and `aria-modal`, and test with a screen reader if you ship one; focus handling here is for sighted controller use.
 
 ## Verification
 
-- [tested] The browser stage `smoke menu` with a fake gamepad (21 checks, 5 screenshots): Start opens the screen with the ring on the equipped class; d-pad right moves to the next class; A equips it; RB then LB switch tab and back; the left stick held 900 ms repeats down the rows; hovering previews a stat delta without equipping; B closes; keyboard arrows and Enter equip; Esc closes; a mouse click equips.
-- [tested] Of 285 unit tests every one passed before the first browser run; the browser stages then found the menu flag that never arrived and the parked-mouse refocus. A rule that is never called, or a decision only a real equip exercises, is invisible to isolated unit tests.
-- [documented] The model and router are unit-tested in the ui-kit package (65 tests passed 2026-10-07).
-- [tested] Cost: no timings were recorded for the menu; the pad-suppression lookup allocates nothing.
+- [general] A browser stage with a fake gamepad (override `navigator.getGamepads` in an init script and set button and axis values from the test) can drive: open, move focus with the d-pad, accept, switch tabs, hold the stick for repeats, hover for a preview, back, then the same by keyboard and mouse. Take screenshots.
+- [general] Unit tests passed before the first browser run and the browser then found a flag that never arrived and the parked-mouse refocus. A rule that is never called, or a decision only a real action exercises, is invisible to isolated tests.
+- [general] A physical controller, narrow screens and assistive technology are not covered by a fake pad.
 
-## Not verified
+## Links
 
-- [documented] A real controller was never used. The colour picker with a physical gamepad and the layout on a screen narrower than 1000 px were not checked.
-- [general] Screen-reader behaviour: the dialog sets `role` and `aria-modal`, but no assistive-technology test was run.
+- [Flight controls](flight-controls.md)
+- [Frame loop and state](frame-loop-and-state.md)
+- [Part kits and paint](part-kits-and-paint.md)
