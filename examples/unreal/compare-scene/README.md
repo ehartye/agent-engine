@@ -104,6 +104,10 @@ Run it with `-Set mine`. The pieces:
 - `GridPoints(Count, Spacing)` lays `Count` copies out on a grid about the origin, wide as it is deep for a 16:9 view.
 - `FSet::SlotSpacing`, `LabelHeight`, `FocusHeight`, `DarkHeight` and `ShowcaseCopies` resize the stage for small props or large effects. `FSet::Style` (floor, wall, dark panel, post-process asset paths) left empty gives the engine's basic shape material and a lit stage, as in the example. A game with its own unlit look names its materials there.
 
+## Optional: an authored Niagara candidate
+
+To compare a system you authored (Python through Epic's Niagara toolsets, or in the Niagara editor) rather than an engine template: save it under `/Game/FX`, add `+DirectoriesToAlwaysCook=(Path="/Game/FX")` to `Config/DefaultGame.ini`, and call the same helper with its object path, for example `/Game/FX/NS_Authored.NS_Authored`. See [Niagara in Unreal](../../../skills/engine-asset-import/references/unreal-niagara.md) for the authoring routes. Not run from this example.
+
 ## Optional: a Niagara Fluids candidate
 
 Not part of the example, because the Niagara Fluids plugin is not enabled by default. To add one:
