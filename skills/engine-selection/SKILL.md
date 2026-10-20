@@ -69,6 +69,8 @@ play it. The profiles give what is known per option.
 
 Per-engine evidence, traps and blockers: [engine profiles](references/engine-profiles.md).
 
+For a frame-budget target (for example 120 fps) or a plan to add 25% to 50% more content, profile before choosing a fix: [profiling method](../engine-phaser/references/profiling-method.md) is the engine-neutral method, with browser specifics; the Unreal version is [native Unreal profiling](../engine-asset-import/references/unreal-native-profiling.md). Do not promise a frame rate from an engine's ceiling.
+
 For a Fortnite project blocked by missing MCP operations, or a proposal to author
 in regular UE and port, read [UEFN authoring routes](../engine-asset-import/references/uefn-authoring.md)
 before recommending a second editor workflow.

@@ -53,6 +53,7 @@ Every response entry quotes both paths, for example `"source-file" "../../../Dea
 
 - [tested] The **Game executable**, not UnrealEditor, ran title, race and functional scenarios offscreen on D3D12/RTX 5070 Ti. All three delivered fresh 1920×1080 PNGs and matching native JSON; the images were opened. The log mounted the staged pak. App-local runtime DLLs and both archived OFL notices were present.
 - [tested] Race sampled eight cars, 14722 cm player displacement, 133.5 km/h and three grounded wheels. Functional sampled 12224 cm displacement, 60 shots, ammo zero and four grounded wheels. These establish sampled native motion/control-command/weapon execution. They do not establish a completed lap/race or physical keyboard/controller interaction.
+- [general] Performance acceptance needs the profiling method in [native profiling](unreal-native-profiling.md), run on the immutable package with the sampler built into it.
 - [general] Preserve visual GAP status, known HUD/world issues and open complete-race/input/audio/performance acceptance. A locally running native package does not establish cross-machine portability; another clean Windows machine remains a separate test.
 
 ## Pace audio captures
