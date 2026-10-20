@@ -65,8 +65,8 @@ purpose, on the author's machine, then push. Never let CI regenerate everything 
   shared runner. Mark it `continue-on-error: true` until it has been green on GitHub for a while, and make the
   deploy job not `needs:` it, so a green deploy means the site deployed. Promote it to blocking later. Running
   the real GPU suite stays a local, pre-merge step.
-- **Browsers on a headless Linux runner.** [tested] Fallow Valley's cross-browser job was red on every run until each of
-  these was found:
+- **Browsers on a headless Linux runner.** [general] A cross-browser job on a headless Linux runner can stay red until each of
+  these is handled (reported from one project, not reproduced here):
   - Firefox has no WebGL there ("Exhausted GL driver options", then Phaser's "Cannot create WebGL context"). Run it
     under `xvfb-run -a` with `LIBGL_ALWAYS_SOFTWARE=1` (Mesa llvmpipe). WebKit is fine with the same. Chromium is not:
     it has its own SwiftShader and gets several times slower under forced Mesa, so run it without.

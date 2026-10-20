@@ -1,29 +1,29 @@
 # Native UEFN audio import
 
 Read this when a UEFN project needs rendered WAVs but MCP exposes no audio importer.
+Observed in one consuming UEFN project on UEFN 42.30; not reproduced in this repo.
 Native editor Python is a separate route from the MCP script sandbox. A missing
 MCP operation does not require manual dragging or a second Unreal project.
 
 ## Evidence and limits
 
-**Tested on 2026-10-03:** UEFN 42.30, engine
-`6.0.0-58557680+++Fortnite+Release-42.30`, imported five approved museum masters
+**[general] Observed on 2026-10-03:** UEFN 42.30, engine
+`6.0.0-58557680+++Fortnite+Release-42.30`, imported five approved masters
 into five Sound Waves and five direct looping Sound Cues. Sources were stereo
-48 kHz PCM16, each 72 seconds. Those are tested inputs, not universal format limits.
+48 kHz PCM16, each 72 seconds. Those are observed inputs, not universal format limits.
 Exact source hashes, editor metadata, Cue graphs, explicit scoped saves, clean
-package state and ten disk package hashes were independently checked. Assets
-shipped through Git LFS in [museum PR #10](https://github.com/ehartye/art_explorers_fn/pull/10).
+package state and the disk package hashes were independently checked.
 
-**Playback preparation:** [museum PR #11](https://github.com/ehartye/art_explorers_fn/pull/11)
-adds compiled personal gallery selection, five Audio Players, two mute controls
-and seven preserved typed bindings. Independent settings/reference readback and
-eight scoped actor saves passed. The single launch reached server cook completion,
-then the server shut down because no game clients connected while Fortnite stayed
-in Sleep Mode. The 38 runtime policy checks have not executed. This is not evidence
-of a playback failure, audible success or a complete UEFN sample-scene pass.
+**Playback preparation:** [general] the follow-up added personal audio selection,
+five Audio Players, two mute controls and preserved typed bindings. Independent
+settings/reference readback and scoped actor saves passed. The single launch
+reached server cook completion, then the server shut down because no game clients
+connected while Fortnite stayed in Sleep Mode. The runtime policy checks never
+executed. This is not evidence of a playback failure, audible success or a
+complete UEFN sample-scene pass.
 
 Still open: disk reload, client launch completion, actual listening, seamless
-repeats, gallery levels/transitions, physical mute and multiplayer isolation.
+repeats, level transitions, physical mute and multiplayer isolation.
 Loop flags and Play/Stop logs prove configuration or requests, not audibility.
 Rediscover the installed APIs after upgrades; older Unreal documentation is not
 a contract for every UEFN build.
@@ -36,7 +36,7 @@ settings. Select exactly one intended editor, read its actual loaded island via
 mount/level before edits. The advertised `FortniteGame` project name does not
 identify the island. Keep the same guard inside every project-local script and
 close the short-lived native connection in `finally`. Both skill bodies link
-the authoring reference directly for the tested connection setup.
+the authoring reference directly for the connection setup.
 
 Preflight `SoundFactory`, `SoundWave`, `SoundCue`, `SoundNodeWavePlayer`,
 `AssetImportTask`, `AssetToolsHelpers` and `EditorAssetLibrary` in the installed
@@ -53,8 +53,8 @@ replay a mutation or overwrite an existing Wave/Cue to make a check pass.
 
 ## Configure SoundFactory and AssetImportTask
 
-This configuration excerpt uses calls exercised by the museum importer. It is
-not a standalone importer: the checked source, exact destination and unique name
+[general] This configuration excerpt uses calls exercised by a project importer. It
+is not a standalone importer: the checked source, exact destination and unique name
 are project inputs, and the guards/receipt above must run first.
 
 ```python
@@ -84,28 +84,28 @@ for key, value in {
     task.set_editor_property(key, value)
 ```
 
-After the project preflight and pending receipt, the tested mutation is
+After the project preflight and pending receipt, the mutation is
 `unreal.AssetToolsHelpers.get_asset_tools().import_asset_tasks([task])`.
 [SoundFactory documentation](https://dev.epicgames.com/documentation/en-us/unreal-engine/python-api/class/SoundFactory?application_version=5.1)
-describes the auto-cue options; the installed 42.30 implementation was inspected
-before applying them.
+[documented] describes the auto-cue options; the installed 42.30 implementation was
+inspected before applying them.
 
 ## Inspect the actual graph, then save only the new assets
 
-`task.imported_object_paths` returned **only the Wave**, although SoundFactory
-also created the Cue. Convert native Arrays with `list(...)` before JSON
-serialization. Compare the destination registry before/after; require exactly
+[general] `task.imported_object_paths` returned **only the Wave**, although
+SoundFactory also created the Cue. Convert native Arrays with `list(...)` before
+JSON serialization. Compare the destination registry before/after; require exactly
 the intended new Wave/Cue objects and their actual classes. A Cue omitted from
 the task result is not grounds to import again.
 
-Read `cue.first_node` through `get_editor_property`. The tested graph is a direct
+Read `cue.first_node` through `get_editor_property`. The observed graph is a direct
 `SoundNodeWavePlayer` with no `child_nodes`, and its `sound_wave_asset_ptr` points
 to the new Wave. Set that player's `looping` property to true. Keep Cue volume at
 1.0 so the importer does not silently attenuate the approved master.
 
 Do not substitute `SoundNodeLooping` for seamless indefinite score repeats.
-Epic documents that node for logical/procedural loops, and recommends the Wave
-Player's loop flag for seamless indefinite playback.
+[documented] Epic documents that node for logical/procedural loops, and recommends
+the Wave Player's loop flag for seamless indefinite playback.
 [Looping-node guidance](https://dev.epicgames.com/documentation/unreal-engine/API/Runtime/Engine/USoundNodeLooping).
 
 Before saving, verify Wave `duration`, `num_channels`, `imported_sample_rate`,
@@ -116,20 +116,17 @@ Call `EditorAssetLibrary.save_asset(path, only_if_is_dirty=False)` for each expl
 new Wave/Cue. Verify nonempty disk files, hashes and clean package state separately.
 Reject empty save targets; do not turn a scoped save into Save All.
 
-The tested source/inspection recipe is in the museum's
-[importer](https://github.com/ehartye/art_explorers_fn/blob/f2a06b783053c6ac92e5dd23f145abde6914de61/scripts/import_score_audio.py),
-[native inspector](https://github.com/ehartye/art_explorers_fn/blob/f2a06b783053c6ac92e5dd23f145abde6914de61/scripts/inspect_score_audio.py)
-and [independent verifier](https://github.com/ehartye/art_explorers_fn/blob/f2a06b783053c6ac92e5dd23f145abde6914de61/scripts/verify_score_audio.py).
-The museum repository is private; these examples require repository access.
-Their island UUID, manifests and paths belong to that project; inspect and adapt
-them rather than executing against a different island.
+The recipe splits into an importer, a native inspector and an independent
+verifier script, each carrying its own project manifest and island mount; adapt
+those inputs rather than executing against a different island.
 
 ## Runtime proof and fallback
 
 UEFN's [Audio Player](https://dev.epicgames.com/documentation/fortnite/using-audio-player-devices-in-unreal-editor-for-fortnite)
-uses Sound Waves/Cues. For per-visitor playback, the museum configured Instigator
-Only with Instigating Player location, all autoplay phases off, then used
-`Play(Agent)`/`Stop(Agent)`. Those overloads require Instigator Only according to
+uses Sound Waves/Cues. [general] For per-visitor playback, the observed project
+configured Instigator Only with Instigating Player location, all autoplay phases
+off, then used `Play(Agent)`/`Stop(Agent)`. [documented] Those overloads require
+Instigator Only according to
 the [device API](https://dev.epicgames.com/documentation/en-us/fortnite/verse-api/fortnitedotcom/devices/audio_player_device).
 Read options and preserved typed references back before scoped actor saves.
 Launch once with private diagnostic probes disabled; reconcile a timeout from
@@ -138,8 +135,8 @@ check. Do not claim listening or multiplayer acceptance from editor metadata.
 
 If the installed native APIs or connection are unavailable, use one native editor
 import exemplar via [Content Browser Import](https://dev.epicgames.com/documentation/en-us/fortnite/importing-custom-audio-in-unreal-editor-for-fortnite).
-Auto Reimport created nothing in the earlier 42.20 WAV test. Repeating that failed
-route or building the whole museum in UE is not a prerequisite for audio import.
+[general] Auto Reimport created nothing in an earlier 42.20 WAV test. Repeating that
+failed route or building the whole project in UE is not a prerequisite for audio import.
 
 Time is one capability probe and pilot before batching. Risk is overwriting
 content or replaying an uncertain import. Complexity stays in project scripts
