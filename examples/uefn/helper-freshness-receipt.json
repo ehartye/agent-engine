@@ -1,7 +1,7 @@
 {
   "schema": "agent-engine-native-helper-probe@1",
   "pending": false,
-  "world": "/c0a04fe6-ac82-4a41-81c9-430ad031c9d2/art_explorers_fn.art_explorers_fn",
+  "world": "/<project-guid>/<project>.<project>",
   "pythonVersion": "3.11.8 (tags/v3.11.8:db85d51, Feb  6 2024, 22:03:32) [MSC v.1937 64 bit (AMD64)]",
   "baseline": {
     "actors": 777,
@@ -12,13 +12,13 @@
     "selection": []
   },
   "moduleName": "_agent_engine_helper_probe_049e6173bdba45d99f9dcdeb5274f32d",
-  "fixtureDirectory": "C:\\Users\\ehart\\AppData\\Local\\Temp\\agent-engine-helper-tplhxyof",
+  "fixtureDirectory": "<tmp>\\agent-engine-helper-tplhxyof",
   "probeSourceSha256": "868d44c5d7f4a1d6fce9d353d79adb07b26f594b8e1da04e5f46c45a00e80b4d",
   "runtimeVerified": false,
   "first": {
     "entry": "before",
     "helper": "before",
-    "helperPath": "C:\\Users\\ehart\\AppData\\Local\\Temp\\agent-engine-helper-tplhxyof\\_agent_engine_helper_probe_049e6173bdba45d99f9dcdeb5274f32d.py",
+    "helperPath": "<tmp>\\agent-engine-helper-tplhxyof\\_agent_engine_helper_probe_049e6173bdba45d99f9dcdeb5274f32d.py",
     "helperSha256": "dfdb8e2db249a5d2bd779a9f08754b51d9ad8f56bb1cd0776ac0cd9c01ae00df"
   },
   "second": {
@@ -26,7 +26,7 @@
     "helper": "before",
     "sameModule": true,
     "sameFunction": true,
-    "helperPath": "C:\\Users\\ehart\\AppData\\Local\\Temp\\agent-engine-helper-tplhxyof\\_agent_engine_helper_probe_049e6173bdba45d99f9dcdeb5274f32d.py",
+    "helperPath": "<tmp>\\agent-engine-helper-tplhxyof\\_agent_engine_helper_probe_049e6173bdba45d99f9dcdeb5274f32d.py",
     "helperSha256": "1b2c42ad6c834d1a63ae3b7160a8f0f4b5cf0c3c3bcdf8cf1249b961ed0bcc5e"
   },
   "afterFinderInvalidation": "before",

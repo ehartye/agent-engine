@@ -18,7 +18,7 @@ querying the destination folder afterwards found all 52 assets, including both c
 after import and save the complete asset list explicitly.
 
 The Microsoft Store build of Blender must be started through its
-execution alias, `%LOCALAPPDATA%\Microsoft\WindowsApps\blender-launcher.exe`, from the owner's session.
+execution alias, `%LOCALAPPDATA%\Microsoft\WindowsApps\blender-launcher.exe`, from an interactive user session.
 
 ## UEFN device check
 
