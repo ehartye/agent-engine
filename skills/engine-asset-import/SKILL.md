@@ -26,6 +26,7 @@ strict line between what was verified and what was only read in documentation.
 | Diagnose procedural-road loss and keep collision regression evidence separate | [Native contact case study](references/unreal-native-contact.md) |
 | Profile frame time against a budget (120 fps), decompose game thread, render thread and GPU, run an ablation matrix and cost per item | [Native profiling](references/unreal-native-profiling.md); method in [profiling method](../engine-phaser/references/profiling-method.md) |
 | Prove a performance fix exact, check engine source before predicting a cost, avoid Insights, nullrhi and PowerShell traps | [Profiling facts and traps](references/unreal-native-profiling-facts.md) |
+| Put several ways of doing one visible thing side by side on a stage, film them, time each alone at N copies and write a receipt, from a native C++ game | [Comparison scene](references/unreal-native-compare-scene.md); source and runner in `examples/unreal/compare-scene` |
 
 ## Before you claim anything
 
