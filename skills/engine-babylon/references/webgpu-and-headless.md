@@ -1,38 +1,42 @@
 # WebGPU, WebGL and headless Chromium for Babylon.js
 
-Evidence: Sector Run Slice 1, `docs/lessons/babylon.md` (private repository). Versions are in [versions and migrations](versions-and-migrations.md). `[tested]` ran there, `[documented]` was read in official docs or source, `[general]` was not checked.
+Evidence: `examples/web3d` (core tests, the Babylon.js Node tests and verifier) plus library source. `[tested]` is reproduced by a command in this repo, `[documented]` was read in official docs or source, `[general]` is guidance not checked here. Pin: @babylonjs/core 9.29.0 (see [versions and migrations](versions-and-migrations.md)).
 
-All runs: Playwright 1.63.0 with Chromium 153.0.8010.12 on Windows 11, a laptop with an NVIDIA GeForce RTX 5070 Ti and Intel Graphics.
+Which backend runs, how headless Chromium picks a GPU, and how to assert it. The example app creates only a WebGL `Engine`; nothing here ran on WebGPU. The flag set is in [`examples/web/verify-checks.mjs`](../../../examples/web/verify-checks.mjs), and `node examples/web3d/r3f/renderer-flags.mjs` prints what each flag set selects on your machine.
 
 ## Engines and backends
 
-- [tested] Slice 1 renders with WebGL 2 only (`Engine`), because its toon shader is GLSL only. `?backend=webgpu` is accepted and reported honestly as `webgl-fallback`, so the verifier sees what really rendered. A WebGPU run was not tried.
-- [general] For WebGPU, add WGSL versions of the custom shaders to `ShaderStore.ShadersStoreWGSL` and create the engine with `WebGPUEngine`. Believed, not checked here.
+- [documented] `Engine` is the WebGL engine (`webGLVersion` 2 on a WebGL 2 context). `WebGPUEngine` is a separate class: create it with `await WebGPUEngine.CreateAsync(canvas)` (or `new WebGPUEngine(canvas)` then `await engine.initAsync()`), and test support first with `await WebGPUEngine.IsSupportedAsync` (`@babylonjs/core/Engines/webgpuEngine`, 9.29.0).
+- [documented] Shaders are per language: GLSL lives in `ShaderStore.ShadersStore` and WGSL in `ShaderStore.ShadersStoreWGSL` (`Engines/shaderStore.js`). A custom shader written only in GLSL needs a WGSL version before it can run on `WebGPUEngine`.
+- [general] You choose the engine class; check support and create `Engine` yourself if `WebGPUEngine` is unavailable. If your app offers a `?backend=webgpu` switch and falls back to WebGL, report what actually rendered (`webgpu`, `webgl2`, `webgl-fallback`) so a verifier sees the truth.
+- [general] The example app reads the backend from the engine, not from the request:
 
-## Headless Chromium on Windows
+```js
+holder.backend = engine.webGLVersion >= 2 ? 'webgl2' : 'webgl1';
+const dbg = engine._gl.getExtension('WEBGL_debug_renderer_info');
+holder.renderer = dbg ? engine._gl.getParameter(dbg.UNMASKED_RENDERER_WEBGL) : '';
+```
 
-- [tested] These flags put headless Chromium on the discrete GPU through ANGLE/D3D11: `--use-angle=d3d11 --ignore-gpu-blocklist --force_high_performance_gpu`. The renderer string was `ANGLE (NVIDIA, NVIDIA GeForce RTX 5070 Ti Laptop GPU (0x00002F58) Direct3D11 vs_5_0 ps_5_0, D3D11)`. Some earlier spike numbers come from the same machine's Intel Graphics (0x7D67).
-- [tested] For a software run use SwiftShader: `SMOKE_SOFTWARE=1` for the smoke script, `PROBE_ANGLE=swiftshader pnpm verify:babylon --allow-software` for the verifier. The renderer string is `ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)`.
+## Headless Chromium picks a GPU
+
+- [tested] (babylon verify: renderer is a hardware GPU; `node examples/web3d/r3f/renderer-flags.mjs`) The shared flag set is the platform ANGLE backend, `--ignore-gpu-blocklist` and `--force_high_performance_gpu` (`gpuArgs()`: `d3d11` on Windows, `metal` on macOS, `gl` elsewhere). The verifier launches with it and requires a hardware renderer string.
+- [general] With no GPU flags headless Chromium may render with the SwiftShader software rasteriser. WebGL 2 works and nothing errors; only the renderer string gives it away.
+- [general] Which GPU the ANGLE backend alone picks on a hybrid-GPU laptop (integrated plus discrete) varies with drivers and power state; that is why `--force_high_performance_gpu` is in the set (harmless on one-GPU machines) and why the verifier reports the renderer string instead of assuming one.
+
+```js
+chromium.launch({ headless: true, args: ['--use-angle=d3d11', '--ignore-gpu-blocklist', '--force_high_performance_gpu'] });
+```
 
 ## Asserting the backend
 
-- [tested] Classify the renderer string, do not trust the request: the probe's `backend` was `webgl2` on the GPU and `webgl-fallback` on SwiftShader, from the shared `classifyRenderer`.
-- [documented] The app also reports a WebGL 1 context or a WebGPU request it answered with WebGL as `webgl-fallback` (`apps/babylon/src/probe/state.ts`):
-
-```ts
-export function backendOf(requested: 'webgl2' | 'webgpu', webglVersion: number | null, renderer: string): Backend {
-  if (webglVersion === null) return 'unknown';
-  if (requested === 'webgpu') return 'webgl-fallback';
-  if (webglVersion < 2) return 'webgl-fallback';
-  return classifyRenderer('webgl2', renderer); // engine.getGlInfo().renderer
-}
-```
-
-- [tested] The smoke script's backend check first expected `webgl2` under `SMOKE_SOFTWARE` too and had to be corrected to expect `webgl-fallback` there.
-- [tested] The verifier's `--allow-software` relaxes the software-renderer check but not the backend check: on SwiftShader the whole scenario ran and the run still reported FAIL on `backend is webgl2 or webgpu (webgl-fallback)` alone (a probe quirk, reported, not changed).
+- [tested] (`node --test examples/web/verify-checks.test.mjs`: classifyRenderer, rendererCheck) Classify the unmasked renderer string against `/swiftshader|llvmpipe|software|basic render/i`: hardware GPU passes, software is `webgl-fallback`, no WebGL 2 context or no string is `none`.
+- [tested] (babylon verify: renderer is a hardware GPU; verify-checks test: rendererCheck) The first verifier check reads the renderer string the app reports and fails on a software rasteriser unless `--allow-software` is passed. `--allow-software` relaxes only that check; with no WebGL 2 context the check still fails.
+- [general] Do not trust the request: a page that asked for one backend can run another, and a screenshot check passes on a software rasteriser.
 
 ## Software rendering
 
-- [tested] WebGL 2 runs on SwiftShader. The smoke stages `boot flight combat perf` passed all 25 checks at a mean 43.6 fps (min 35.1) in 28 s of wall time, against 60.0 fps and 24 s on the GPU.
-- [tested] The verifier on SwiftShader (no `--enforce-fps`) ran the whole scenario in 54 s of command wall time (51.3 s inside the verifier) at 29.7 fps, against 49 to 50 s on the GPU; course 13.12 s -> 12.30 s (6.2 % faster).
-- [tested] CPU and GPU particle systems both render on SwiftShader; a GPU burst lit about 15,000 pixels on both renderers.
+- [general] On a machine with no GPU run the verifier with `--allow-software`: the scenario still runs, only slower, and frame-rate numbers are meaningless.
+- [general] Software rasterisers can log GPU-stall performance warnings (for example about `ReadPixels`) that a GPU run does not, which a zero-warning console rule then fails. Decide whether that is the signal you want or allow the text for software runs only.
+- [general] A scenario driven by `requestAnimationFrame` takes about the same wall time on software and on a GPU when the scene is light, because the page is capped at the display rate either way. Wall time does not separate them; the renderer string does.
+
+Related: [probe and verification](probe-and-verification.md), [scene loop and observables](scene-loop-and-observables.md).

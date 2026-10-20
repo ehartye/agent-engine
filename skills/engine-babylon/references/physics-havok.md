@@ -1,20 +1,20 @@
 # Havok physics in Babylon.js
 
-Evidence: Sector Run Slice 1, `docs/lessons/babylon.md` (private repository). Versions are in [versions and migrations](versions-and-migrations.md). `[tested]` ran there, `[documented]` was read in official docs or source, `[general]` was not checked.
+Evidence: `examples/web3d` (core tests, the Babylon.js Node tests and verifier) plus library source. `[tested]` is reproduced by a command in this repo, `[documented]` was read in official docs or source, `[general]` is guidance not checked here. Pin: @babylonjs/core 9.29.0 (see [versions and migrations](versions-and-migrations.md)).
 
-The spec's risk was whether Havok's WASM loads in headless Chromium at all. It does, with no configuration.
+Babylon.js v2 physics runs on Havok (`@babylonjs/havok`, a WASM build). The example does not use Havok: its projectiles are swept tests in the engine-neutral core, and it installs only `@babylonjs/core`. So what follows about Havok itself is `[general]` or read from `@babylonjs/core` source; the stepping contract it relies on is reproduced.
 
-## The choice and what it was weighed against
+## Do you need an engine
 
-- [tested] Spike B (121 static spheres and a dynamic ship sphere): Havok cost 0.18 to 0.22 ms per step (0.2 to 0.25 ms on the Intel GPU run), resolved a 260 m/s contact at the surface with no tunnelling, and was stepped in the same fixed ticks as the flight model.
-- [tested] A 420 m/s bolt moves 7 m per 60 Hz step, so a swept segment-versus-sphere test is exact and needs no physics engine.
-- [tested] Decision: Havok for ship-versus-rock contact only; bolts and ore pickups are analytic tests in the core (`src/sim/combat.ts`, `src/sim/pickups.ts`). Every kill under the verifier and the smoke run delivered its full ore.
+- [tested] (core tests: swept segment tests hit 400 of 400 fast shots; an end-point test with a random phase does not) A fast projectile moves several metres per fixed step, and a swept segment-versus-sphere test finds all 400 of 400 hits at random phases where an end-point test misses some. The test is plain maths, so it needs no physics engine and stays identical in every renderer.
+- [general] Use analytic tests in the core for projectiles and pickups, and a physics engine only for contact response you do not want to write (body against body, resting contact). Keeping gameplay events out of the engine's callbacks also keeps the rules testable in Node ([`core`](../../../examples/web3d/core)).
+- [general] Measure the step cost for your own body count before committing: one earlier spike (about 120 static spheres and one dynamic body) cost a fraction of a millisecond per step with no tunnelling, but that is one scene, not a budget.
 
 ## Loading the WASM in Vite and headless Chromium
 
-- [tested] `@babylonjs/havok` 1.3.14 loads with no Vite configuration, in dev with or without `locateFile` and from `vite build` plus `vite preview`, in 25 to 30 ms (26 to 42 ms on the Intel run). The app passes the URL explicitly (`src/game/physics.ts`):
+- [general] `@babylonjs/havok` loaded in dev and from `vite build` plus `vite preview` in headless Chromium with no Vite configuration in an earlier project, in tens of milliseconds. Pass the WASM URL explicitly so the bundler emits it as its own asset:
 
-```ts
+```js
 import HavokPhysics from '@babylonjs/havok';
 import wasmUrl from '@babylonjs/havok/lib/esm/HavokPhysics.wasm?url';
 import { HavokPlugin } from '@babylonjs/core/Physics/v2/Plugins/havokPlugin';
@@ -24,30 +24,32 @@ const hk = await HavokPhysics({ locateFile: () => wasmUrl });
 scene.enablePhysics(new Vector3(0, 0, 0), new HavokPlugin(true, hk));
 ```
 
-- [tested] The WASM is 2,094,563 bytes (2.09 MB), served from the build as `/assets/HavokPhysics-<hash>.wasm`.
-- [tested] `@babylonjs/havok/package.json` is not exported, so a Vite config cannot `require.resolve` it; read the version by path (`node_modules/@babylonjs/havok/package.json`).
-- [tested] The first dev run after adding Havok logged 504 `Outdated Optimize Dep` console errors: Vite's optimizer re-bundled for the new dependencies and in-flight requests for the old bundle failed. The page still worked and the second run was clean. Warm the optimizer before a headless check; see [zero errors](probe-and-verification.md#zero-errors).
+- [documented] `joinedPhysicsEngineComponent` is the side-effect module that defines `Scene.prototype.enablePhysics` and replaces `_advancePhysicsEngineStep`, an empty stub in `scene.pure.js` ("Code will be replaced if physics engine component is referenced"). Import it by deep path, or physics is not wired to the scene.
+- [general] The WASM is about 2 MB and is not part of the JavaScript budget; see [bundle size and imports](bundle-size-and-imports.md).
+- [general] Read the Havok version from `node_modules/@babylonjs/havok/package.json` by path; the package did not export its `package.json` to a Vite config in the earlier project.
+- [general] The first dev run after adding a dependency can log `Outdated Optimize Dep` errors while Vite re-bundles. Warm the optimizer before a headless check so the zero-warning gate stays honest ([probe and verification](probe-and-verification.md)).
 
 ## Bodies and shapes
 
-- [tested] A `PhysicsBody` on a plain `TransformNode` with a `PhysicsShapeSphere` works without a mesh; the app's rocks are exactly that.
-- [tested] Zero inertia keeps a dynamic body from rotating, so the flight model can own orientation and give Havok only the velocity: in spike B the ship's rotation stayed identity through 153 contacts.
+- [general] A `PhysicsBody` works on a plain `TransformNode` with a `PhysicsShapeSphere`; no mesh is needed. Static obstacles can be just that.
+- [general] A zero-inertia dynamic body does not rotate, so the game can own orientation and give Havok only a velocity to resolve:
 
-```ts
-const body = new PhysicsBody(shipNode, PhysicsMotionType.DYNAMIC, false, scene);
+```js
+const body = new PhysicsBody(node, PhysicsMotionType.DYNAMIC, false, scene);
 body.shape = new PhysicsShapeSphere(Vector3.Zero(), radius, scene);
 body.setMassProperties({ mass: 1, inertia: Vector3.Zero() });
 ```
 
-- [tested] `body.dispose()` mid-run is clean; a game reset disposes every rock body and rebuilds the field.
+- [general] Dispose every body on a game reset (`body.dispose()`) and rebuild; it is clean mid-run.
 
 ## Stepping and determinism
 
-- [tested] Create the engine with `deterministicLockstep: true, lockstepMaxSteps: 4, timeStep: 1 / 60` and call `scene.enablePhysics`: Babylon steps Havok in the fixed ticks, 59 to 60 steps per wall second, calling `scene.onBeforeStepObservable` before each Havok step. See [the scene loop](scene-loop-and-observables.md).
-- [tested] `timeStep` is in seconds: `1000 / 60` froze the simulation at zero steps (re-run on 2026-10-07 under `NullEngine`: 0 steps in 113 frames, against 178 steps with `1 / 60`).
-- [tested] Set the velocity before the step (`scene.onBeforeStepObservable`) and read Havok's position and velocity back after it (`scene.onAfterStepObservable`). Hit-stop zeroes the Havok velocity for 4 steps.
+- [tested] (babylon Node tests: timeStep is in seconds) With `deterministicLockstep: true`, `timeStep` is in seconds: `1 / 60` steps about 60 times a second and `1000 / 60` freezes the simulation at zero steps (babylon verify: `timeStep` 1000/60 freezes steps). `engine.getTimeStep()` reports milliseconds. Physics is stepped from the same ticks, so the same mistake freezes physics too.
+- [documented] Under lockstep each tick runs `onBeforeStepObservable`, then the animation update, then `_advancePhysicsEngineStep(timeStep in ms)`, then `onAfterStepObservable` (`Scene.animate`, `scene.pure.js`). With no sub-step set, the engine steps by that tick (`_step(step / 1000)`), and `HavokPlugin(true, hk)` uses the delta it is given.
+- [general] Set the body's velocity in `onBeforeStepObservable` and read position and velocity back in `onAfterStepObservable`. Hit-stop is then "skip the gameplay step and zero the body's velocity for N ticks" ([scene loop and observables](scene-loop-and-observables.md)).
+- [documented] `scene.onBeforePhysicsObservable` and `onAfterPhysicsObservable` also fire around each physics step (`joinedPhysicsEngineComponent.pure.js`); use the before/after step observables for gameplay so the order does not depend on the physics sub-step setting.
 
 ## Collision events
 
-- [tested] Spike B: the ship flown into a rock stopped at z 88.8, the rock's near face (90) minus the ship radius (1.2), with 153 to 154 collision callbacks from `body.setCollisionCallbackEnabled(true)` and `body.getCollisionObservable().add(...)` (`spikes/src/b.ts`).
-- [documented] The game itself registers no collision observer: the contact response shows up in the velocity it reads back after each step (`apps/babylon/src/game/physics.ts`, `src/game/game.ts`). Bolt hits and pickups are core events from the analytic tests.
+- [documented] `body.setCollisionCallbackEnabled(true)` plus `body.getCollisionObservable().add(...)` is the per-body event API (`Physics/v2/physicsBody.js`).
+- [general] Callbacks fire every step while bodies touch (about 150 in one earlier contact run), so treat them as state, not as one-shot events. The simpler pattern is no observer: the contact response already shows up in the velocity read back after the step, and gameplay events come from the analytic tests.

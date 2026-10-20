@@ -1,47 +1,41 @@
 # Babylon.js bundle size and imports
 
-Evidence: Sector Run Slice 1, `docs/lessons/babylon.md` (private repository). Versions are in [versions and migrations](versions-and-migrations.md). `[tested]` ran there, `[documented]` was read in official docs or source, `[general]` was not checked.
+Evidence: `examples/web3d` (core tests, the Babylon.js Node tests and verifier) plus library source. `[tested]` is reproduced by a command in this repo, `[documented]` was read in official docs or source, `[general]` is guidance not checked here. Pin: @babylonjs/core 9.29.0 (see [versions and migrations](versions-and-migrations.md)).
 
-All sizes are from `pnpm --filter @sector-run/babylon build` (Vite 8.3.3 with Rolldown) on the finished Slice 1 app.
+Babylon.js is large if you import the package root, and small enough if you import deep modules. The catch is that many features register themselves as a side effect of importing one module, so a missing import fails quietly or at run time. The example imports only deep `@babylonjs/core/...` paths ([`main.mjs`](../../../examples/web3d/babylon/src/main.mjs), [`labs.mjs`](../../../examples/web3d/babylon/src/labs.mjs)).
 
-## Measured sizes
+## Size
 
-| What | Size |
-| --- | --- |
-| Build time | 560 ms. [tested] |
-| Main chunk `index-<hash>.js` | 1,578.43 kB, 380.45 kB gzip (Vite's figures). [tested] |
-| Havok WASM | 2,094,563 bytes. [tested] |
-| Next largest chunks | `scene.pure` 160 kB, `pbrMaterial.pure` 152 kB, `openpbrMaterial.pure` 128 kB, `pbr.fragment` 118 kB. [tested] |
-| All JavaScript | 255 files, 3,832 KiB raw, 964 KiB gzip (level 9, Node's zlib). [tested] |
-| `dist` | 7.3 MB: `assets` 6.4 MB, `audio` 504 KB, `parts` 412 KB. [tested] |
+- [tested] (babylon verify: a deep-import production build stays under 2 MB of JavaScript) The example (engine, scene, free camera, hemispheric light, `StandardMaterial`, mesh builders, thin instances, the outline renderer and instrumentation) builds with Vite 8.3.3 to about 1.6 MB of JavaScript (1597 kB in the run recorded here, the sum of the chunks' code). The check is a loose ceiling so a barrel import is noticed, not a budget; run `npm run verify` for the current figure.
+- [general] Importing from the package root (`@babylonjs/core`) pulls in far more and defeats tree shaking; keep every import a deep path, and re-run the size check after each new feature.
+- [general] Gzip and the split between chunks depend on your app; measure your own build. The verifier does not report them.
+- [general] Heavy assets are separate downloads, not JavaScript: the Havok WASM is about 2 MB ([Havok](physics-havok.md)), plus your models and audio.
 
-- [tested] No file in the production build has `inspector` in its name; the spike build that included the inspector was about 30 MB.
+## Side-effect imports
 
-## Tree shaking and side-effect imports
+- [documented] 9.29.0 ships each module twice: `foo.pure.js` is side-effect free, and `foo.js` re-exports it and then registers the feature (for example `particleSystem.js` calls `RegisterParticleSystem()`; `package.json` lists `Shaders/**` as side-effectful). A deep import of the non-pure path registers the feature; a `.pure` import does not.
+- [documented] Features that augment a class are left as stubs until their module is imported (`Misc/devTools.js`). `Mesh.prototype.thinInstanceSetBuffer` is a stub (`mesh.pure.js`, line 4946) and `renderOutline` is a property that reads `undefined`, and whose setter just stores a value (`abstractMesh.pure.js`, line 2495), so assigning `mesh.renderOutline = true` without `Rendering/outlineRenderer` draws no outline and raises no error.
+- [documented] Turn the stubs loud while developing: `SetMissingSideEffectWarningsEnabled(true)` from `@babylonjs/core/Misc/devTools` makes a stub log a one-time "requires a side-effect import" warning. Warnings are off by default because the engine probes optional features itself.
+- [tested] (babylon verify: built-in outline; thin instances) The example imports `@babylonjs/core/Rendering/outlineRenderer` and `@babylonjs/core/Meshes/thinInstanceMesh` explicitly, and both features work in the real GPU checks.
+- [documented] A shader chunk you `#include` must have been registered by importing its module (`@babylonjs/core/Shaders/ShadersInclude/instancesDeclaration`, `.../instancesVertex`). An unregistered include is not an error at once: the shader processor falls back to fetching `ShadersInclude/<name>.fx` from the shaders repository (`Engines/Processors/shaderProcessor.js`), which does not exist in a bundled app.
+- [documented] The side-effect imports a feature set needs, read from 9.29.0 source (verify each at run time on your version):
 
-- [tested] Import exactly the modules used, by deep `@babylonjs/core/...` paths, not the package root. A module that registers a feature then needs its own side-effect import, or the feature is missing at run time.
-- [tested] Babylon ships "pure" modules (`*.pure.js`) next to side-effect modules: a deep import of a module registers its feature, a `.pure` import does not.
-- [tested] The side-effect imports Sector Run had to write by hand, each because the feature was missing at run time without it:
-
-```ts
-import '@babylonjs/core/Meshes/thinInstanceMesh';
-import '@babylonjs/core/Rendering/outlineRenderer';
-import '@babylonjs/core/Shaders/ShadersInclude/instancesDeclaration'; // a custom shader that includes
-import '@babylonjs/core/Shaders/ShadersInclude/instancesVertex';      // these fails to compile without them
-import '@babylonjs/core/Particles/webgl2ParticleSystem';              // new GPUParticleSystem throws without it
-import '@babylonjs/core/Particles/particleSystemComponent';
-import '@babylonjs/core/Engines/Extensions/engine.transformFeedback';
-import '@babylonjs/core/Shaders/particles.vertex'; // and the other five particle shaders:
-// particles.fragment, gpuUpdateParticles.vertex/.fragment, gpuRenderParticles.vertex/.fragment
-import '@babylonjs/core/Physics/joinedPhysicsEngineComponent';
-import '@babylonjs/loaders/glTF/2.0';
+```js
+import '@babylonjs/core/Meshes/thinInstanceMesh';                   // thinInstanceSetBuffer and friends
+import '@babylonjs/core/Rendering/outlineRenderer';                 // mesh.renderOutline
+import '@babylonjs/core/Shaders/ShadersInclude/instancesDeclaration'; // custom shaders that #include them
+import '@babylonjs/core/Shaders/ShadersInclude/instancesVertex';
+import '@babylonjs/core/Particles/webgl2ParticleSystem';            // GPUParticleSystem on WebGL2; imports the update shaders and transform feedback
+import '@babylonjs/core/Particles/gpuParticleSystem';               // render shaders for GPU particles
+import '@babylonjs/core/Particles/particleSystem';                  // CPU ParticleSystem registration
+import '@babylonjs/core/Physics/joinedPhysicsEngineComponent';      // scene.enablePhysics and physics stepping
+import '@babylonjs/loaders/glTF/2.0';                               // GLB loading (separate package)
 ```
 
-## Splitting Havok and the inspector
+- [documented] The CPU particle shaders (`particles.vertex`, `particles.fragment`) are loaded by a dynamic `import()` inside `ThinParticleSystem`, so a bundler emits them as their own small chunks instead of needing a hand-written import ([particles and explosions](particles-and-explosions.md)).
 
-- [tested] Havok's WASM stays out of the JavaScript: imported with `?url` (`@babylonjs/havok/lib/esm/HavokPhysics.wasm?url`) it is emitted as its own asset, `/assets/HavokPhysics-<hash>.wasm`. See [Havok](physics-havok.md#loading-the-wasm-in-vite-and-headless-chromium).
-- [tested] Guard the inspector behind `import.meta.env.DEV` and load it with a dynamic `import('@babylonjs/inspector')`: the production build then has no inspector chunk (count 0), against about 30 MB for the spike build that bundled it. See [the inspector](inspector-and-debugging.md#loading-the-inspector-on-demand).
+## Splitting off the heavy parts
 
-## What the build still carries
-
-- [tested] The glTF loader pulls in the PBR materials (`pbrMaterial.pure` 152 kB, `openpbrMaterial.pure` 128 kB, `pbr.fragment` 118 kB) although every mesh gets the toon material.
+- [general] Import the Havok WASM with `?url` (`@babylonjs/havok/lib/esm/HavokPhysics.wasm?url`) so it is emitted as its own asset and stays out of the JavaScript chunks.
+- [general] Guard the inspector behind `import.meta.env.DEV` and load it with a dynamic `import('@babylonjs/inspector')`. A production build then has no inspector chunk; a build that bundles it is many times larger ([inspector and debugging](inspector-and-debugging.md)).
+- [general] The glTF loader brings in the PBR material code even when every mesh is re-materialed with a toon `ShaderMaterial`. Expect that cost once you load GLBs and measure it.

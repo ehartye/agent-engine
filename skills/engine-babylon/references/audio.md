@@ -1,14 +1,14 @@
 # Audio in Babylon.js
 
-Evidence: Sector Run Slice 1, `docs/lessons/babylon.md` (private repository). Versions are in [versions and migrations](versions-and-migrations.md). `[tested]` ran there, `[documented]` was read in official docs or source, `[general]` was not checked.
+Evidence: `examples/web3d` (core tests, the Babylon.js Node tests and verifier) plus library source. `[tested]` is reproduced by a command in this repo, `[documented]` was read in official docs or source, `[general]` is guidance not checked here. Pin: @babylonjs/core 9.29.0 (see [versions and migrations](versions-and-migrations.md)).
 
-Sector Run plays recorded WAVs (explosion variants and a pickup chime) through Babylon's AudioV2 engine (`src/audio/director.ts`).
+Babylon.js 9 plays recorded WAVs through its AudioV2 engine (`@babylonjs/core/AudioV2`). The example makes no sound, so nothing here is `[tested]`; the claims are read from source or are guidance from an earlier project that played recorded effects (explosion variants, a pickup chime). The sounds themselves come from the agent-beeps skills; this is only the Babylon side.
 
 ## Audio engine and loading
 
-- [tested] Create the engine with `CreateAudioEngineAsync` and decode each file with `CreateSoundAsync`; both work while the context is still suspended. After creation `engine.state` and the `AudioContext` are `suspended`, and five stand-in sounds decoded anyway (0.4, 0.4, 0.4, 0.4 and 0.2 s).
+- [documented] `CreateAudioEngineAsync(options)` builds the engine and `CreateSoundAsync(name, source, options, engine)` decodes a file into a static sound; `sound.play({ volume })` starts an instance, and `maxInstances` caps overlapping plays of one sound (`AudioV2/webAudio/webAudioEngine.js`, `abstractAudio/audioEngineV2.js`, 9.29.0).
 
-```ts
+```js
 import { CreateAudioEngineAsync } from '@babylonjs/core/AudioV2/webAudio/webAudioEngine';
 import { CreateSoundAsync } from '@babylonjs/core/AudioV2/abstractAudio/audioEngineV2';
 
@@ -17,35 +17,38 @@ const sound = await CreateSoundAsync('explosion-0', '/audio/explosion-0.wav', { 
 sound.play({ volume: 0.8 });
 ```
 
-- [tested] All five sounds played with `sound.play({ volume })` after the unlock, with no console warning or error.
+- [documented] `disableDefaultUI: false` (the default) adds Babylon's own unmute button; a game with its own start screen turns it off. `resumeOnInteraction` (default true) makes the engine resume its `AudioContext` on the first user gesture.
+- [general] In an earlier project the engine and decoding worked while the `AudioContext` was still `suspended`, so load sounds at start and gate only `play()` on the unlock.
 
 ## Unlock on the first gesture
 
-- [tested] Spike D, Chromium without an autoplay flag: after a real `page.mouse.click` the page saw `pointerdown`, `stateChangedObservable` reported `running` and `engine.unlockAsync()` resolved with `engine.state` `running`.
-- [tested] Symptom: the first verifier run failed `audio is locked before the click`. The app had defined `unlocked` as `engine.state === 'running'`, and the context was already running before any click.
-- [tested] Cause: in the verifier's page `navigator.userActivation.hasBeenActive` was true and a fresh `new AudioContext()` reported `running` before any input. Playwright's `page.evaluate`, which the verifier uses to read the probe, counts as user activation, so Chromium starts audio contexts running. The spike missed it because it read the state once, before any evaluate had run.
-- [tested] Workaround: keep your own flag, set only from a trusted `pointerdown` or `keydown` (`event.isTrusted`), and gate `play()` on it as well as on the engine state. A smoke `boot` check, `audio is locked before a real gesture`, failed with `{"unlocked":true}` before the fix and passes after it.
+- [documented] `engine.unlockAsync()` is `resumeAsync()`, which calls `AudioContext.resume()`; `engine.state` reads the context state and `stateChangedObservable` reports changes.
+- [general] Do not use the context state as a gesture gate in an automated browser. Playwright's `page.evaluate` counts as user activation in Chromium, so a fresh `AudioContext` can report `running` before any click, and a check like "audio is locked before a real gesture" fails for the wrong reason.
+- [general] Keep your own flag, set only from a trusted `pointerdown` or `keydown` (`event.isTrusted`), and gate `play()` on that flag as well as on the engine state:
 
-```ts
-const unlock = (e: Event) => { if (e.isTrusted) void audio.unlock(); }; // sets gestured, then engine.unlockAsync()
+```js
+const unlock = (e) => { if (e.isTrusted) void audio.unlock(); }; // sets gestured, then engine.unlockAsync()
 window.addEventListener('keydown', unlock);
 canvas.addEventListener('pointerdown', unlock);
 // get unlocked() { return this.gestured && this.engine?.state === 'running'; }
 ```
 
-- [tested] Under Playwright the context state is not a gesture gate. The R3F app keeps its own flag too, but sets it without checking `event.isTrusted`.
+- [general] Synthetic `dispatchEvent` input has `isTrusted === false`, so use the browser's real input (`page.mouse.click`, `page.keyboard.press`) in the verifier to unlock.
 
 ## Variants without immediate repeats
 
-- [tested] Each explosion picks a variant that differs from the last one played; nothing is played, or logged as played, before the unlock.
-- [documented] The picker draws from `count - 1` slots and skips over the last index, so it never repeats and needs no retry loop; the app ships four explosion variants and one pickup chime (`apps/babylon/src/audio/variants.ts`):
+- [general] To avoid hearing the same explosion twice in a row, draw from `count - 1` slots and skip over the last index; it never repeats and needs no retry loop:
 
-```ts
+```js
 let pick = Math.floor(rng() * (count - 1));
 if (pick >= last) pick++;
 last = pick;
 ```
 
+- [general] Use a seeded generator for the pick, not `Math.random`, so a replay or a test hears the same sequence. Play nothing, and log nothing as played, before the unlock.
+
 ## State the probe can read
 
-- [tested] The probe exposes `audio.unlocked` and `audio.played` (the sounds played since the unlock). The verifier, launched without an autoplay flag (`chromiumArgs` in `packages/probe/src/cli/args.ts`), asserts that `unlocked` is false and `played` is empty before its one real click in the middle of the page, and that `unlocked` is true within 2 s after it. With the trusted-gesture flag this passed in both verifier runs.
+- [general] Expose `audio.unlocked` and `audio.played` (the sounds played since the unlock) in the state probe ([probe and verification](probe-and-verification.md)). A verifier launched without an autoplay flag can then assert `unlocked` is false and `played` is empty before one real click, and that `unlocked` becomes true within a couple of seconds after it. Sound output itself is not verified; the probe checks that the right call was made.
+
+Related: [bundle size and imports](bundle-size-and-imports.md), [webgpu and headless](webgpu-and-headless.md).
