@@ -164,7 +164,7 @@ has to be converted first, and the clips can vanish in the conversion.
 - Clip names differ by route: Interchange from the GLB gave `foxwalk`; the MCP tool from the FBX gave
   `Fox_Anim_Ember_fox_walk`. List the clips after import and look them up by suffix.
 - Blender from the Microsoft Store cannot be run from its folder under `WindowsApps` (access denied). Run
-  `%LOCALAPPDATA%\Microsoft\WindowsApps\blender-launcher.exe` as an interactive task in the owner's session; it
+  `%LOCALAPPDATA%\Microsoft\WindowsApps\blender-launcher.exe` as an interactive task in an interactive user session; it
   swallows Blender's console output, so check that the output file was rewritten. A leftover Blender process stalls
   the next launch.
 
