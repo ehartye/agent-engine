@@ -32,7 +32,7 @@ struct FCandidate {
     /** Add whatever the candidate can tell about itself (component counts, which asset it loaded, whether it was available) to its entry in the receipt. Optional. */
     TFunction<void(FJsonObject& Into)> Describe;
 };
-/** Asset paths for the stage's look. Empty paths use the engine's basic shape material, and the stage is then lit (a directional light and a sky light are added); a project with an unlit
+/** Asset paths for the stage's look. Empty paths use the engine's basic shape material (light floor and wall, dark panels), and the stage is then lit (a key light on the camera's side and a sky light are added, and the exposure is lowered); a project with an unlit
  * house style (an unlit material, a post-process finish) names its own and gets exactly its look. */
 struct FStyle { FString Floor,Wall,Dark,PostProcess; };
 struct FSet {

@@ -14,7 +14,7 @@ Use it to choose between implementations of one visible thing (mesh components m
 
 ## Verified
 
-Built as part of a C++ project, cooked and packaged, and run with `compare.ps1` on Unreal Engine 5.8.2, Windows, with the `example` set. The runner's checks passed (valid 1920x1080 PNGs, receipt parses and names its scenario and screenshot, every candidate timed over its window) and the first filmed frame was looked at. Not run: live mode and the gamepad bindings, the editor-launched route (`-Exe UnrealEditor.exe`), an output path containing spaces, any non-Windows platform.
+Built as part of a C++ project, cooked and packaged, and run with `compare.ps1` on Unreal Engine 5.8.2, Windows, with the `example` set. The runner's checks passed (valid 1920x1080 PNGs, receipt parses and names its scenario and screenshot, every candidate timed over its window), and the filmed frames were looked at: a lit stage with a label under each candidate, a dark panel behind each, the cubes turning and the fountain's particles showing against the dark panel. Not run: live mode and the gamepad bindings, the editor-launched route (`-Exe UnrealEditor.exe`), an output path containing spaces, any non-Windows platform.
 
 ## Adopt it in a native C++ game
 
@@ -25,7 +25,7 @@ Built as part of a C++ project, cooked and packaged, and run with `compare.ps1` 
    PrivateDependencyModuleNames.AddRange(new[] { "Json", "RHI", "Niagara" });
    ```
 
-3. `.uproject` plugins: Niagara is enabled by default; add it explicitly if your project disables defaults. A set that uses another plugin's content lists that plugin as well.
+3. `.uproject` plugins: Niagara is enabled by default. A set that uses another plugin's content lists that plugin as well.
 4. Cooked game: engine-plugin content loaded by path must be cooked. Add to `Config/DefaultGame.ini`:
 
    ```ini
@@ -129,4 +129,6 @@ If the plugin or the cook entry is missing, the candidate reports `available: fa
 - Read what a candidate says about itself before clearing it.
 - `UTextRenderComponent` text faces +X; rotate yaw 180 to face a camera that looks down +X.
 - In PowerShell, `"$Map?game=..."` is read as the variable `$Map?game`. Write `"${Map}?game=..."`.
+- The default lit stage first rendered wrongly (only the floor lit; wall, labels' background and the fronts of objects black) in a project with dynamic global illumination switched off. The stage now has a Movable key light on the camera's side aimed along the view; the cause was not isolated, so check it in a project with your renderer settings.
+- `BasicShapeMaterial` is one-sided and lit; a plane turned the wrong way vanishes. A static mesh left on its own default material (the engine cube) rendered nearly black on this stage, so give your candidates' meshes a material.
 - Additive white sprites vanish against a light background. The stage puts a dark panel behind each slot so an effect is seen against both.

@@ -35,10 +35,12 @@ AECompare::FCandidate MeshActors() {
     C.Spawn=[State](AActor& Owner,const FTransform& Slot,int32 Count) {
         State->Components.Reset(); State->Phases.Reset();
         UStaticMesh* Cube=LoadObject<UStaticMesh>(nullptr,TEXT("/Engine/BasicShapes/Cube.Cube"));
+        UMaterialInterface* Material=LoadObject<UMaterialInterface>(nullptr,TEXT("/Engine/BasicShapes/BasicShapeMaterial.BasicShapeMaterial"));
         const TArray<FVector2D> Points=AECompare::GridPoints(Count,GridSpacing(Count));
         for(int32 I=0;I<Points.Num();++I) {
             UStaticMeshComponent* Component=NewObject<UStaticMeshComponent>(&Owner);
             Component->SetStaticMesh(Cube);
+            if(Material) Component->SetMaterial(0,Material);
             Component->SetupAttachment(Owner.GetRootComponent());
             Component->SetMobility(EComponentMobility::Movable);
             Component->SetCollisionEnabled(ECollisionEnabled::NoCollision);
