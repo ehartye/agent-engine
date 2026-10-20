@@ -64,7 +64,7 @@ play it. The profiles give what is known per option.
   profiles): windowed rendering and screen capture fail in a non-interactive session, while offscreen modes work.
 - Recommend one option and say what it gives up. Do not list five and stop.
 - When a question is open (for example whether a GLB imports with its skin intact), propose a
-  one-hour spike with the [sample scene](../../docs/sample-scene.md) and say what it will settle. For a 3D game, use the [web 3D proving ground](../../docs/web-3d-proving-ground.md) instead.
+  one-hour spike with the [sample scene](../../docs/sample-scene.md) and say what it will settle. For a 3D game, spike a thin playable slice (one flight or movement loop, one imported part kit, one sound) in each candidate stack instead.
 - A screenshot is the only check that catches wrong scale, facing and pivots. Require one.
 
 Per-engine evidence, traps and blockers: [engine profiles](references/engine-profiles.md).

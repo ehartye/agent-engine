@@ -49,7 +49,7 @@ on a trigger and picks among its variants. A fixed camera frames all three.
 
 The scripts are in [`examples/unreal`](../examples/unreal), [`examples/godot`](../examples/godot), [`examples/unity`](../examples/unity) and [`examples/web`](../examples/web).
 
-For 3D games on the web, the acceptance test is the [web 3D proving ground](web-3d-proving-ground.md): a playable game checked through a state probe, not a fox and two flipbooks.
+For 3D games on the web, the acceptance test is a playable slice checked through a state probe, not a fox and two flipbooks.
 
 ![The scene in three.js: the 3D fox, the pixel campfire and the pixel courier](images/web-three-sample-scene.png)
 
