@@ -1,6 +1,6 @@
 # Side-by-side comparison scene for a native Unreal game
 
-A reusable C++ game mode that sets several ways of doing one thing in a row on an empty stage under one camera, films them, times each alone at N copies, and writes a receipt. Source, an engine-only example set, a standalone runner and a longer README: [`examples/unreal/compare-scene`](../../../examples/unreal/compare-scene/README.md). Built, packaged and run on Unreal 5.8.2, Windows, as a packaged game in a throwaway project. Not run: gamepad input, a non-Windows platform, the editor-launched route.
+A reusable C++ game mode that sets several ways of doing one thing in a row on an empty stage under one camera, films them, times each alone at N copies, and writes a receipt. Source, an engine-only example set, a standalone runner and a longer README: [`examples/unreal/compare-scene`](../../../examples/unreal/compare-scene/README.md). Built, cooked, packaged and run on Unreal 5.8.2, Windows, as a packaged game in a throwaway C++ project with the `example` set: the runner's checks passed and the filmed images were looked at. Not run: live mode, gamepad input, a non-Windows platform, the editor-launched route.
 
 ## When to use it
 
@@ -16,7 +16,7 @@ A reusable C++ game mode that sets several ways of doing one thing in a row on a
 
 ## Adopt it in a native C++ game
 
-- [tested] Copy `AECompare.h` and `AECompare.cpp` into the game module. Add `Json` and `RHI` to the module's dependency lists (`Niagara` too if a set spawns Niagara systems, as the example does). Keep `AAECompareGameMode` out of any other module: its `?game=` class path names the module, `/Script/<Module>.AECompareGameMode`.
+- [tested] Copy `AECompare.h` and `AECompare.cpp` into the game module. Add `Json` and `RHI` to the module's dependency lists (`Niagara` too if a set spawns Niagara systems, as the example does). The `?game=` class path names that module: `/Script/<Module>.AECompareGameMode`.
 - [tested] Enable the plugins your candidates need in the `.uproject` (Niagara is on by default; the Niagara Fluids plugin is not). Engine-plugin content a cooked game loads by path must be cooked: add `+DirectoriesToAlwaysCook=(Path="/Niagara/DefaultAssets/Templates/Systems")` to `Config/DefaultGame.ini`.
 - [tested] Register a set from its own source file, so adding a comparison touches no other file:
 
@@ -50,6 +50,8 @@ static AECompare::FRegistrar MineRegistrar(TEXT("mine"),&MakeMine);
 ## Traps found while building it
 
 - [tested] A candidate that spawns something its slot owner does not own (a Niagara component, an actor of its own) must destroy it in `Clear`. Otherwise its leftovers appear in, and slow, the next candidate's measurement.
+- [tested] The default lit stage first rendered wrongly in a project with dynamic global illumination switched off: only the up-facing floor was lit, so the wall, the fronts of objects and the labels' background were black and the text was invisible. A Movable key light on the camera's side, aimed along the view and down 35 degrees, fixed it. The cause was not isolated; check a lit stage in a project with your renderer settings.
+- [tested] `BasicShapeMaterial` is one-sided and lit, and its plane's front face is +Z: a wall plane turned the wrong way vanishes. A static mesh left on its own default material (the engine cube) rendered nearly black on this stage, so give each candidate's meshes a material.
 - [tested] `FScreenshotRequest` writes the PNG on another thread. Wait for it before exiting, or the file is truncated or missing.
 - [tested] Read what a candidate says about itself (`Describe`) before clearing it; after the clear it describes nothing.
 - [tested] `UTextRenderComponent` text faces +X. Rotate it by yaw 180 to face a camera that looks down +X.
