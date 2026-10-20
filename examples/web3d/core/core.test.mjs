@@ -6,7 +6,7 @@ import { createFixedLoop } from './fixed-loop.mjs';
 import { createSession } from './session.mjs';
 import { createInput } from './input.mjs';
 import { segmentSphereHit, endpointHit } from './sweep.mjs';
-import { NOSE, noseDirection, cameraLookDirection, chaseCamera, steer, smoothDamp } from './flight.mjs';
+import { NOSE, noseDirection, cameraLookDirection, chaseCamera, steer, smoothDamp, orientation, qRotate } from './flight.mjs';
 import { isReady, createProbe, consoleGate } from './probe.mjs';
 import { mulberry32 } from './rng.mjs';
 
@@ -104,6 +104,32 @@ test('two steps in one frame hand the tap to the first step only', () => {
   assert.equal(shots.n, 1);
 });
 
+test('engine-owned steps: a tap fires once, survives a frame with no step, and is dropped while paused', () => {
+  const { shots, session } = shotCounter();
+  session.input.down('fire'); session.input.up('fire');
+  session.endFrame(1 / 144);                 // a frame in which the engine ran no step
+  session.runStep(1 / 60); session.runStep(1 / 60); // the next frame runs two
+  session.endFrame(1 / 30);
+  assert.equal(shots.n, 1);
+  assert.equal(session.steps, 2);
+  session.paused = true;
+  session.input.down('fire'); session.input.up('fire');
+  session.runStep(1 / 60); session.endFrame(1 / 60);
+  session.paused = false;
+  session.runStep(1 / 60); session.endFrame(1 / 60);
+  assert.equal(shots.n, 1, 'the paused tap was dropped');
+});
+
+test('engine-owned steps honour a hit-stop', () => {
+  const { shots, session } = shotCounter();
+  session.hitStop = 0.05;
+  session.input.down('fire'); session.input.up('fire');
+  for (let i = 0; i < 2; i++) { session.runStep(1 / 60); session.endFrame(1 / 60); }
+  assert.equal(shots.n, 0);
+  for (let i = 0; i < 4; i++) { session.runStep(1 / 60); session.endFrame(1 / 60); }
+  assert.equal(shots.n, 1);
+});
+
 // --- swept hit tests ------------------------------------------------------------------------------------------
 
 test('segmentSphereHit: entry time, already inside, moving away, grazing, miss', () => {
@@ -189,6 +215,14 @@ test('a glTF nose is +Z and an unrotated camera looks down -Z, so a chase camera
   const cam = chaseCamera(ship, 10, 2);
   close(dot(noseDirection(ship), cameraLookDirection(cam.cameraYaw)), 1, 1e-12);
   assert.ok(dot([cam.position[0] - 3, 0, cam.position[2] - 1], noseDirection(ship)) < 0, 'camera is behind the ship');
+});
+
+test('the orientation quaternion rotates the glTF nose onto the nose direction', () => {
+  for (const pose of [{ yaw: 0, pitch: 0 }, { yaw: Math.PI / 2, pitch: 0 }, { yaw: 0.7, pitch: 0.4 }, { yaw: -2.1, pitch: -0.9 }]) {
+    const q = orientation(pose), n = noseDirection(pose), r = qRotate(q, NOSE);
+    for (let i = 0; i < 3; i++) close(r[i], n[i], 1e-12);
+    close(Math.hypot(...q), 1, 1e-12);
+  }
 });
 
 test('smoothDamp reaches the target without overshoot at any frame time', () => {

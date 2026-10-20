@@ -11,12 +11,16 @@ const NO_TAPS = new Set();
  *   paused), so a frame that runs no step (a fast display, a hit-stop) does not lose the tap, and a tap made while
  *   a menu is open does not fire when it closes.
  * - `framesDrawn` is set by the renderer after it draws; `frameUpdate` runs before that frame is drawn.
+ * - An engine that owns the fixed step (Babylon.js deterministic lockstep) calls `runStep(dt)` from its before-step
+ *   hook instead, and `endFrame(delta)` once per rendered frame; the tap rules are the same.
  *
  * @param {{ step?: number, onStep: (dt: number, ctx: { held: (name: string) => boolean, taps: Set<string> }) => void }} opts
  */
 export function createSession({ step = 1 / 60, onStep }) {
   const loop = createFixedLoop({ step });
   const input = createInput();
+  let pending = null;    // taps for the first step of the current frame (engine-driven stepping)
+  let ranThisFrame = false;
   const session = {
     loop, input, paused: false, hitStop: 0, steps: 0, framesDrawn: 0, drawCalls: 0,
     /** @returns {number} interpolation alpha for drawing */
@@ -30,6 +34,21 @@ export function createSession({ step = 1 / 60, onStep }) {
       });
       if (n > 0 || session.paused) input.clearLatches();
       return loop.alpha;
+    },
+    /** One engine-owned step. Does nothing while paused or in a hit-stop. */
+    runStep(dt) {
+      if (session.paused || session.hitStop > 0) return;
+      pending ??= input.takeSnapshot();
+      onStep(dt, { held: input.isHeld, taps: pending });
+      pending = NO_TAPS;
+      ranThisFrame = true;
+      session.steps++;
+    },
+    /** Once per rendered frame, after the engine's steps. */
+    endFrame(delta = 0) {
+      if (session.hitStop > 0) session.hitStop = Math.max(0, session.hitStop - delta);
+      if (ranThisFrame || session.paused) input.clearLatches();
+      pending = null; ranThisFrame = false;
     },
     /** Call after the renderer drew a frame. */
     markDrawn(renderCallCount) { session.framesDrawn = renderCallCount; },

@@ -11,6 +11,24 @@ export function noseDirection({ yaw, pitch }) {
   return [Math.sin(yaw) * Math.cos(pitch), -Math.sin(pitch), Math.cos(yaw) * Math.cos(pitch)];
 }
 
+/**
+ * The same orientation as a quaternion [x, y, z, w] (yaw about +Y, then pitch about the local X; right-handed).
+ * Copy it straight into `quaternion` (three.js) or `rotationQuaternion` (Babylon.js with `useRightHandedSystem`):
+ * no conjugate, no axis swap.
+ */
+export function orientation({ yaw, pitch }) {
+  const [sy, cy, sp, cp] = [Math.sin(yaw / 2), Math.cos(yaw / 2), Math.sin(pitch / 2), Math.cos(pitch / 2)];
+  // q = qYaw * qPitch, qYaw = [0, sy, 0, cy], qPitch = [sp, 0, 0, cp]
+  return [cy * sp, sy * cp, -sy * sp, cy * cp];
+}
+
+/** Rotate vector v by quaternion q = [x, y, z, w]. */
+export function qRotate(q, v) {
+  const [x, y, z, w] = q;
+  const t = [2 * (y * v[2] - z * v[1]), 2 * (z * v[0] - x * v[2]), 2 * (x * v[1] - y * v[0])];
+  return [v[0] + w * t[0] + (y * t[2] - z * t[1]), v[1] + w * t[1] + (z * t[0] - x * t[2]), v[2] + w * t[2] + (x * t[1] - y * t[0])];
+}
+
 /** Where a camera rotated by `yaw` about +Y looks: its local -Z. Equals the nose direction only when yawed pi further. */
 export function cameraLookDirection(cameraYaw) {
   return [-Math.sin(cameraYaw), 0, -Math.cos(cameraYaw)];
