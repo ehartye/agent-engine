@@ -8,8 +8,9 @@ NIAGARA_SHOWCASE_REPORT for the JSON report (default: Saved/niagara-showcase-bui
 It places eight stations in a ring on a dark stage: five of Epic's shipped Niagara systems (GPU 3D gas fire, coloured fire, a gas
 explosion, a 3D FLIP liquid splash, sand), ribbon trails, a radial burst, and a system authored here through Epic's Niagara toolsets
 (Epic's radial-burst system with vortex, curl-noise and point-attraction modules added to its emitter's particle update). Each station has a label, a
-pedestal and a coloured light; a post-process volume fixes exposure and adds bloom; a camera is placed for showcase_run.py.
-Stations start inactive: showcase_run.py turns them on as the camera approaches, so only about two run at once.
+pedestal and a coloured light; a post-process volume fixes exposure and adds bloom; a camera is placed for the run scripts.
+Stations start inactive: showcase_explore.py (fly it yourself) and showcase_run.py (an automatic tour) switch them on as the camera
+approaches, so only a few run at once.
 """
 import json
 import math
@@ -84,6 +85,11 @@ def author_vortex_system():
     step("vortex", template="RadialBurst", emitter=emitters[0], added=added, saved=True)
 
 
+def rgb(color):
+    """unreal.Color takes its positional arguments as (b, g, r, a), so name them."""
+    return unreal.Color(r=color[0], g=color[1], b=color[2], a=255)
+
+
 def spawn(cls, location, rotation=None):
     return unreal.EditorLevelLibrary.spawn_actor_from_class(cls, location, rotation or unreal.Rotator(0, 0, 0))
 
@@ -131,7 +137,7 @@ try:
         lc.set_mobility(unreal.ComponentMobility.MOVABLE)
         lc.set_editor_property("intensity", LIGHT_INTENSITY)
         lc.set_editor_property("attenuation_radius", 900.0)
-        lc.set_editor_property("light_color", unreal.Color(*color, 255))
+        lc.set_editor_property("light_color", rgb(color))
 
         # Rotator is (roll, pitch, yaw); the text front faces +X, so yaw = outward + 180 makes it face the ring's centre.
         text = spawn(unreal.TextRenderActor, unreal.Vector(x * 0.97, y * 0.97, 560), unreal.Rotator(0, 0, math.degrees(angle) + 180))
@@ -139,7 +145,7 @@ try:
         tr = text.get_editor_property("text_render")
         tr.set_text(label)
         tr.set_editor_property("world_size", 40.0)
-        tr.set_editor_property("text_render_color", unreal.Color(*color, 255))
+        tr.set_editor_property("text_render_color", rgb(color))
         tr.set_editor_property("horizontal_alignment", unreal.HorizTextAligment.EHTA_CENTER)
         step("station", id=sid, system=system_path, loaded=bool(system))
 
@@ -157,7 +163,7 @@ try:
     ppv.set_editor_property("settings", settings)
 
     camera = spawn(unreal.CameraActor, unreal.Vector(RING - 650, 0, 240))
-    camera.set_actor_label("TourCamera")
+    camera.set_actor_label("ShowcaseCamera")
     camera.set_actor_rotation(unreal.MathLibrary.find_look_at_rotation(camera.get_actor_location(), unreal.Vector(RING, 0, 150)), False)
     step("save_map", ok=bool(unreal.EditorLoadingAndSavingUtils.save_map(unreal.EditorLevelLibrary.get_editor_world(), MAP_PATH)))
 except Exception:

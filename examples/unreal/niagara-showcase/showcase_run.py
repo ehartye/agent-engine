@@ -207,6 +207,9 @@ def poll_diag():
 
 
 def tick(dt):
+    if state.get("busy"):
+        return   # activating a system blocks on its compile and Slate keeps ticking meanwhile, which re-enters this callback
+    state["busy"] = True
     try:
         if DIAG and state["diag"] is None and state["t"] > 1.0:
             start_diag()
@@ -217,6 +220,8 @@ def tick(dt):
         if not state.get("failed"):
             state["failed"] = True
             unreal.log_error("[showcase_run] " + repr(exc))
+    finally:
+        state["busy"] = False
 
 
 unreal.register_slate_post_tick_callback(tick)
