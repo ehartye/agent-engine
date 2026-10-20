@@ -41,7 +41,7 @@ Evidence: Unreal 5.8.2 on Windows, headless and offscreen. `[tested]` is reprodu
 ## MCP and external tools
 
 - [documented] Epic's MCP server exposes the toolset registry through meta-tools (`list_toolsets`, `describe_toolset`, `call_tool`) and needs the `ModelContextProtocol` and `AllToolsets` plugins. The Niagara tools above are the same ones `execute_tool` ran.
-- [general] Community projects add Niagara tools (an MCP server with a Niagara category, a plugin adding simulation-stage and module-graph tools, a read-only listing extension) and a Python exporter that turns a system into text for an agent to read. Their claims are the projects' own; check the engine version and run the same sim-cache check on what they author.
+- [general] Community projects add Niagara tools (MCP servers, a plugin adding simulation-stage and module-graph tools) and a Python exporter that turns a system into text for an agent. Their claims are their own; check the engine version and run the sim-cache check on what they author.
 
 ## Importing generated assets into Niagara
 
