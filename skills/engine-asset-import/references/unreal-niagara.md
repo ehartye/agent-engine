@@ -14,7 +14,6 @@ Evidence: Unreal 5.8.2 on Windows, headless and offscreen. `[tested]` is reprodu
 | Let an external agent call all of it | Epic's MCP server over the same toolset registry |
 
 - [tested] Start with the cheapest route that covers the need: `niagara_build.py` needs only PythonScriptPlugin, EditorScriptingUtilities and Niagara; the stack-authoring script also needs the NiagaraToolsets plugin.
-- [general] Each route fails differently. Authoring errors come back as tool errors, runtime errors as inactive components, and C++ errors as a build; keep one verification (below) that does not depend on the authoring route.
 
 ## What Python does without extras
 
@@ -28,7 +27,7 @@ Evidence: Unreal 5.8.2 on Windows, headless and offscreen. `[tested]` is reprodu
 - [documented] `NiagaraToolsets` is an Experimental, editor-only plugin disabled by default (`Plugins/Experimental/Toolsets/NiagaraToolsets`); enabling it loads `ToolsetRegistry`. It registers five toolsets; `NiagaraToolset_System` has 46 tools (create from a template, schema and topology reads, add or remove emitters, renderers and modules, set stack inputs, compile state, stack issues and fixes).
 - [tested] The tools are `AICallable`, not Python members: `dir(unreal.NiagaraToolset_System)` is empty. Call them with `unreal.ToolsetRegistry.execute_tool("NiagaraToolsets.NiagaraToolset_System", "AddEmitter", json_input)`. The result's `value` is JSON `{"returnValue": ...}`, objects are `{"refPath": "/Package/Path.Name"}`, and `ToolsetRegistry.get_toolset_json_schema(unreal.NiagaraToolset_System)` returns every tool's input schema.
 - [tested] Synchronous tools complete in a commandlet (`CreateNiagaraSystem`, `GetSystemSummary`, `AddEmitter`: a three-emitter system came back). Tools that wait for a compile (`GetSystemCompileState`, `GetStackIssues`) return an incomplete result there; poll `result.is_complete` (a property) from an editor tick, as `niagara_verify.py` does, and expect status `UpToDate`.
-- [general] Exit code 3 appeared twice: after a run that ended with an incomplete async result, and when a script deleted an existing system and recreated it under the same name (an access violation in the log). Create new names, and do not treat the exit code alone as proof of what failed.
+- [general] Exit code 3 appeared after a run that ended with an incomplete async result, and when a script deleted a system and recreated it under the same name (an access violation). Create new names; the exit code alone does not say what failed.
 - [tested] `AddEmitter` with a sprite-burst template gave an emitter that counted 0 particles in the sim cache, while the other two emitters counted 20 and 120. A successful tool call is not an emitting effect; verify.
 - [general] A community plugin author reports that writing the `SimulationStages` array through `SetEmitterData` crashes the editor, and that the stock toolsets cannot create simulation stages, event handlers or local modules. Treat edits to those as C++ work and keep a backup of the asset.
 
@@ -48,6 +47,12 @@ Evidence: Unreal 5.8.2 on Windows, headless and offscreen. `[tested]` is reprodu
 
 - [documented] A mesh renderer takes a static mesh from the system or from a user parameter (`override_system_user_variable_static_mesh`; the Static Mesh data interface also binds an actor or component). The Audio Player data interface plays a `SoundBase` from particle data.
 - [general] A sprite atlas becomes a flipbook texture: import it, use a Sprite Renderer with the Sub UV Animation module, and set Sub Image Size to the atlas grid. Epic advises a power-of-two texture and a tile count that divides it evenly. The Niagara Baker, which bakes a simulation to a flipbook, is documented as an editor UI workflow only.
+
+## Fluids and first runs
+
+- [general] Epic's 3D fluid systems need `r.GenerateMeshDistanceFields=True` in the project; without it the log says mesh distance field generation is not enabled and the system never activates. Their grid bounds draw through `User.DrawBounds`.
+- [general] The first activation of a system compiles it on the game thread, from a fraction of a second to about a minute for a fluid, and the window freezes meanwhile; the result is cached.
+- [general] Check a newly authored system with a simulation cache first: removing a template's emitter and adding a Fountain emitter plus modules gave a system that never emitted; adding modules to an emitter that already emitted worked ([showcase](../../../examples/unreal/niagara-showcase/README.md)).
 
 ## Verify and profile
 
