@@ -1,6 +1,6 @@
 # Niagara in Unreal 5.8: author, drive and verify from an agent
 
-Evidence: Unreal 5.8.2 on Windows, headless and offscreen. `[tested]` is reproduced by the scripts in [`examples/unreal`](../../../examples/unreal/README.md) (`niagara_build.py`, `niagara_toolset_author.py`, `niagara_verify.py`). `[documented]` was read in Epic documentation or the installed engine's source and Python API. `[general]` is guidance not checked here. Niagara authoring changes fast; the toolset route below is Experimental.
+Evidence: Unreal 5.8.2 on Windows, headless and offscreen. `[tested]` is reproduced by the scripts in [`examples/unreal`](../../../examples/unreal/README.md); `node examples/unreal/niagara_validate.mjs --engine <UE_5.8 folder>` runs them all and checks 15 claims below (rerun it after an engine update; a failing check means this page is stale). `[documented]` was read in Epic documentation or the installed engine's source and Python API. `[general]` is guidance not checked here. Niagara authoring changes fast; the toolset route below is Experimental.
 
 ## Pick a route
 
@@ -21,7 +21,7 @@ Evidence: Unreal 5.8.2 on Windows, headless and offscreen. `[tested]` is reprodu
 - [tested] Create an empty system with `AssetTools.create_asset(name, path, unreal.NiagaraSystem, unreal.NiagaraSystemFactoryNew())`, or duplicate an engine template such as `/Niagara/DefaultAssets/Templates/Systems/SimpleExplosion` into `/Game` with `duplicate_asset`.
 - [tested] Trap: in a commandlet call `AssetRegistry.search_all_assets(True)` first, pass the source as an object path (`Package.Name`), and `save_asset` each duplicate before saving a map that uses it, or the map loads with a null asset. On a placed `NiagaraActor` set the `asset` editor property; `set_asset` did not persist.
 - [documented] `NiagaraSystem` exposes editor properties (warmup, fixed bounds, effect type) but almost no methods in Python. `NiagaraComponent` has typed runtime setters and getters (`set_variable_float`, `_vec3`, `_linear_color`, `_static_mesh`, `_texture`, `_object`, and `get_variable_*`), and `NiagaraFunctionLibrary` has mesh and texture overrides.
-- [general] `spawn_system_at_location` returned None in a commandlet's blank map; spawn in a ticking editor world or Play-In-Editor instead.
+- [tested] `spawn_system_at_location` returns None in a commandlet's blank map (`niagara_traps.py`); spawn in a ticking editor world or Play-In-Editor instead.
 
 ## Authoring the stack from Python (NiagaraToolsets)
 
@@ -35,7 +35,7 @@ Evidence: Unreal 5.8.2 on Windows, headless and offscreen. `[tested]` is reprodu
 ## C++ only
 
 - [documented] `UNiagaraExternalEditUtilities` (`NiagaraEditor/Public/NiagaraExternalSystemEditorUtilities.h`) holds the authoring API the toolsets wrap. Its header says "EXPERIMENTAL! DO NOT USE EXCEPT FOR TESTING!". Its functions have no `UFUNCTION`, so the class is absent from `unreal`; only its `NiagaraExt_*` data structs are exposed, without functions.
-- [documented] `NiagaraPythonEmitter` and `NiagaraPythonModule` exist for version-upgrade scripts and are `BlueprintInternalUseOnly`; they inspect emitters, not author them.
+- [documented] `NiagaraPythonEmitter` and `NiagaraPythonModule` exist for version-upgrade scripts and are `BlueprintInternalUseOnly`. [tested] They read an emitter's modules and read or set its properties; they have no way to add an emitter, renderer or module.
 - [documented] Custom data interfaces are C++; Epic ships `ExampleCustomDataInterface` as the model. Niagara Data Channels have a Python library (`NiagaraDataChannelLibrary`: write, read, subscribe), but creating the channel asset is not documented for Python.
 - [general] To add a missing operation, write a small editor module with a `BlueprintCallable` wrapper, or register your own toolset (Epic's skills plugin describes `AICallable` in C++ and a `toolset_registry.tool_call` decorator in Python), then call it through `execute_tool`.
 
