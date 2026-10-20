@@ -6,9 +6,11 @@
 #include "Dom/JsonObject.h"
 #include "Engine/PostProcessVolume.h"
 #include "Engine/StaticMesh.h"
+#include "Components/LightComponent.h"
 #include "Engine/DirectionalLight.h"
 #include "Engine/Engine.h"
 #include "Engine/SkyLight.h"
+#include "Materials/MaterialInstanceDynamic.h"
 #include "GameFramework/HUD.h"
 #include "GameFramework/PlayerController.h"
 #include "HAL/PlatformMisc.h"
@@ -34,7 +36,16 @@ UMaterialInterface* LoadMaterial(const FString& Path) {
 
 TMap<FString,AECompare::FSetFactory>& Registry() { static TMap<FString,AECompare::FSetFactory> Sets; return Sets; }
 
-UStaticMeshComponent* AddShape(AActor& Owner,const TCHAR* Mesh,const FTransform& Transform,const FString& Material) {
+/** The material for one role on the stage: the project's own when it names one, otherwise the engine's basic shape material tinted to Grey (it is lit, one-sided and has a "Color" parameter). */
+UMaterialInterface* StageMaterial(UObject& Outer,const FString& Path,float Grey) {
+    UMaterialInterface* Base=LoadMaterial(Path);
+    if(!Path.IsEmpty()||!Base) return Base;
+    UMaterialInstanceDynamic* Tinted=UMaterialInstanceDynamic::Create(Base,&Outer);
+    Tinted->SetVectorParameterValue(TEXT("Color"),FLinearColor(Grey,Grey,Grey));
+    return Tinted;
+}
+
+UStaticMeshComponent* AddShape(AActor& Owner,const TCHAR* Mesh,const FTransform& Transform,UMaterialInterface* Material) {
     UStaticMeshComponent* C=NewObject<UStaticMeshComponent>(&Owner);
     C->SetStaticMesh(LoadObject<UStaticMesh>(nullptr,Mesh));
     C->SetupAttachment(Owner.GetRootComponent());
@@ -42,7 +53,7 @@ UStaticMeshComponent* AddShape(AActor& Owner,const TCHAR* Mesh,const FTransform&
     C->SetCollisionEnabled(ECollisionEnabled::NoCollision);
     C->SetCastShadow(false);
     C->SetWorldTransform(Transform);
-    if(UMaterialInterface* M=LoadMaterial(Material)) C->SetMaterial(0,M);
+    if(Material) C->SetMaterial(0,Material);
     Owner.AddInstanceComponent(C);
     C->RegisterComponent();
     return C;
@@ -131,15 +142,16 @@ void AAECompareGameMode::BuildStage(int32 SlotCount) {
     AActor* Stage=World->SpawnActor<AActor>(FVector::ZeroVector,FRotator::ZeroRotator,Spawn);
     USceneComponent* Root=NewObject<USceneComponent>(Stage); Stage->SetRootComponent(Root); Root->RegisterComponent();
     const float SlotSpacing=Set.SlotSpacing,Width=SlotSpacing*SlotCount;
+    UMaterialInterface* FloorMaterial=StageMaterial(*Stage,Set.Style.Floor,.4f); UMaterialInterface* WallMaterial=StageMaterial(*Stage,Set.Style.Wall,1.f); UMaterialInterface* DarkMaterial=StageMaterial(*Stage,Set.Style.Dark,.02f);
     const TCHAR* Plane=TEXT("/Engine/BasicShapes/Plane.Plane"); const TCHAR* Cylinder=TEXT("/Engine/BasicShapes/Cylinder.Cylinder");
-    AddShape(*Stage,Plane,FTransform(FRotator::ZeroRotator,FVector(0.f,0.f,0.f),FVector(FloorSize/100.f)),Set.Style.Floor);
-    AddShape(*Stage,Plane,FTransform(FRotator(90.f,0.f,0.f),FVector(SlotSpacing*2.f,0.f,FloorSize*.5f),FVector(FloorSize/100.f)),Set.Style.Wall);
+    AddShape(*Stage,Plane,FTransform(FRotator::ZeroRotator,FVector(0.f,0.f,0.f),FVector(FloorSize/100.f)),FloorMaterial);
+    AddShape(*Stage,Plane,FTransform(FRotator(90.f,0.f,0.f),FVector(SlotSpacing*2.f,0.f,FloorSize*.5f),FVector(FloorSize/100.f)),WallMaterial);
     for(int32 I=0;I<SlotCount;++I) {
         const FVector At(0.f,(I-(SlotCount-1)*.5f)*SlotSpacing,0.f);
         Slots.Add(FTransform(At));
-        AddShape(*Stage,Cylinder,FTransform(FRotator::ZeroRotator,At+FVector(0.f,0.f,3.f),FVector(SlotSpacing*.0057f,SlotSpacing*.0057f,.06f)),Set.Style.Dark);
+        AddShape(*Stage,Cylinder,FTransform(FRotator::ZeroRotator,At+FVector(0.f,0.f,3.f),FVector(SlotSpacing*.0057f,SlotSpacing*.0057f,.06f)),DarkMaterial);
         // Behind each candidate the wall is dark up to Set.DarkHeight, so an effect is seen against both: additive light shows on the dark and dark shapes show on the light.
-        AddShape(*Stage,Plane,FTransform(FRotator(90.f,0.f,0.f),FVector(SlotSpacing*2.f-10.f,At.Y,Set.DarkHeight*.5f),FVector(Set.DarkHeight/100.f,SlotSpacing*.96f/100.f,1.f)),Set.Style.Dark);
+        AddShape(*Stage,Plane,FTransform(FRotator(90.f,0.f,0.f),FVector(SlotSpacing*2.f-10.f,At.Y,Set.DarkHeight*.5f),FVector(Set.DarkHeight/100.f,SlotSpacing*.96f/100.f,1.f)),DarkMaterial);
         const AECompare::FCandidate& C=Set.Candidates[I];
         const float TextScale=SlotSpacing/700.f;
         AddText(*Stage,C.Label,At+FVector(0.f,0.f,Set.LabelHeight),34.f*TextScale);
@@ -159,7 +171,7 @@ void AAECompareGameMode::BuildStage(int32 SlotCount) {
     PP.bOverride_MotionBlurAmount=true; PP.MotionBlurAmount=0.f;
     PP.bOverride_AutoExposureMethod=true; PP.AutoExposureMethod=AEM_Manual;
     PP.bOverride_AutoExposureApplyPhysicalCameraExposure=true; PP.AutoExposureApplyPhysicalCameraExposure=false;
-    PP.bOverride_AutoExposureBias=true; PP.AutoExposureBias=0.f;
+    PP.bOverride_AutoExposureBias=true; PP.AutoExposureBias=Set.Style.Wall.IsEmpty()?-2.f:0.f;   // the lit stage is darker than an unlit one at the same exposure
     CameraActor=Camera;
     // A project's own finish (a post-process material) goes on an unbound volume; without one the stage is lit like any basic scene.
     if(!Set.Style.PostProcess.IsEmpty()) {
@@ -168,7 +180,12 @@ void AAECompareGameMode::BuildStage(int32 SlotCount) {
         if(UMaterialInterface* Palette=LoadMaterial(Set.Style.PostProcess)) Finish->Settings.WeightedBlendables.Array.Add(FWeightedBlendable(1.f,Palette));
     }
     if(Set.Style.Wall.IsEmpty()) {
-        World->SpawnActor<ADirectionalLight>(FVector(-500.f,-300.f,800.f),FRotator(-45.f,25.f,0.f),Spawn);
+        // A key light on the camera's side, aimed along the view and down 35 degrees, so the wall and the fronts of the candidates are lit, and a sky light for the rest. The key is Movable so it
+        // does not depend on a lighting build.
+        const FTransform KeyAt(FRotator(-35.f,0.f,0.f),FVector(-500.f,0.f,800.f));
+        ADirectionalLight* Key=World->SpawnActorDeferred<ADirectionalLight>(ADirectionalLight::StaticClass(),KeyAt);
+        Key->GetLightComponent()->SetMobility(EComponentMobility::Movable);
+        Key->FinishSpawning(KeyAt);
         World->SpawnActor<ASkyLight>(FVector(0.f,0.f,500.f),FRotator::ZeroRotator,Spawn);
     }
 }
