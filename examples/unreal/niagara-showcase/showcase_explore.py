@@ -33,7 +33,7 @@ import unreal
 GAME = os.environ.get("NIAGARA_SHOWCASE_GAME") == "1"
 SELFTEST = os.environ.get("NIAGARA_SHOWCASE_SELFTEST") == "1"
 SHOTS = os.environ.get("NIAGARA_SHOWCASE_SHOTS") == "1"
-SETTLE = float(os.environ.get("NIAGARA_SHOWCASE_SETTLE", "4" if SHOTS else "0.3"))   # self-test seconds at a station before it is checked
+SETTLE = float(os.environ.get("NIAGARA_SHOWCASE_SETTLE") or ("4" if SHOTS else "0.3"))   # self-test seconds at a station before it is checked
 
 SPEED = 700.0              # cm/s at full stick
 BOOST = 3.0
