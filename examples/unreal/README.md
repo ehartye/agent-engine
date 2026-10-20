@@ -34,3 +34,15 @@ UnrealEditor.exe SampleScene.uproject /Game/Maps/SampleScene -RenderOffScreen
 
 In Git Bash set `MSYS_NO_PATHCONV=1`, or `/Game/Maps/SampleScene` is rewritten into a Windows path.
 Do not use `-ExecutePythonScript` for the run: it quits the editor when the script ends.
+
+## Niagara scripts
+
+Three scripts back [Niagara in Unreal](../../skills/engine-asset-import/references/unreal-niagara.md). They need a project with PythonScriptPlugin, EditorScriptingUtilities and Niagara, plus NiagaraToolsets (Experimental) for the second. Each writes a JSON report (`NIAGARA_PROBE_REPORT`, default under the project's `Saved/`).
+
+```text
+UnrealEditor-Cmd.exe Project.uproject -run=pythonscript -script=niagara_build.py -unattended -nullrhi -nosplash -nopause -nosound -notraceserver
+UnrealEditor-Cmd.exe Project.uproject -run=pythonscript -script=niagara_toolset_author.py ...same flags...
+UnrealEditor.exe Project.uproject /Game/Maps/NiagaraProbe -RenderOffScreen -ExecCmds="py <path>/niagara_verify.py" -log=niagara.log -notraceserver -nosplash -unattended
+```
+
+`niagara_build.py` duplicates two engine template systems and places them in a level; `niagara_toolset_author.py` creates a system and adds an emitter through Epic's toolsets and places it; `niagara_verify.py` runs the level in Play-In-Editor, counts particles per emitter with a simulation cache and polls each system's compile state. They run on Unreal 5.8.2 only.

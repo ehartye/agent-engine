@@ -14,6 +14,8 @@ public version labels and older experimental wording do not establish local supp
 
 ## Author a compact Niagara family when it helps
 
+- [documented] For the tooling (Python versus C++ authoring, Epic's Niagara toolsets, MCP, sim-cache particle counts), see [Niagara in Unreal](../../engine-asset-import/references/unreal-niagara.md).
+
 - [documented] Niagara supports mesh, sprite and ribbon renderers and particle-to-material bindings. Use authored silhouettes, flipbook breakup, age-driven erosion and distinct curves; verify facing, sockets, local/world space and actual event payloads. Component Renderer adds per-component overhead; avoid a SceneComponent for every decorative particle. [Epic: Niagara Renderers](https://dev.epicgames.com/documentation/en-us/unreal-engine/render-module-reference-for-niagara-effects-in-unreal-engine)
 - [general] Keep existing valid signals and migrate one effect family first. A useful payload includes source/contact transform, velocity/normal, surface, strength, sustained state and event time as needed. Author player-critical accents and distant cosmetic tails separately so scaling can retain information. Niagara itself supplies neither the art direction nor the gameplay authority.
 - [documented] Effect Types share scalability rules; System/Emitter overhead remains with GPU simulation. Set instance caps, significance/priority policy and bounds appropriate to the motion; verify player-critical cues survive culling and lower quality. Consolidate matching behavior when profiling supports it rather than moving every small effect to GPU simulation. [Epic: Niagara Scalability](https://dev.epicgames.com/documentation/en-us/unreal-engine/scalability-and-best-practices-for-niagara)
