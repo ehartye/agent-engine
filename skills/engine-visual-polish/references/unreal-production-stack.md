@@ -1,7 +1,7 @@
 # Unreal production stack for visual polish
 
 Public Epic pages below were read as UE 5.8 documentation on 2026-10-16/17.
-Installed 5.8.2 was the research context, not a tested Niagara integration.
+Installed 5.8.2 was the research context; only the "Tested on Unreal 5.8.2" subsection below was run.
 Check the consuming project's installed APIs, renderer and active runtime settings;
 public version labels and older experimental wording do not establish local support.
 
@@ -20,6 +20,16 @@ public version labels and older experimental wording do not establish local supp
 - [general] Keep existing valid signals and migrate one effect family first. A useful payload includes source/contact transform, velocity/normal, surface, strength, sustained state and event time as needed. Author player-critical accents and distant cosmetic tails separately so scaling can retain information. Niagara itself supplies neither the art direction nor the gameplay authority.
 - [documented] Effect Types share scalability rules; System/Emitter overhead remains with GPU simulation. Set instance caps, significance/priority policy and bounds appropriate to the motion; verify player-critical cues survive culling and lower quality. Consolidate matching behavior when profiling supports it rather than moving every small effect to GPU simulation. [Epic: Niagara Scalability](https://dev.epicgames.com/documentation/en-us/unreal-engine/scalability-and-best-practices-for-niagara)
 - [documented] Niagara's Baker can capture simulation as a flipbook. Try baked fluid motion for suitable smoke/fire before paying for live fluids; compare view-angle/depth limitations against a mesh core in the real camera. No bake or fluid performance is established here. [Epic: Flipbook Baker](https://dev.epicgames.com/documentation/en-us/unreal-engine/niagara-flipbook-baker-quick-start-guide-in-unreal-engine)
+
+### Tested on Unreal 5.8.2
+
+- [tested] Niagara is Unreal's own VFX system and is enabled by default. A native game links the `Niagara` module and spawns a system with `UNiagaraFunctionLibrary::SpawnSystemAtLocation`.
+- [tested] Editor Python exposes spawning and user-parameter setters on `NiagaraComponent`, but not authoring: there is no Niagara editor library, no `NiagaraMeshRendererProperties` class, and the system factory's emitter list cannot be set. A script cannot build a custom system; use systems Epic ships, or author in the Niagara editor.
+- [tested] The default template systems are in `/Niagara/DefaultAssets/Templates/Systems/` (AttributeReaderTrails, DirectionalBurst, DirectionalBurstLightweight, FountainLightweight, MinimalLightweight, RadialBurst, SimpleExplosion), and emitters in `/Templates/Emitters/`. None is a fire.
+- [tested] `FountainLightweight` is a stateless (lightweight) particle fountain. It exposes no user parameters, so code cannot recolour or restyle it, and its additive white sprites vanish against a light background: put a dark backdrop behind effects.
+- [tested] The Niagara Fluids plugin (not enabled by default) ships fire templates such as `/NiagaraFluids/Templates/Gas/2D/Systems/Grid2D_Gas_MovingFire`. Its only user parameter is `User.SimRT`, a render target object. It has two emitters: `SourceParticles` (no renderer) and `Grid2D_Gas_SmokeFire_Emitter` (one sprite renderer). Fire and smoke come from the same grid and one translucent unlit material, `M_2D_SmokeFire`, whose scalar parameters include TemperatureCurve, DensityScale, TemperatureGain, DepthFade, Blackbody and TemperatureMaximum, and whose vector parameters include `Density Tint`, `Temperature Tint`, EnvironmentColor and SunColor. Each instance runs its own grid simulation, so N fires cost N simulations. Whether a component-level material override removes the smoke was not tested.
+- [tested] Creating instances of the fluid system the first time logged a non-fatal engine ensure: "The current loader 'ZenLoader' is unable to FlushAsyncLoading from the current thread ... Flush will be ignored". The system still ran.
+- [tested] To use engine-plugin Niagara content in a cooked game, enable the plugin in the `.uproject` and add `+DirectoriesToAlwaysCook=(Path="/Niagara/DefaultAssets/Templates/Systems")`, and the Fluids path for fluid systems, to `Config/DefaultGame.ini`. A harness that spawns these systems side by side with other approaches: [comparison scene](../../engine-asset-import/references/unreal-native-compare-scene.md).
 
 ## Evaluate motion and production cost
 
