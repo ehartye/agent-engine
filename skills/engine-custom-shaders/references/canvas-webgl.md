@@ -1,7 +1,7 @@
 # Canvas to WebGL passes
 
-Status: **documented architecture**, with a tested Cyberpunkt implementation
-recorded below. This is not the engine sample-scene acceptance pass. Check APIs
+Status: **documented architecture**, with results reported from one custom
+Canvas renderer recorded below (not reproduced in this repo). This is not the engine sample-scene acceptance pass. Check APIs
 against the project's WebGL version. WebGL 1 and 2 differ in
 GLSL syntax and texture/framebuffer capabilities; don't mix shader versions.
 
@@ -119,17 +119,15 @@ Benchmark the whole frame under the same browser/device/scene, with effects on a
 off; a software renderer or timing only shader submission is weaker performance
 evidence.
 
-**Tested here:** Cyberpunkt's custom Canvas renderer now uses a native 384x216
-WebGL 2 chem pass with direct presentation and separate bitmap HUD/messages.
-Hardware Chromium on an NVIDIA RTX 5070 Ti Laptop verified byte-exact identity,
-all twelve chems and stacked effects against CPU output (small warp-boundary
-differences), trail resets, resize, CPU fallback and context recovery. The game's
-[GPU regression test](https://ehartye.github.io/cyberpunkt/tests/gpu-postfx.test.mjs)
-records the checks; test-only readback is not part of
-gameplay. Repeated same-scene frame-callback measurements showed roughly 7–19%
-lower median time for GPU effects, with CPU world/lighting still dominant. This
-does not establish complete presentation latency, mobile speed or a general
-engine performance claim. Other custom renderers still require their own proof.
+**Reported from one project (not reproduced here):** a custom Canvas renderer moved a
+screen-space effect pass to a native 384x216 WebGL 2 pass with direct presentation and
+separate bitmap HUD and messages. Hardware Chromium on a discrete GPU verified byte-exact
+identity, every effect and stacked effects against CPU output (small warp-boundary
+differences), trail resets, resize, CPU fallback and context recovery. Test-only readback
+is not part of gameplay. Repeated same-scene frame-callback measurements showed roughly
+7-19% lower median time for GPU effects, with CPU world and lighting still dominant. This
+does not establish complete presentation latency, mobile speed or a general engine
+performance claim. Other custom renderers still require their own proof.
 
 ## Documentation
 
