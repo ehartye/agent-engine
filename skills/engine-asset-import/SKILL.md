@@ -1,7 +1,7 @@
 ---
 name: engine-asset-import
 description: Import agent-sprites atlases, agent-meshes GLB models and agent-beeps WAV exports into a Unity, Unreal, UEFN or Godot project, using the known per-engine traps and stating exactly what has been verified.
-when_to_use: Use when bringing a sprite atlas, GLB, WAV or song export into a Unity, Unreal, UEFN or Godot project, by script or through an engine's MCP server; when an imported model is missing bones, morphs, meshes or animation clips, or its clips have different names; when an Unreal import splits one model into many meshes or leaves nothing on disk; when a sprite sheet imports with wrong frames, tags or pivot; when asked whether an asset "works in" an engine; or when edited native Python helpers still produce old values in a running UEFN editor.
+when_to_use: Use when bringing a sprite atlas, GLB, WAV or song export into a Unity, Unreal, UEFN or Godot project, by script or through an engine's MCP server; when an imported model is missing bones, morphs, meshes or animation clips, or its clips have different names; when an Unreal import splits one model into many meshes or leaves nothing on disk; when a sprite sheet imports with wrong frames, tags or pivot; when asked whether an asset "works in" an engine; when edited native Python helpers still produce old values in a running UEFN editor; or when profiling an Unreal game's frame time, hitting a frame budget such as 120 fps, or costing +25% to +50% more content.
 ---
 
 # Importing plugin assets into a game engine
@@ -24,6 +24,8 @@ strict line between what was verified and what was only read in documentation.
 | Replay mapped input and diagnose retained trigger state during native tests | [Native input replay](references/unreal-native-input.md) |
 | Reject default-material cook fallbacks and verify imported UV channel meaning | [Material and UV validation](references/unreal-native-material-validation.md) |
 | Diagnose procedural-road loss and keep collision regression evidence separate | [Native contact case study](references/unreal-native-contact.md) |
+| Profile frame time against a budget (120 fps), decompose game thread, render thread and GPU, run an ablation matrix and cost per item | [Native profiling](references/unreal-native-profiling.md); method in [profiling method](../engine-phaser/references/profiling-method.md) |
+| Prove a performance fix exact, check engine source before predicting a cost, avoid Insights, nullrhi and PowerShell traps | [Profiling facts and traps](references/unreal-native-profiling-facts.md) |
 
 ## Before you claim anything
 

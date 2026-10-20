@@ -1,6 +1,6 @@
 # Native Unreal game build and capture loop
 
-DEAD REDLINE, Windows, 2026-10-16. **Tested:** Unreal **5.8.2 CL56702186**, VS2022 Build Tools **17.14.37516.0**, actual MSVC **14.44.35228**, SDK **10.0.26100.0**, bundled **.NET 10**, D3D12 **RTX 5070 Ti Laptop GPU**. This differs from the older5.8.3 sample. Source inspection and execution are labeled separately. Screenshots reveal rendering failures; delivery alone does not establish reference parity.
+DEAD REDLINE, Windows, 2026-10-16. **Tested:** Unreal **5.8.2 CL56702186**, VS2022 Build Tools **17.14.37516.0**, actual MSVC **14.44.35228**, SDK **10.0.26100.0**, bundled **.NET 10**, D3D12 **RTX 5070 Ti Laptop GPU**. Source inspection and execution are labeled separately. Screenshots reveal rendering failures; delivery alone does not establish reference parity.
 
 ## Native module and source geometry
 
@@ -71,4 +71,4 @@ Use nullrhi for nonvisual automation, never for a rendered acceptance frame. Eng
 
 Read [native Windows packaging](unreal-native-packaging.md) for the exact Application Control UAT failure and the separately tested Build.bat/direct-Cook/UnrealPak route. The actual Game executable delivered three native capture scenarios from an immutable commit; this is distinct from Editor-game evidence.
 
-- [general] The initial packaged baseline did not establish full racing, hardware input, audible audio, frame-rate robustness, portability or reference parity. Later guides carry their own bounded proofs.
+- [general] The initial packaged baseline did not establish full racing, hardware input, audible audio, frame-rate robustness ([profiling](unreal-native-profiling.md)), portability or reference parity. Later guides carry their own bounded proofs.
