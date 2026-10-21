@@ -50,6 +50,7 @@ Target: Unreal Engine 5.8, Windows. MetaSounds is a node-graph, sample-accurate 
 | Visual graph layout, in-graph widgets, wiring by hand | Editor UI only | MetaSound Editor. The `MetasoundEditorGraph*` classes in the Python module are editor graph objects; the Builder classes are the scripting route. |
 
 Python names in the surface: about 146 `Metasound`/`MetaSound` names. Building and editing: the builder, subsystem, handle, literal and result classes above. The rest are editor-graph node and default-value classes, `MetasoundFrontend*` document structs and enums (read-only data), view-model and widget classes, and delegate types.
+
 ## Workflow
 
 1. Choose the asset type: Source plays on its own; Patch is referenced by other MetaSounds; Preset overrides a parent's input defaults.
