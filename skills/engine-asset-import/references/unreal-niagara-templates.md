@@ -1,12 +1,10 @@
 # Choosing a Niagara template: the shipped catalog
 
-Evidence: Unreal 5.8.2 on Windows. `[tested]` is reproduced by a script in [`examples/unreal`](../../../examples/unreal/README.md), `[documented]` was read in Epic documentation, `[general]` is an observation that no script asserts. Authoring and driving a system is in [Niagara in Unreal](unreal-niagara.md).
+Written for Unreal 5.8. The descriptions below are the text Epic ships on each template system, listed by [`niagara_templates.py`](../../../examples/unreal/niagara_templates.py). Authoring and driving a system is in [Niagara in Unreal](unreal-niagara.md).
 
-## Read the catalog before choosing by name
+## Choose from the shipped description
 
-- [tested] Every template system carries a one-line `template_asset_description`, the text the editor shows in its New System picker. [`niagara_templates.py`](../../../examples/unreal/niagara_templates.py) lists them for the fluid, sand and core templates. Epic's web documentation has no per-template descriptions: its [Niagara Fluids reference](https://dev.epicgames.com/documentation/unreal-engine/niagara-fluids-reference-in-unreal-engine) covers the plugin's design, using the 3D gas fire as its worked example.
-- [tested] The descriptions are terse and sometimes copied or empty: `Grid3D_Gas_ColoredFire` repeats the 3D fire's sentence, and `Grid3D_FLIP_Coupled`, `SandSystem`, `AttributeReaderTrails`, `FountainLightweight` and the other lightweight systems have none. Read them as a hint about what the system is for, not a quality or cost ranking.
-- [general] The trap: a template picked by its name. "3D gas fire" sounds like the headline fire, yet its description says it is fire from a static mesh without smoke, an example of the 3D solver. The 2D fire that is meant to be placed in a map is a different system.
+Every template system carries a one-line `template_asset_description`, the text the editor shows in its New System picker. Read it before choosing, and run `niagara_templates.py` to list it for the fluid, sand and core templates. Epic's [Niagara Fluids reference](https://dev.epicgames.com/documentation/unreal-engine/niagara-fluids-reference-in-unreal-engine) covers the plugin's design and render settings, with the 3D gas fire as its worked example.
 
 ## Gas (Niagara Fluids)
 
@@ -29,13 +27,14 @@ Evidence: Unreal 5.8.2 on Windows. `[tested]` is reproduced by a script in [`exa
 
 ## Liquid, sand and the core templates
 
-- `Grid3D_Flip_Hose`: a static pool plus constant emission. `Grid3D_Flip_Pool`: a static pool; moving static meshes act as collisions and cause splashes. `Grid3D_Flip_Splash`: one splash burst. `Grid3D_FLIP_Coupled` and `SandSystem`: no description.
-- Core (`/Niagara/DefaultAssets/Templates/Systems`): `DirectionalBurst` (a burst of sprites in a direction), `RadialBurst` (omnidirectional burst with ribbon trails), `SimpleExplosion` (sprite core, velocity-aligned sparks, oriented meshes). `AttributeReaderTrails` and the three lightweight systems have no description.
+- `Grid3D_Flip_Hose`: a static pool plus constant emission. `Grid3D_Flip_Pool`: a static pool; moving static meshes act as collisions and cause splashes. `Grid3D_Flip_Splash`: one splash burst. `Grid3D_FLIP_Coupled` and `SandSystem` ship without a description.
+- Core (`/Niagara/DefaultAssets/Templates/Systems`): `DirectionalBurst` (a burst of sprites in a direction), `RadialBurst` (omnidirectional burst with ribbon trails), `SimpleExplosion` (sprite core, velocity-aligned sparks, oriented meshes). `AttributeReaderTrails` and the three lightweight systems ship without a description.
 
 ## Choosing
 
-- [documented] Epic positions the 2D gas templates for games and real-time use and the 3D ones for hero effects and cinematics, at higher memory and GPU cost.
-- [general] Side by side at their default settings in [`night_build.py`](../../../examples/unreal/niagara-showcase/night_build.py), the 2D `Grid2D_Gas_MovingFire` read as a tall, full, well-defined flame and the 3D `Grid3D_Gas_Fire` as thin wisps. This is a look at defaults, by eye, not a measurement; the 3D fire's look is tuned through its Controls emitter (render temperature, density, step size).
-- [general] For a fire that must follow something, use the moving variants (`Grid2D_Gas_MovingFire`, `Grid3D_MovingGridFire`). For one that stands in place with smoke, `Grid2D_Gas_SmokeFire`.
-- [tested] The 3D fluids need `r.GenerateMeshDistanceFields=True` or they never activate (see the [showcase README](../../../examples/unreal/niagara-showcase/README.md)).
-- [general] A scene that only needs the look of a fluid fire can bake it to a flipbook; Epic's reference describes that route for real-time use.
+- Use the 2D gas templates for games and real-time effects and the 3D ones for hero effects and cinematics; 3D costs more memory and GPU time (Epic's Niagara Fluids reference).
+- For a fire parented in a map, use `Grid2D_Gas_MovingFire`; for one that stands in place with smoke, `Grid2D_Gas_SmokeFire`; for one that follows an animated actor in 3D, `Grid3D_MovingGridFire`.
+- Use the 3D fire when you want a volume to tune through its Controls emitter (render temperature, density, step size).
+- Compare candidates side by side on a plain stage: [`stage_build.py`](../../../examples/unreal/niagara-showcase/stage_build.py) places any list of systems on a flat plane and [`showcase_explore.py`](../../../examples/unreal/niagara-showcase/showcase_explore.py) flies you between them.
+- Use the 3D fluid templates with Generate Mesh Distance Fields enabled ([Niagara in Unreal](unreal-niagara.md#fluids)).
+- Bake a fluid to a flipbook when only its look is needed in real time; Epic's reference describes that route.

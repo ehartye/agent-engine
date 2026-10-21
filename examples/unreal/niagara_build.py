@@ -8,12 +8,11 @@ path of the JSON report to write (default: Saved/niagara-build.json under the pr
 It duplicates engine template systems into /Game/FX, saves them, places one NiagaraActor per system in a new map and saves
 the map as /Game/Maps/NiagaraProbe. Claims nothing about rendering: niagara_verify.py checks the running systems.
 
-Traps this script encodes (each cost a failed run):
-  - The asset registry has not scanned engine content in a commandlet; call search_all_assets(True) first or
-    duplicate_asset says the source "could not be found in the Asset Registry".
-  - duplicate_asset takes an object path (Package.Name) for the source.
-  - A duplicate lives only in memory until saved; a map saved before the duplicate is saved loads with a null asset.
-  - On a placed actor set the `asset` editor property. NiagaraComponent.set_asset does not persist in the saved map.
+Steps it follows:
+  - Call AssetRegistry.search_all_assets(True) first: a commandlet has not scanned engine content yet.
+  - Pass duplicate_asset the source as an object path (Package.Name).
+  - Save each duplicate before saving the map that places it.
+  - Assign the system through the placed actor's `asset` editor property.
 """
 import json
 import os
