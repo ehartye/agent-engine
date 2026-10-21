@@ -4,9 +4,9 @@ A dark arena with eight stations, built only from Unreal 5.8 engine content and 
 
 | Station | System | What it shows |
 | --- | --- | --- |
-| 3D gas fire | `Grid3D_Gas_Fire` | A GPU grid fluid: fire and embers advected through a 3D volume |
+| 2D fire | `Grid2D_Gas_MovingFire` | A GPU grid fluid drawn as a sprite: the fire Epic ships for placing in a map |
+| 3D fire | `Grid3D_Gas_Fire` | A GPU grid fluid: fire and embers advected through a 3D volume (no smoke) |
 | Explosion | `Grid3D_Gas_Explosion` | A 3D gas explosion that restarts every 10 s |
-| Dust explosion | `Grid3D_Gas_DustExplosion` | The same grid solver with a dust look, restarting |
 | Liquid hose | `Grid3D_Flip_Hose` | A 3D FLIP liquid (particles plus a grid) |
 | Sand | `SandSystem` | A granular simulation: thousands of spheres that pile and flow |
 | Ribbon trails | `AttributeReaderTrails` | Ribbons that read attributes from another emitter's particles |
@@ -31,6 +31,10 @@ UnrealEditor.exe Project.uproject /Game/Maps/NiagaraShowcase -game -windowed -Re
 ```
 
 Set `NIAGARA_SHOWCASE_GAME=1` first for the game window (a game process has no editor, so the script finds the world with `ObjectIterator`; any `EditorLevelLibrary` call there crashes). Leave it unset to run in the editor, which starts Play-In-Editor itself; click the viewport so it has focus. In Git Bash set `MSYS_NO_PATHCONV=1`. Quote the whole `py <path>` command: unquoted, the space splits it and the script silently never runs.
+
+## Night scene
+
+`night_build.py` builds `/Game/Maps/NiagaraNight`, an outdoor scene with no sky light and a very dim moon, so the fires are the main light. It has four stations: the 2D fire and the 3D fire side by side on the west side, and Epic's 2D and 3D smoke on the east side. Build it the same way as the arena (one command), then fly it with `showcase_explore.py` and the map path above; the explorer finds the centre from the stations. Light levels are `NIAGARA_NIGHT_MOON`, `NIAGARA_NIGHT_FIRE_LIGHT` and `NIAGARA_NIGHT_SMOKE_LIGHT`. Its point of interest is the comparison: at default settings the 2D fire reads taller and fuller than the 3D one. That is a look by eye, not a measurement.
 
 ## Controls
 
@@ -66,7 +70,7 @@ UnrealEditor.exe Project.uproject /Game/Maps/NiagaraShowcase -game -RenderOffScr
 ## What it is and is not
 
 - It is a demonstration scene built from shipped assets. It claims nothing about performance: only the stations near the camera run, at most three at once.
-- Passed on Unreal 5.8.2 on Windows, in a game process and in the editor: the self-test (motion maths and the eight station switches). Also in the editor, by screenshot per station: fire, sand and the others render; the authored system emits particles. The fire is wispy and the hose reads as scattered droplets; the fluid looks are Epic's defaults and were not art-directed.
+- Passed on Unreal 5.8.2 on Windows, in a game process: the self-test on the arena (motion maths and the eight station switches) and on the night scene (the four station switches). Seen in the editor by screenshot per station on an earlier version of the arena: sand and the others render, the authored system emits particles, and the 3D fire is thin wisps. The hose reads as scattered droplets; the fluid looks are Epic's defaults and were not art-directed. The current 2D fire station and the night scene were looked at live by a person, not by screenshot, and no screenshot of them is checked in.
 - Not tested: reading a real gamepad, the mouse (the self-test only confirms the device calls run and every key name is valid, with nothing plugged in), the on-screen help line (debug text does not appear in screenshots), other platforms, other engine versions, a packaged build. The bindings above were written from Epic's key names; the first person to plug a pad in is the test.
 
 ## Findings while building it
@@ -76,5 +80,7 @@ UnrealEditor.exe Project.uproject /Game/Maps/NiagaraShowcase -game -RenderOffScr
 - The first activation of each system compiles it on the game thread (the sand system took 54 s the first time), and while it blocks, Slate keeps ticking, so a Python tick callback re-enters itself. Both scripts guard against that.
 - The toolsets' compile-wait tools (`GetSystemCompileState`, `GetStackIssues`) block the game thread until they time out (120 s) when a compile is queued behind other work, so a diagnostic that calls them can hang for two minutes.
 - Authoring recipe matters: removing a template's emitter and adding a Fountain emitter plus three modules produced a system that compiled but completed at once without emitting; adding the same modules to the emitter of a system that already emits worked (three emitters, up to 230 particles, about 2.5 s). Check a new system with a simulation cache before building on it.
+- Choose templates from their shipped descriptions, not their names. The first version of this arena used `Grid3D_Gas_Fire` as its fire because "3D gas fire" sounded like the headline fluid; its description says it is fire from a static mesh without smoke, and it looks thin next to `Grid2D_Gas_MovingFire`. The catalog is in the [templates reference](../../../skills/engine-asset-import/references/unreal-niagara-templates.md).
+- A Stationary light in a level with no baked lighting makes the game window print "lighting needs to be rebuilt"; set built lights to Movable.
 - Reading input from Python needs an `unreal.Key`; in a game process `key.import_text("W")` makes one, while `set_editor_property("key_name", ...)` only works in the editor and commandlets.
 - `unreal.Color(255, 130, 40, 255)` is blue, not orange: the positional order is (b, g, r, a). Use keywords.

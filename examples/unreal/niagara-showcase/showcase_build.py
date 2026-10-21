@@ -5,10 +5,10 @@ Run headless (assets and level only, no rendering):
 The project needs PythonScriptPlugin, EditorScriptingUtilities, Niagara, NiagaraFluids and NiagaraToolsets (Experimental). Set
 NIAGARA_SHOWCASE_REPORT for the JSON report (default: Saved/niagara-showcase-build.json in the project).
 
-It places eight stations in a ring on a dark stage: five of Epic's shipped Niagara systems (GPU 3D gas fire, coloured fire, a gas
-explosion, a 3D FLIP liquid splash, sand), ribbon trails, a radial burst, and a system authored here through Epic's Niagara toolsets
-(Epic's radial-burst system with vortex, curl-noise and point-attraction modules added to its emitter's particle update). Each station has a label, a
-pedestal and a coloured light; a post-process volume fixes exposure and adds bloom; a camera is placed for the run scripts.
+It places eight stations in a ring on a dark stage: Epic's 2D fire and 3D fire (both Niagara Fluids gas templates), a 3D gas
+explosion, a 3D FLIP liquid hose, sand, ribbon trails, a radial burst, and a system authored here through Epic's Niagara toolsets
+(the radial-burst system with vortex, curl-noise and point-attraction modules added to its emitter's particle update). Each station
+has a label, a pedestal and a coloured light; a post-process volume fixes exposure and adds bloom; a camera is placed for the run scripts.
 Stations start inactive: showcase_explore.py (fly it yourself) and showcase_run.py (an automatic tour) switch them on as the camera
 approaches, so only a few run at once.
 """
@@ -27,9 +27,9 @@ LIGHT_INTENSITY = float(os.environ.get("NIAGARA_SHOWCASE_LIGHT", "300"))  # cand
 
 # id, label, system, replay seconds (0 = loops), light colour
 STATIONS = [
-    ("fire", "3D GAS FIRE  -  GPU grid fluid", "/NiagaraFluids/Templates/Gas/3D/Systems/Grid3D_Gas_Fire", 0, (255, 130, 40)),
+    ("fire2d", "2D FIRE  -  GPU grid sprite", "/NiagaraFluids/Templates/Gas/2D/Systems/Grid2D_Gas_MovingFire", 0, (255, 130, 40)),
+    ("fire3d", "3D FIRE  -  GPU grid volume", "/NiagaraFluids/Templates/Gas/3D/Systems/Grid3D_Gas_Fire", 0, (255, 130, 40)),
     ("explosion", "EXPLOSION  -  3D gas, restarts", "/NiagaraFluids/Templates/Gas/3D/Systems/Grid3D_Gas_Explosion", 10, (255, 170, 80)),
-    ("dust", "DUST EXPLOSION  -  3D gas, restarts", "/NiagaraFluids/Templates/Gas/3D/Systems/Grid3D_Gas_DustExplosion", 11, (200, 160, 110)),
     ("hose", "LIQUID HOSE  -  3D FLIP", "/NiagaraFluids/Templates/Liquid/3D/Systems/Grid3D_Flip_Hose", 0, (80, 170, 255)),
     ("sand", "SAND  -  granular sim", "/NiagaraFluids/Templates/Sand/Systems/SandSystem", 0, (230, 190, 110)),
     ("trails", "RIBBON TRAILS  -  attribute reader", "/Niagara/DefaultAssets/Templates/Systems/AttributeReaderTrails", 0, (180, 110, 255)),

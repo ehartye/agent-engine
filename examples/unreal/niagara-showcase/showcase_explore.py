@@ -158,11 +158,13 @@ def idle():
 
 # ---- motion: plain numbers in, plain numbers out ----
 
-def station_pose(location):
-    """Camera pose (x, y, z, yaw, pitch) in front of a station, looking at it from the ring's centre side."""
-    radius = math.hypot(location.x, location.y)
-    ux, uy = location.x / radius, location.y / radius
-    x, y = location.x - ux * DISTANCE, location.y - uy * DISTANCE
+def station_pose(location, centre=(0.0, 0.0)):
+    """Camera pose (x, y, z, yaw, pitch) in front of a station, looking at it from the centre of all stations."""
+    ox, oy = location.x - centre[0], location.y - centre[1]
+    radius = math.hypot(ox, oy) or 1.0
+    ux, uy = ox / radius, oy / radius
+    park = min(DISTANCE, 0.6 * radius)   # in a small room, stay nearer to the station than to the others
+    x, y = location.x - ux * park, location.y - uy * park
     dx, dy, dz = location.x - x, location.y - y, LOOK_Z - HEIGHT
     return {"x": x, "y": y, "z": HEIGHT, "yaw": math.degrees(math.atan2(dy, dx)), "pitch": math.degrees(math.atan2(dz, math.hypot(dx, dy)))}
 
@@ -206,6 +208,13 @@ def stations(w):
     return cache["stations"]
 
 
+def pose_for(w, index):
+    """Camera pose in front of station `index`, seen from the centroid of all stations (the ring's centre for the arena)."""
+    locs = [a.get_actor_location() for a in stations(w)]
+    centre = (sum(l.x for l in locs) / len(locs), sum(l.y for l in locs) / len(locs))
+    return station_pose(locs[index], centre)
+
+
 def distances(w):
     cam = state["cam"]
     result = []
@@ -246,7 +255,7 @@ def nearest(w):
 
 
 def go_to(w, index):
-    state["goal"] = station_pose(stations(w)[index].get_actor_location())
+    state["goal"] = pose_for(w, index)
 
 
 def hud(w, dt):
@@ -279,7 +288,7 @@ def setup(w):
     controller.set_editor_property("show_mouse_cursor", False)
     for actor in stations(w):
         comp(actor).deactivate()
-    state["cam"] = station_pose(stations(w)[0].get_actor_location())
+    state["cam"] = pose_for(w, 0)
     state["ready"] = True
     return True
 

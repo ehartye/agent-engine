@@ -1,12 +1,12 @@
 # Niagara in Unreal 5.8: author, drive and verify from an agent
 
-Evidence: Unreal 5.8.2 on Windows, headless and offscreen. `[tested]` is reproduced by the scripts in [`examples/unreal`](../../../examples/unreal/README.md); `node examples/unreal/niagara_validate.mjs --engine <UE_5.8 folder>` runs them all and checks 15 claims below (rerun it after an engine update: a failure means this page is stale). `[documented]` was read in Epic documentation or the installed engine's source and Python API. `[general]` is guidance not checked here.
+Evidence: Unreal 5.8.2, Windows, headless/offscreen. `[tested]` is reproduced by the scripts in [`examples/unreal`](../../../examples/unreal/README.md); `node examples/unreal/niagara_validate.mjs --engine <UE_5.8 folder>` runs them all, checking 15 claims below (rerun it after an engine update: a failure means this page is stale). `[documented]` was read in Epic docs or the installed engine's source and Python API. `[general]` is guidance not checked here.
 
 ## Pick a route
 
 | Need | Route |
 |---|---|
-| Make a system from an engine template, tune asset properties, place it | Python: AssetTools, `EditorAssetLibrary`, `get_editor_property` |
+| Make a system from an engine template ([choose one](unreal-niagara-templates.md)), tune properties, place it | Python: AssetTools, `EditorAssetLibrary`, `get_editor_property` |
 | Add emitters, renderers, modules, set stack inputs, read compile errors | Python through `unreal.ToolsetRegistry.execute_tool` (Experimental NiagaraToolsets), else C++ |
 | Drive a running effect (user parameters, mesh overrides) | Python on `NiagaraComponent` |
 | Prove an effect spawned N particles without a screenshot | Python sim cache |
