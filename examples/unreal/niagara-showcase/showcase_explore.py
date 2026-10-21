@@ -161,9 +161,12 @@ def idle():
 def station_pose(location, centre=(0.0, 0.0)):
     """Camera pose (x, y, z, yaw, pitch) in front of a station, looking at it from the centre of all stations."""
     ox, oy = location.x - centre[0], location.y - centre[1]
-    radius = math.hypot(ox, oy) or 1.0
-    ux, uy = ox / radius, oy / radius
-    park = min(DISTANCE, 0.6 * radius)   # in a small room, stay nearer to the station than to the others
+    radius = math.hypot(ox, oy)
+    if radius < 1.0:   # a single station at the centre: look at it along +X
+        ux, uy, park = 1.0, 0.0, DISTANCE
+    else:
+        ux, uy = ox / radius, oy / radius
+        park = min(DISTANCE, 0.6 * radius)   # stay nearer to this station than to the others
     x, y = location.x - ux * park, location.y - uy * park
     dx, dy, dz = location.x - x, location.y - y, LOOK_Z - HEIGHT
     return {"x": x, "y": y, "z": HEIGHT, "yaw": math.degrees(math.atan2(dy, dx)), "pitch": math.degrees(math.atan2(dz, math.hypot(dx, dy)))}

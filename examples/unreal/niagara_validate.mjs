@@ -38,7 +38,7 @@ const headless = ['-unattended', '-nullrhi', '-nosplash', '-nopause', '-nosound'
 const script = (file) => [project, '-run=pythonscript', `-script=${resolve(here, file)}`, ...headless];
 
 console.log(`Niagara validation in ${root}`);
-// The traps step exits 1 on purpose: it triggers and logs the expected duplicate_asset error.
+// This step exits 1 on purpose: it triggers and logs the expected duplicate_asset error.
 run('traps', cmd, script('niagara_traps.py'), 'niagara-traps', 300000);
 run('build', cmd, script('niagara_build.py'), 'niagara-build', 300000);
 run('author', cmd, script('niagara_toolset_author.py'), 'niagara-author', 300000);
