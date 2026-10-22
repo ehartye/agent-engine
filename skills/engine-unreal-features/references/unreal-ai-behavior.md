@@ -28,8 +28,8 @@ Target: Unreal Engine 5.8, Windows. Epic's AI page lists StateTree, Behavior Tre
 ## Use something else when
 
 - Epic's pages give no rule for StateTree versus Behavior Tree. The documented difference: StateTree commits a selection and re-selects on transitions; Behavior Trees keep executing selection logic. Use one per character. A Behavior Tree can host a StateTree through `BTTask_RunStateTree`, and Mass runs StateTrees.
-- Use [Navigation](./unreal-navigation.md) for pathing and [Mover](./unreal-mover.md) for how the pawn moves.
-- Use [Gameplay Ability System](./unreal-gameplay-ability-system.md) for abilities, attributes and effects.
+- Use [Navigation](unreal-navigation.md) for pathing and [Mover](unreal-mover.md) for how the pawn moves.
+- Use [Gameplay Ability System](unreal-gameplay-ability-system.md) for abilities, attributes and effects.
 - Mass is experimental in the descriptors.
 
 ## How an agent drives it

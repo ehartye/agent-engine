@@ -10,9 +10,9 @@ Animation Blueprints are part of the engine; no plugin is needed. Related plugin
 |---|---|---|
 | `AnimationWarping` (stride, orientation, slope warping) | off | not beta, not experimental |
 | `MotionWarping` | off | beta |
-| `PoseSearch`, `BlendStack` | off | not beta, not experimental (see [Motion Matching](./unreal-motion-matching.md)) |
+| `PoseSearch`, `BlendStack` | off | not beta, not experimental (see [Motion Matching](unreal-motion-matching.md)) |
 | `AnimationBudgetAllocator` | off | not beta, not experimental |
-| `ControlRig` | on | see [Control Rig](./unreal-control-rig.md) |
+| `ControlRig` | on | see [Control Rig](unreal-control-rig.md) |
 | `UAF` (Unreal Animation Framework) | off | experimental |
 
 - The 5.8 release notes call UAF "the new Unreal Animation Framework" and label Animation Mixing in Sequencer Experimental. This reference covers Animation Blueprints only.
@@ -26,9 +26,9 @@ Animation Blueprints are part of the engine; no plugin is needed. Related plugin
 
 ## Use something else when
 
-- Use [Motion Matching](./unreal-motion-matching.md) when poses should be searched from animation data instead of wired through state-machine transitions. Epic documents state machines separately.
-- Use [Control Rig](./unreal-control-rig.md) for procedural pose edits and IK inside the graph.
-- Use [Mover](./unreal-mover.md) for movement; the Animation Blueprint reads its results.
+- Use [Motion Matching](unreal-motion-matching.md) when poses should be searched from animation data instead of wired through state-machine transitions. Epic documents state machines separately.
+- Use [Control Rig](unreal-control-rig.md) for procedural pose edits and IK inside the graph.
+- Use [Mover](unreal-mover.md) for movement; the Animation Blueprint reads its results.
 
 ## How an agent drives it
 

@@ -2,7 +2,7 @@
 
 Verified on Unity 6000.3.25f1, Windows, with a licence activated in Unity Hub (headless launches fail with "No valid
 Unity Editor license found" until the owner signs in once). They build the [sample scene](../../docs/sample-scene.md)
-and a Windows player, and the player has a verify mode. Read the Unity section of the `engine-asset-import` skill first.
+and a Windows player, and the player has a verify mode. Read [the Unity import notes](../../skills/engine-asset-import/references/unity-import.md) first.
 
 Create a project (`Unity.exe -batchmode -nographics -createProject <dir> -quit`), add `"com.unity.cloud.gltfast": "6.20.0"`
 to `Packages/manifest.json`, copy `Assets/Scripts` and `Assets/Editor` from here, and put the assets under

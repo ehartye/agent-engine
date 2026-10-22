@@ -1,7 +1,7 @@
 # Godot sample scene scripts
 
 Verified on Godot 4.7.2, Windows (Vulkan, Forward+). They build the [sample scene](../../docs/sample-scene.md) and run it
-with a verify mode. Read the Godot section of the `engine-asset-import` skill first.
+with a verify mode. Read [the Godot import notes](../../skills/engine-asset-import/references/godot-import.md) first.
 
 Put the assets in the project folder (`project.godot` is here) under `assets/meshes/fox.glb`,
 `assets/sprites/{courier,campfire}.png` and their `.atlas.json`, and `assets/audio/` with the WAVs and manifests.

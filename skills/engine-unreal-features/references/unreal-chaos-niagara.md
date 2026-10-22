@@ -23,7 +23,7 @@ Target: Unreal Engine 5.8 on Windows. ChaosNiagara lets Niagara read Chaos destr
 ## Use something else when
 
 - Use [unreal-chaos-destruction.md](unreal-chaos-destruction.md) to fracture, damage or configure the destructible itself.
-- Use [unreal-niagara.md](../../engine-asset-import/references/unreal-niagara.md) or [unreal-niagara-templates.md](../../engine-asset-import/references/unreal-niagara-templates.md) when the effect is not driven by Chaos data.
+- Use [unreal-niagara.md](unreal-niagara.md) or [unreal-niagara-templates.md](unreal-niagara-templates.md) when the effect is not driven by Chaos data.
 - Use [unreal-chaos-vehicles.md](unreal-chaos-vehicles.md) for wheel and chassis effects on vehicles.
 - Use [unreal-cascade.md](unreal-cascade.md) only for legacy particle assets.
 - Use Blueprint or Python event delegates (below) when the response is gameplay logic rather than particles.
@@ -32,7 +32,7 @@ Target: Unreal Engine 5.8 on Windows. ChaosNiagara lets Niagara read Chaos destr
 
 | Task | Route | What to call |
 |---|---|---|
-| Build the Niagara system | Editor UI (Niagara editor); stack scripting is in [unreal-niagara.md](../../engine-asset-import/references/unreal-niagara.md) | Add the "Chaos Destruction Data" parameter under System Exposed Parameters; add the "Apply Chaos Data" module under Particle Spawn |
+| Build the Niagara system | Editor UI (Niagara editor); stack scripting is in [unreal-niagara.md](unreal-niagara.md) | Add the "Chaos Destruction Data" parameter under System Exposed Parameters; add the "Apply Chaos Data" module under Particle Spawn |
 | Pick the event stream | Editor UI | Data Source: Collision Data, Breaking Data or Trailing Data; override per System Actor in the level |
 | Pick the solver | Editor UI | Default is the world solver; set the data interface's Chaos Solver set for a custom solver |
 | Thin and shape spawns | Editor UI | Data Process Frequency, Max Number of Data to Spawn, Spawn Count Min/Max, Chance to Spawn, Min/Max thresholds (impulse, speed, mass, extents, volume), location X/Y/Z filtering, Sort by Mass or Random Shuffle, velocity generation modes |

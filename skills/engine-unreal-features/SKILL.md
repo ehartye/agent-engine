@@ -10,7 +10,7 @@ Unreal 5.8 on Windows. Pick the feature from the goal, enable only its plugin, t
 
 | You are about to | Read |
 |---|---|
-| Make fire, smoke, sparks, trails, liquid, sand or any particle effect (Niagara; fluid templates in NiagaraFluids; on) | [Niagara](../engine-asset-import/references/unreal-niagara.md), [Niagara templates](../engine-asset-import/references/unreal-niagara-templates.md) |
+| Make fire, smoke, sparks, trails, liquid, sand or any particle effect (Niagara; fluid templates in NiagaraFluids; on) | [Niagara](references/unreal-niagara.md), [Niagara templates](references/unreal-niagara-templates.md) |
 | Keep or convert existing Cascade particle content (Cascade on in the editor; converter off, beta) | [Cascade](references/unreal-cascade.md) |
 | Drive effects from destruction or physics events (ChaosNiagara; on, beta) | [Chaos Niagara](references/unreal-chaos-niagara.md) |
 | Break walls or props apart: fracture, debris, fields (Geometry Collections and Fracture; off, beta) | [Chaos destruction](references/unreal-chaos-destruction.md) |
@@ -25,6 +25,7 @@ Unreal 5.8 on Windows. Pick the feature from the goal, enable only its plugin, t
 | Build or edit meshes from code, in the editor or at runtime (Geometry Scripting; off) | [Geometry Scripting](references/unreal-geometry-scripting.md) |
 | Create a runtime mesh from vertex arrays (Procedural Mesh Component; on) | [Procedural Mesh Component](references/unreal-procedural-mesh-component.md) |
 | Make parameter-driven, sample-accurate game audio (MetaSounds; on) | [MetaSounds](references/unreal-metasounds.md) |
+| Script the editor from Python: run modes, cameras, keyboard and gamepad input, process cleanup | [Editor Python](references/unreal-editor-python.md) |
 | Light a scene dynamically: global illumination and reflections, many shadow-casting lights, high-resolution shadows (project settings; MegaLights opt-in) | [Lumen](references/unreal-lumen.md), [MegaLights](references/unreal-megalights.md), [Virtual Shadow Maps](references/unreal-virtual-shadow-maps.md) |
 | Render dense or high-polygon geometry without authored LODs (project setting plus per-mesh flag) | [Nanite](references/unreal-nanite.md) |
 | Author layered or stylized materials, or choose anti-aliasing and upscaling (Substrate beta, Substrate Toon experimental; TSR on) | [Substrate](references/unreal-substrate.md), [TSR and anti-aliasing](references/unreal-temporal-super-resolution.md) |
@@ -41,11 +42,11 @@ Unreal 5.8 on Windows. Pick the feature from the goal, enable only its plugin, t
 - When two features fit equally, choose the one whose plugin is on by default. A beta or experimental plugin is a deliberate opt-in, and its reference says what it is for.
 - Use Niagara for new particle work and keep Cascade for content that already exists. Prefer the current system in every area: each reference notes in one line what it supersedes (for example Lumen over baked lighting, Enhanced Input over legacy mappings) and whether Epic labels it beta or experimental.
 - Import a fixed asset (a GLB from agent-meshes, a WAV from agent-beeps, a sprite atlas from agent-sprites); build in Unreal (Geometry Scripting, MetaSounds, Niagara) when the asset must respond to gameplay. The import steps are in `engine-asset-import`.
-- Choose the route by reach: asset creation, level building and property edits are editor Python (`EditorAssetLibrary`, asset tools, editor subsystems; see [Editor Python](../engine-asset-import/references/unreal-editor-python.md)); per-frame behaviour, custom solvers and new data types are C++ or Blueprint. Each reference's route table says which tasks are which.
+- Choose the route by reach: asset creation, level building and property edits are editor Python (`EditorAssetLibrary`, asset tools, editor subsystems; see [Editor Python](references/unreal-editor-python.md)); per-frame behaviour, custom solvers and new data types are C++ or Blueprint. Each reference's route table says which tasks are which.
 
 ## Enable a feature
 
 1. List the plugin's descriptor: `node examples/unreal/engine_plugins.mjs --engine "<UE folder>" --name <Plugin>`.
 2. Enable it in Edit > Plugins, or add `{ "Name": "<Plugin>", "Enabled": true }` to the `.uproject` `Plugins` array, and restart the editor.
 3. See what Python reaches: run [`unreal_surface.py`](../../examples/unreal/unreal_surface.py) headless with `UNREAL_SURFACE_MATCH=<name fragment>`.
-4. Script the editor with [Editor Python](../engine-asset-import/references/unreal-editor-python.md).
+4. Script the editor with [Editor Python](references/unreal-editor-python.md).

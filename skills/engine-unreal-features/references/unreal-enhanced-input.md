@@ -21,7 +21,7 @@ Target: Unreal Engine 5.8, Windows. Enhanced Input is the input system built fro
 
 ## Use something else when
 
-- A script only reads raw device state each tick, such as editor tooling or a camera tour: read keys from the player controller, as in [Editor Python](../../engine-asset-import/references/unreal-editor-python.md).
+- A script only reads raw device state each tick, such as editor tooling or a camera tour: read keys from the player controller, as in [Editor Python](unreal-editor-python.md).
 - A plugin supplies its own input path: [Mover](unreal-mover.md) takes an input command produced by your code each tick.
 - The Combo trigger is deprecated in 5.8 (`InputTriggers.h`); build sequences from the other triggers.
 
@@ -55,7 +55,7 @@ This reference does not claim any of the Python calls were run; the 5.7 pages ar
 8. Bind in Blueprint with the Input Action event, or in C++ with `BindAction`.
 9. Script asset creation from Python as above, save the assets, then open the editor to confirm triggers and modifiers; test with injected input and `showdebug enhancedinput`.
 
-Related: [Gameplay Ability System](./unreal-gameplay-ability-system.md), [Mover](./unreal-mover.md), [Networking and replication](./unreal-networking-and-replication.md).
+Related: [Gameplay Ability System](unreal-gameplay-ability-system.md), [Mover](unreal-mover.md), [Networking and replication](unreal-networking-and-replication.md).
 
 ## Sources
 

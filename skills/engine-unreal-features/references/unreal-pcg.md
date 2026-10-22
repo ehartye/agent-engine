@@ -25,11 +25,11 @@ Target: Unreal Engine 5.8, Windows. PCG is a node-graph "visual scripting framew
 ## Use something else when
 
 - Use hand placement when a handful of specific, authored actors matter individually.
-- Use [Geometry Scripting](./unreal-geometry-scripting.md) when the output is new mesh geometry (booleans, extrusions, remeshing) rather than placed instances; PCG also carries mesh results as dynamic mesh data (`unreal.PCGDynamicMeshData`, `PCGStaticMeshToDynamicMeshSettings`).
-- Use [Procedural Mesh Component](./unreal-procedural-mesh-component.md) when one runtime mesh is built from code vertex by vertex.
-- Use [Landmass](./unreal-landmass.md) when the goal is sculpting the Landscape heightmap itself.
-- Use [Water](./unreal-water.md) for rivers, lakes and oceans; PCG can scatter shoreline props around them.
-- Use [Niagara](../../engine-asset-import/references/unreal-niagara.md) for particle effects; PCG output is scene content.
+- Use [Geometry Scripting](unreal-geometry-scripting.md) when the output is new mesh geometry (booleans, extrusions, remeshing) rather than placed instances; PCG also carries mesh results as dynamic mesh data (`unreal.PCGDynamicMeshData`, `PCGStaticMeshToDynamicMeshSettings`).
+- Use [Procedural Mesh Component](unreal-procedural-mesh-component.md) when one runtime mesh is built from code vertex by vertex.
+- Use [Landmass](unreal-landmass.md) when the goal is sculpting the Landscape heightmap itself.
+- Use [Water](unreal-water.md) for rivers, lakes and oceans; PCG can scatter shoreline props around them.
+- Use [Niagara](unreal-niagara.md) for particle effects; PCG output is scene content.
 
 ## How an agent drives it
 

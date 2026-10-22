@@ -10,7 +10,7 @@ Generic replication is built in and is the default. Plugins:
 |---|---|---|---|---|
 | `Iris` | Networking | no | beta | Experimental |
 | `ReplicationGraph` | Performance | no | beta | none stated |
-| `NetworkPrediction` | Gameplay | no | beta | see [Mover](./unreal-mover.md) |
+| `NetworkPrediction` | Gameplay | no | beta | see [Mover](unreal-mover.md) |
 
 - Iris is the newest replication system and runs alongside the generic one; the generic system stays the default until you opt in (Epic).
 - Opt in: add `{ "Name": "Iris", "Enabled": true }` to the `.uproject`, call `SetupIrisSupport(Target);` in the module `*.Build.cs`; set `bUseIris = true;` in `*.Target.cs`; under `[SystemSettings]` in `DefaultEngine.ini` set `net.SubObjects.DefaultUseSubObjectReplicationList=1` and `net.Iris.UseIrisReplication=1`. The net driver lists Iris in `IrisNetDriverConfigs`; `-UseIrisReplication=1` or `=0` toggles it at launch (Epic).
@@ -24,7 +24,7 @@ Generic replication is built in and is the default. Plugins:
 
 ## Use something else when
 
-- Use [Mover](./unreal-mover.md) for rollback-predicted movement built on Network Prediction.
+- Use [Mover](unreal-mover.md) for rollback-predicted movement built on Network Prediction.
 - Use the Replication Graph plugin (generic system) for very large actor counts. Epic does not mark it superseded; Iris does not support it.
 - Replication is C++ and Blueprint work; Python does not run at runtime (Epic).
 
@@ -58,7 +58,7 @@ Dedicated server (Epic): needs a source build and a C++ project. Add Server and 
 
 Net console commands (Epic): `net.DebugDraw`, `net.ActorReport`, `net.DumpRelevantActors`, `net.ListActorChannels`, `net.Replication.DebugProperty`, `NetEmulation.PktLag`, `PktLoss`, `PktEmulationProfile`, `NetEmulation.Off`; Iris: `net.iris.UseIrisReplication`. Append `?` to a variable to read it.
 
-Related: [Gameplay Ability System](./unreal-gameplay-ability-system.md), [Enhanced Input](./unreal-enhanced-input.md).
+Related: [Gameplay Ability System](unreal-gameplay-ability-system.md), [Enhanced Input](unreal-enhanced-input.md).
 
 ## Sources
 

@@ -24,7 +24,7 @@ Target: Unreal Engine 5.8, Windows. Nanite is Unreal's virtualized geometry syst
 - Static geometry has high polygon counts or many instances (rocks, buildings, kitbashed sets, scanned assets). Nanite cost scales with screen pixels, not scene complexity.
 - Foliage is modeled as geometry. Epic's Nanite Foliage combines assemblies, voxels and skinning, with wind driven by a bone hierarchy instead of World Position Offset.
 - Terrain needs detail: Nanite Landscape supports tessellation and displacement from the Landscape material.
-- You want Lumen and Virtual Shadow Maps to work against detailed geometry ([Lumen](./unreal-lumen.md), [Virtual Shadow Maps](./unreal-virtual-shadow-maps.md)).
+- You want Lumen and Virtual Shadow Maps to work against detailed geometry ([Lumen](unreal-lumen.md), [Virtual Shadow Maps](unreal-virtual-shadow-maps.md)).
 
 ## Use something else when
 
