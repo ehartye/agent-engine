@@ -58,6 +58,8 @@ Dedicated server (Epic): needs a source build and a C++ project. Add Server and 
 
 Net console commands (Epic): `net.DebugDraw`, `net.ActorReport`, `net.DumpRelevantActors`, `net.ListActorChannels`, `net.Replication.DebugProperty`, `NetEmulation.PktLag`, `PktLoss`, `PktEmulationProfile`, `NetEmulation.Off`; Iris: `net.iris.UseIrisReplication`. Append `?` to a variable to read it.
 
+Related: [Gameplay Ability System](./unreal-gameplay-ability-system.md), [Enhanced Input](./unreal-enhanced-input.md).
+
 ## Sources
 
 - [Networking Overview](https://dev.epicgames.com/documentation/unreal-engine/networking-overview-for-unreal-engine)

@@ -55,6 +55,8 @@ This reference does not claim any of the Python calls were run; the 5.7 pages ar
 8. Bind in Blueprint with the Input Action event, or in C++ with `BindAction`.
 9. Script asset creation from Python as above, save the assets, then open the editor to confirm triggers and modifiers; test with injected input and `showdebug enhancedinput`.
 
+Related: [Gameplay Ability System](./unreal-gameplay-ability-system.md), [Mover](./unreal-mover.md), [Networking and replication](./unreal-networking-and-replication.md).
+
 ## Sources
 
 - [Enhanced Input in Unreal Engine](https://dev.epicgames.com/documentation/en-us/unreal-engine/enhanced-input-in-unreal-engine)

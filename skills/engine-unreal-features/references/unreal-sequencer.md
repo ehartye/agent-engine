@@ -61,6 +61,8 @@ Target: Unreal Engine 5.8, Windows. Sequencer is Epic's multi-track, non-linear 
 10. Record with Take Recorder when the source is live play: it records into a Level Sequence, and Record Sources Into Sub Sequences gives each source its own subsequence (Epic).
 11. Render with [Movie Render Queue](./unreal-movie-render-queue.md).
 
+Related: [Control Rig](./unreal-control-rig.md).
+
 ## Sources
 
 - [Cinematics and Movie Making](https://dev.epicgames.com/documentation/unreal-engine/cinematics-and-movie-making-in-unreal-engine)

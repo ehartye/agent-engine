@@ -63,6 +63,8 @@ Epic describes TSR as improving on UE4's TAAU (Temporal Anti-Aliasing Upsampling
 6. For extra sharpness over stability, lower `r.TSR.Velocity.WeightClampingSampleCount` (default 4.0).
 7. Check the result with `r.TSR.Visualize` and the velocity visualization.
 
+Related: [Lumen](./unreal-lumen.md), [Virtual Shadow Maps](./unreal-virtual-shadow-maps.md), [Movie Render Queue](./unreal-movie-render-queue.md).
+
 ## Sources
 
 - [Temporal Super Resolution](https://dev.epicgames.com/documentation/en-us/unreal-engine/temporal-super-resolution-in-unreal-engine)

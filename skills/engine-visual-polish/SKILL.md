@@ -19,6 +19,7 @@ Read the relevant reference before choosing the effect implementation.
 | --- | --- |
 | Diagnose a demo-like image, match genre references or design effect families | [Genre and effect craft](references/genre-effect-craft.md) |
 | Choose Unreal materials, Niagara, lighting, AA or production profiling | [Unreal production stack](references/unreal-production-stack.md) |
+| Configure an Unreal rendering system: Lumen, Nanite, Virtual Shadow Maps, MegaLights, Substrate or TSR | [Unreal feature selector](../engine-unreal-features/SKILL.md) |
 | Compare Unreal effect or prop implementations side by side, in one filmed and timed run | [Comparison scene](../engine-asset-import/references/unreal-native-compare-scene.md) |
 
 ## Establish the target and current evidence

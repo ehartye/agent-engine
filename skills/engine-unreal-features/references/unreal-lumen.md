@@ -55,6 +55,8 @@ Target: Unreal Engine 5.8, Windows. Lumen is the fully dynamic global illuminati
 8. Profile with `stat gpu` and `ProfileGPU`; set `r.Lumen.AsyncCompute 0` to measure Lumen alone.
 9. For large worlds, Far Field (`r.LumenScene.FarField=1`, hardware ray tracing only) extends GI and reflections and requires World Partition HLOD with HLOD1 built.
 
+Related: [MegaLights](./unreal-megalights.md), [Substrate](./unreal-substrate.md), [TSR and anti-aliasing](./unreal-temporal-super-resolution.md).
+
 ## Sources
 
 - [Lumen Global Illumination and Reflections](https://dev.epicgames.com/documentation/en-us/unreal-engine/lumen-global-illumination-and-reflections-in-unreal-engine)
