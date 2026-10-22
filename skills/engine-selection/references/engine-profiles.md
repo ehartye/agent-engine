@@ -54,7 +54,7 @@ effect appearance, temporal reset and complete-frame performance in the target g
   textures and FBX, spawns actors and returns screenshots; it has no audio import and rejects GLB, so the tested
   loops still use scripts. [documented] Community MCP servers exist; several need a C++ plugin built into the project.
 - [tested] Unreal 5.8.3 passes the same scene after three fixes (the fox splits into 48 meshes by default, automated
-  imports are not saved, FBX clips need frame-aligned lengths); see the `engine-asset-import` skill.
+  imports are not saved, FBX clips need frame-aligned lengths); see the `unreal-import` skill (agent-unreal).
 - [tested] A separate Unreal 5.8.2 native C++ game compiled with VS2022, generated materials/fonts through full Editor Python,
   ran source-built procedural cars/track with Chaos primitive bodies in `-game -RenderOffScreen`, and delivered real
   1920×1080 game-camera PNGs. A failed automation test still exited zero, so the loop parses fresh JSON. See
