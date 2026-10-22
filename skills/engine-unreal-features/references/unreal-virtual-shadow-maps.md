@@ -48,6 +48,8 @@ Target: Unreal Engine 5.8, Windows. Virtual Shadow Maps (VSM) are very high-reso
 9. Lit translucent surfaces: `r.Shadow.Virtual.TranslucentQuality` above 1 gives high-quality shadows at high cost. Only simple subsurface is supported; Subsurface Profile and transmission are not.
 10. Profile with visualization off, since it has a small cost. Shadow Depths cost follows rendered pages and geometry, so use Nanite wherever possible; Shadow Projection cost follows shadow samples across the screen, not caching. Cull small non-Nanite objects with `r.Shadow.RadiusThreshold`.
 
+Related: [Lumen](./unreal-lumen.md), [MegaLights](./unreal-megalights.md).
+
 ## Sources
 
 - [Virtual Shadow Maps](https://dev.epicgames.com/documentation/en-us/unreal-engine/virtual-shadow-maps-in-unreal-engine)

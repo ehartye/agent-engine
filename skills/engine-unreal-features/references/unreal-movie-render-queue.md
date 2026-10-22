@@ -61,6 +61,8 @@ The 5.8 install ships Python examples in `Engine/Plugins/MovieScene/MovieRenderP
 9. Keep executor and callback objects in module-level Python variables for the render's duration (5.8 install example).
 10. Confirm outputs in `on_job_finished`: read `in_output_data.graph_data`, each shot's `render_layer_data` and its `file_paths` (Epic).
 
+Related: [TSR and anti-aliasing](./unreal-temporal-super-resolution.md), [Lumen](./unreal-lumen.md).
+
 ## Sources
 
 - [Movie Render Pipeline](https://dev.epicgames.com/documentation/unreal-engine/movie-render-pipeline-in-unreal-engine?lang=en-US)

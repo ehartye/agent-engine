@@ -57,6 +57,8 @@ Python reaches console variables and Post Process Volume settings. Project Setti
 7. Profile with `r.RDG.AsyncCompute 0`, then A/B test `r.MegaLights.AsyncCompute.Volume`, `.GenerateSamples` and `r.StochasticLighting.AsyncCompute`.
 8. Inspect shadow mismatches with `r.MegaLights.Visualize 1` and the Light Complexity view.
 
+Related: [Lumen](./unreal-lumen.md), [Virtual Shadow Maps](./unreal-virtual-shadow-maps.md), [Nanite](./unreal-nanite.md).
+
 ## Sources
 
 - [MegaLights](https://dev.epicgames.com/documentation/en-us/unreal-engine/megalights-in-unreal-engine)

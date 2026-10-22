@@ -7,3 +7,5 @@ Observed in one consuming Unreal 5.8.2 CL56702186 project on Windows; not reprod
 - [documented] Installed-source inspection: Windows `-NoGamepad` sets `bForceNoGamepads` and returns before `PollGameDeviceState` external-device polling (`WindowsApplication.cpp:1302–1305,4247–4252`). It is process-local. A capture-only controller guard can additionally reject `!Params.IsSimulatedInput()` and flush initial cached keys once, while ordinary play keeps hardware input. Preserve native failure/proof receipts rather than assuming a launch flag establishes isolation.
 
 See the [native game loop](unreal-native-game.md) for fresh artifact validation, process ownership and fixed simulation step limits.
+
+Input actions, mapping contexts and runtime context switching: [Enhanced Input](../../engine-unreal-features/references/unreal-enhanced-input.md).

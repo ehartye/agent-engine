@@ -60,6 +60,8 @@ The local Python class-surface dump did not cover this plugin, so its Python rea
 10. Implement cues as Notify assets: one-shot cues use OnExecute, looping cues use OnBurst, OnBecomeRelevant and OnCeaseRelevant (5.5 names). Implement OnBecomeRelevant with OnCeaseRelevant, since OnBurst can be dropped (README). When the ASC lives on the PlayerState, enable `ReplicationProxyEnabled` and implement `IAbilitySystemReplicationProxyInterface` on the Pawn (README).
 11. Verify with the Gameplay Debugger, `AbilitySystem.Effect.ListActive` and the Visual Logger (README).
 
+Related: [Enhanced Input](./unreal-enhanced-input.md), [Networking and replication](./unreal-networking-and-replication.md).
+
 ## Sources
 
 - [Gameplay Ability System for Unreal Engine](https://dev.epicgames.com/documentation/en-us/unreal-engine/gameplay-ability-system-for-unreal-engine)
