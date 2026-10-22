@@ -58,11 +58,11 @@ effect appearance, temporal reset and complete-frame performance in the target g
 - [tested] A separate Unreal 5.8.2 native C++ game compiled with VS2022, generated materials/fonts through full Editor Python,
   ran source-built procedural cars/track with Chaos primitive bodies in `-game -RenderOffScreen`, and delivered real
   1920×1080 game-camera PNGs. A failed automation test still exited zero, so the loop parses fresh JSON. See
-  [the native game recipe](../../engine-unreal-native/references/unreal-native-game.md) for exact versions and limits.
+  the native game recipe (`unreal-native` skill, agent-unreal) for exact versions and limits.
 - [tested] The same 5.8.2 project built a native Game EXE, cooked/staged with native engine tools and actually ran packaged
   title/race/jump frames. A separate content-only asset bake also succeeded when host policy refused its Editor module.
-  See [packaging](../../engine-unreal-native/references/unreal-native-packaging.md) and
-  [content construction](../../engine-unreal-native/references/unreal-native-content-pipeline.md); visual acceptance remained GAP.
+  See packaging (`unreal-native` skill, agent-unreal) and
+  content construction (`unreal-native` skill, agent-unreal); visual acceptance remained GAP.
 
 **Import** ([tested] unless noted)
 - GLB and PNG: `InterchangeManager.import_asset` with `is_automated = True`. Do not use

@@ -1,6 +1,6 @@
 ---
 name: engine-asset-import
-description: Import agent-sprites atlases, agent-meshes GLB models and agent-beeps WAV exports into a Unity, Unreal, Godot or web project, and state exactly what was verified for each engine. Not for UEFN (use engine-uefn), native Unreal games (use engine-unreal-native) or choosing an Unreal system (use engine-unreal-features).
+description: Import agent-sprites atlases, agent-meshes GLB models and agent-beeps WAV exports into a Unity, Unreal, Godot or web project, and state exactly what was verified for each engine. Not for UEFN (use uefn from agent-unreal), native Unreal games (use unreal-native from agent-unreal) or choosing an Unreal system (use unreal-features from agent-unreal).
 when_to_use: Use when bringing a sprite atlas, GLB, WAV or song export into a Unity, Unreal, Godot or web project, by script or through an engine's MCP server; when an imported model is missing bones, morphs, meshes or animation clips, or its clips have different names; when an Unreal import splits one model into many meshes, leaves nothing on disk or needs a per-mesh import policy; when a sprite sheet imports with wrong frames, tags or pivot; or when asked whether an asset "works in" an engine.
 ---
 
@@ -36,10 +36,9 @@ line between what was verified and what was only read in documentation.
 | Load the assets in Phaser or three.js | [Web import](references/web-import.md); a real Phaser game: [engine-phaser](../engine-phaser/SKILL.md) |
 | See what is verified and not verified per engine | [Engine status](references/engine-status.md) |
 
-Other skills: UEFN is [engine-uefn](../engine-uefn/SKILL.md); a native C++ Unreal game, its packaging and
-profiling are [engine-unreal-native](../engine-unreal-native/SKILL.md); choosing an Unreal system, Niagara
-and editor Python are [engine-unreal-features](../engine-unreal-features/SKILL.md); choosing an engine is
-`engine-selection`.
+Other skills: choosing an engine is `engine-selection`. UEFN, native C++ Unreal games with their packaging and
+profiling, and choosing an Unreal system (with Niagara and editor Python) are the `uefn`, `unreal-native` and
+`unreal-features` skills in the agent-unreal plugin.
 
 The importer scripts for Unreal are in `scripts/` beside this file (`unreal-import.mjs`,
 `unreal_import_native.py`); the guarded-reuse and policy references document their options.

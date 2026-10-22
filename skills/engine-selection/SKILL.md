@@ -69,24 +69,24 @@ play it. The profiles give what is known per option.
 
 Per-engine evidence, traps and blockers: [engine profiles](references/engine-profiles.md).
 
-After choosing Unreal, [engine-unreal-features](../engine-unreal-features/SKILL.md) picks the system for a goal and [engine-asset-import](../engine-asset-import/SKILL.md) brings assets in.
+After choosing Unreal, `unreal-features` (agent-unreal) picks the system for a goal and [engine-asset-import](../engine-asset-import/SKILL.md) brings assets in.
 
-For a frame-budget target (for example 120 fps) or a plan to add 25% to 50% more content, profile before choosing a fix: [profiling method](../engine-phaser/references/profiling-method.md) is the engine-neutral method, with browser specifics; the Unreal version is [native Unreal profiling](../engine-unreal-native/references/unreal-native-profiling.md). Do not promise a frame rate from an engine's ceiling.
+For a frame-budget target (for example 120 fps) or a plan to add 25% to 50% more content, profile before choosing a fix: [profiling method](../engine-phaser/references/profiling-method.md) is the engine-neutral method, with browser specifics; the Unreal version is native Unreal profiling (`unreal-native` skill, agent-unreal). Do not promise a frame rate from an engine's ceiling.
 
 For a Fortnite project blocked by missing MCP operations, or a proposal to author
-in regular UE and port, read [UEFN authoring routes](../engine-uefn/references/uefn-authoring.md)
+in regular UE and port, read UEFN authoring routes (`uefn` skill, agent-unreal)
 before recommending a second editor workflow.
 
 For missing audio import tools, read
-[native UEFN audio import](../engine-uefn/references/uefn-native-audio.md).
+native UEFN audio import (`uefn` skill, agent-unreal).
 Five Wave/Cue pairs are verified in 42.30; manual import or a second UE project
 is not a prerequisite. Import/save, launch, listening and multiplayer are separate proofs.
 
 For a saved-device, compact-control or screenshot bottleneck, also read
-[UEFN saved controls and capture](../engine-uefn/references/uefn-native-operations.md).
+UEFN saved controls and capture (`uefn` skill, agent-unreal).
 Server controller QA establishes behavior separately from physical input, game-camera
 appearance and multiplayer capacity.
 
 For native FBX layout or collision defects, read
-[UEFN FBX coordinates and collision](../engine-uefn/references/uefn-native-fbx.md)
+UEFN FBX coordinates and collision (`uefn` skill, agent-unreal)
 before treating migration to another editor as a prerequisite.
