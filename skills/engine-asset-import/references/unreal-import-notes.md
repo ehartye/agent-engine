@@ -4,7 +4,7 @@
 
 Building a native C++ game? Read the native Unreal build and capture loop (`unreal-native` skill, agent-unreal): exact 5.8.2 toolchain selection, procedural geometry, editor font/material generation, actual game-camera captures and automation results that cannot be inferred from exit code zero. Its current Editor-game evidence is separate from packaged/cook acceptance.
 
-Built and run in the [sample scene](../../../docs/sample-scene.md); scripts in `examples/unreal` in agent-unreal.
+Built and run in the Unreal [sample scene](https://github.com/ehartye/agent-unreal/blob/main/docs/sample-scene.md) (scene spec: [sample scene](../../../docs/sample-scene.md)); scripts in `examples/unreal` in agent-unreal.
 
 - Import GLB and PNG with `InterchangeManager.import_asset` and `is_automated = True`. glTF through
   `AssetTools.import_asset_tasks` in a commandlet crashes on a missing Slate application. WAV is not an
