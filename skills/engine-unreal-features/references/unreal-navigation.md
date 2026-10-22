@@ -24,8 +24,8 @@ Target: Unreal Engine 5.8, Windows. Epic's Navigation System builds a Navigation
 
 ## Use something else when
 
-- Use [Mover](./unreal-mover.md) for how the pawn moves along the path (Mover has a NavWalking mode).
-- Use [AI behavior](./unreal-ai-behavior.md) for decisions; `MassAI` carries its own navmesh and ZoneGraph path-following modules for Mass agents.
+- Use [Mover](unreal-mover.md) for how the pawn moves along the path (Mover has a NavWalking mode).
+- Use [AI behavior](unreal-ai-behavior.md) for decisions; `MassAI` carries its own navmesh and ZoneGraph path-following modules for Mass agents.
 - Use Dynamic, not Dynamic Modifiers Only, when new walkable surfaces must appear: modifiers change the existing mesh and generate no new surfaces.
 
 ## How an agent drives it

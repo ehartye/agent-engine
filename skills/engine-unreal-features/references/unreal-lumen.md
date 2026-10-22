@@ -23,7 +23,7 @@ Target: Unreal Engine 5.8, Windows. Lumen is the fully dynamic global illuminati
 
 - Lights, the sun, geometry or emissive materials change at runtime and lighting must respond without a bake.
 - You want indirect light and reflections from one system, with GI visible in reflections.
-- Content is built on Nanite meshes and Virtual Shadow Maps ([Nanite](./unreal-nanite.md), [Virtual Shadow Maps](./unreal-virtual-shadow-maps.md)).
+- Content is built on Nanite meshes and Virtual Shadow Maps ([Nanite](unreal-nanite.md), [Virtual Shadow Maps](unreal-virtual-shadow-maps.md)).
 - You target current-generation consoles or desktop at the High and Epic scalability levels. Epic recommends hardware ray tracing as the console default (Lumen performance guide).
 
 ## Use something else when
@@ -55,7 +55,7 @@ Target: Unreal Engine 5.8, Windows. Lumen is the fully dynamic global illuminati
 8. Profile with `stat gpu` and `ProfileGPU`; set `r.Lumen.AsyncCompute 0` to measure Lumen alone.
 9. For large worlds, Far Field (`r.LumenScene.FarField=1`, hardware ray tracing only) extends GI and reflections and requires World Partition HLOD with HLOD1 built.
 
-Related: [MegaLights](./unreal-megalights.md), [Substrate](./unreal-substrate.md), [TSR and anti-aliasing](./unreal-temporal-super-resolution.md).
+Related: [MegaLights](unreal-megalights.md), [Substrate](unreal-substrate.md), [TSR and anti-aliasing](unreal-temporal-super-resolution.md).
 
 ## Sources
 

@@ -1,11 +1,11 @@
 # Unreal sample scene scripts
 
-For a native C++ game rather than this import sample, see [native Unreal build and capture](../../skills/engine-asset-import/references/unreal-native-game.md). It records a separate Unreal 5.8.2 execution path and its observed build, material, font and capture traps. Do not assume this sample's PIE evidence establishes a packaged game.
+For a native C++ game rather than this import sample, see [native Unreal build and capture](../../skills/engine-unreal-native/references/unreal-native-game.md). It records a separate Unreal 5.8.2 execution path and its observed build, material, font and capture traps. Do not assume this sample's PIE evidence establishes a packaged game.
 
 For comparing several implementations of one visible thing side by side in a native game, see [compare-scene](compare-scene/README.md).
 
-Verified on Unreal Engine 5.7.3 and 5.8.3, Windows (5.8.3 needed three changes, listed under "Unreal 5.8.3" in the `engine-asset-import` skill). They build the [sample scene](../../docs/sample-scene.md) and
-run it with real rendering. Read the `engine-asset-import` and `engine-selection` skills
+Verified on Unreal Engine 5.7.3 and 5.8.3, Windows (5.8.3 needed three changes, listed in the [Unreal import notes](../../skills/engine-asset-import/references/unreal-import-notes.md)). They build the [sample scene](../../docs/sample-scene.md) and
+run it with real rendering. Read the `engine-asset-import`, `engine-unreal-native` and `engine-selection` skills
 before changing them.
 
 Set `AGENT_ENGINE_SCENES` to a workspace folder with this layout:
@@ -39,7 +39,7 @@ Do not use `-ExecutePythonScript` for the run: it quits the editor when the scri
 
 ## Niagara scripts
 
-Six scripts back [Niagara in Unreal](../../skills/engine-asset-import/references/unreal-niagara.md). They need a project with PythonScriptPlugin, EditorScriptingUtilities and Niagara, plus NiagaraToolsets (Experimental) for the second. Each writes a JSON report (`NIAGARA_PROBE_REPORT`, default under the project's `Saved/`).
+Six scripts back [Niagara in Unreal](../../skills/engine-unreal-features/references/unreal-niagara.md). They need a project with PythonScriptPlugin, EditorScriptingUtilities and Niagara, plus NiagaraToolsets (Experimental) for the second. Each writes a JSON report (`NIAGARA_PROBE_REPORT`, default under the project's `Saved/`).
 
 ```text
 UnrealEditor-Cmd.exe Project.uproject -run=pythonscript -script=niagara_build.py -unattended -nullrhi -nosplash -nopause -nosound -notraceserver
@@ -51,7 +51,7 @@ UnrealEditor.exe Project.uproject /Game/Maps/NiagaraProbe -RenderOffScreen -Exec
 
 `niagara_build.py` duplicates two engine template systems and places them in a level; `niagara_toolset_author.py` creates a system and adds an emitter through Epic's toolsets and places it; `niagara_verify.py` runs the level in Play-In-Editor, counts particles per emitter with a simulation cache and polls each system's compile state. They run on Unreal 5.8.2 only.
 
-`niagara_templates.py` lists the one-line description Epic ships with each fluid, sand and core template system (`NIAGARA_TEMPLATES_REPORT` sets the JSON path); it backs the catalog in [Niagara templates](../../skills/engine-asset-import/references/unreal-niagara-templates.md).
+`niagara_templates.py` lists the one-line description Epic ships with each fluid, sand and core template system (`NIAGARA_TEMPLATES_REPORT` sets the JSON path); it backs the catalog in [Niagara templates](../../skills/engine-unreal-features/references/unreal-niagara-templates.md).
 
 `engine_plugins.mjs` lists the plugins an engine install ships from their `.uplugin` descriptors (name, category, enabled by default, beta or experimental, description): `node engine_plugins.mjs --engine "<UE folder>" --name PCG,Metasound`. It needs no Unreal run and has node tests in the merge lane. `unreal_surface.py` lists what the `unreal` Python module exposes for a feature (`UNREAL_SURFACE_MATCH=Hair,Groom`), run headless in a project that enables the plugin. Both back the [Unreal feature selector](../../skills/engine-unreal-features/SKILL.md) and its references.
 

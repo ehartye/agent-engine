@@ -58,5 +58,5 @@ Epic's MCP server exposes the toolset registry through `list_toolsets`, `describ
 ## Verify and profile
 
 - Count what spawned: `NiagaraSimCacheFunctionLibrary.create_niagara_sim_cache`, then `capture_niagara_sim_cache_immediate(cache, params, component, True, dt)` in Play-In-Editor, then `read_position_attribute("Position", emitter, frame)`. Call `activate(True)` on a one-shot burst before capturing. A stateless (lightweight) template keeps no per-particle data, so read stateful templates this way.
-- Cost and scalability: Effect Types share scalability rules; the Niagara Debugger (`fx.Niagara.Debug.Hud`, `fx.Budget.*`) and Unreal Insights with `-StatNamedEvents` are interactive tools. See [profiling facts](unreal-native-profiling-facts.md).
+- Cost and scalability: Effect Types share scalability rules; the Niagara Debugger (`fx.Niagara.Debug.Hud`, `fx.Budget.*`) and Unreal Insights with `-StatNamedEvents` are interactive tools. See [profiling facts](../../engine-unreal-native/references/unreal-native-profiling-facts.md).
 - Particle counts show that an effect ran. Pair them with a native screenshot and the review in [engine-visual-polish](../../engine-visual-polish/references/unreal-production-stack.md).

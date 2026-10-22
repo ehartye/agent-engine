@@ -10,7 +10,7 @@ Target: Unreal Engine 5.8, Windows. Landmass is the plugin that supplies the Lan
 
 - Enable via Edit > Plugins, or add `{"Name": "Landmass", "Enabled": true}` to the `Plugins` array of the `.uproject`.
 - Create the Landscape with Enable Edit Layers checked; Blueprint brushes need edit layers.
-- The [Water](./unreal-water.md) plugin depends on Landmass, so enabling Water enables it.
+- The [Water](unreal-water.md) plugin depends on Landmass, so enabling Water enables it.
 
 ## Use it when
 
@@ -23,9 +23,9 @@ Target: Unreal Engine 5.8, Windows. Landmass is the plugin that supplies the Lan
 ## Use something else when
 
 - Use the Landscape sculpt tools directly when you want freehand, one-off height edits with no stack to maintain.
-- Use [PCG](./unreal-pcg.md) when you need to populate terrain with instances (trees, rocks, props); PCG reads Landscape data through Get Landscape Data.
-- Use [Water](./unreal-water.md) when the shape is a river, lake or ocean with water rendering and gameplay queries.
-- Use [Geometry Scripting](./unreal-geometry-scripting.md) when the result is a mesh asset rather than Landscape heightmap data.
+- Use [PCG](unreal-pcg.md) when you need to populate terrain with instances (trees, rocks, props); PCG reads Landscape data through Get Landscape Data.
+- Use [Water](unreal-water.md) when the shape is a river, lake or ocean with water rendering and gameplay queries.
+- Use [Geometry Scripting](unreal-geometry-scripting.md) when the result is a mesh asset rather than Landscape heightmap data.
 
 ## How an agent drives it
 

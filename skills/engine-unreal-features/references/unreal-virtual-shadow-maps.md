@@ -1,6 +1,6 @@
 # Virtual Shadow Maps in Unreal 5.8: when to use them and how to drive them
 
-Target: Unreal Engine 5.8, Windows. Virtual Shadow Maps (VSM) are very high-resolution shadow maps: each has a virtual resolution of 16k x 16k pixels, split into 128x128 pages that are allocated only where the view needs them (Epic's VSM page). They are designed to be used with [Nanite](./unreal-nanite.md).
+Target: Unreal Engine 5.8, Windows. Virtual Shadow Maps (VSM) are very high-resolution shadow maps: each has a virtual resolution of 16k x 16k pixels, split into 128x128 pages that are allocated only where the view needs them (Epic's VSM page). They are designed to be used with [Nanite](unreal-nanite.md).
 
 ## Enable it
 
@@ -48,7 +48,7 @@ Target: Unreal Engine 5.8, Windows. Virtual Shadow Maps (VSM) are very high-reso
 9. Lit translucent surfaces: `r.Shadow.Virtual.TranslucentQuality` above 1 gives high-quality shadows at high cost. Only simple subsurface is supported; Subsurface Profile and transmission are not.
 10. Profile with visualization off, since it has a small cost. Shadow Depths cost follows rendered pages and geometry, so use Nanite wherever possible; Shadow Projection cost follows shadow samples across the screen, not caching. Cull small non-Nanite objects with `r.Shadow.RadiusThreshold`.
 
-Related: [Lumen](./unreal-lumen.md), [MegaLights](./unreal-megalights.md).
+Related: [Lumen](unreal-lumen.md), [MegaLights](unreal-megalights.md).
 
 ## Sources
 

@@ -1,6 +1,6 @@
 # Motion Matching in Unreal 5.8: Pose Search databases, schemas, the Motion Matching node and trajectory
 
-Target: Unreal Engine 5.8, Windows. Motion Matching selects animation from a Pose Search Database by comparing a query built from the character's pose history and trajectory. Epic calls it "a dynamic alternative to State Machines, or Blendspaces", with no transition or blending logic to set up between sequences. State-machine locomotion stays documented; see [Animation Blueprints](./unreal-animation-blueprints.md).
+Target: Unreal Engine 5.8, Windows. Motion Matching selects animation from a Pose Search Database by comparing a query built from the character's pose history and trajectory. Epic calls it "a dynamic alternative to State Machines, or Blendspaces", with no transition or blending logic to set up between sequences. State-machine locomotion stays documented; see [Animation Blueprints](unreal-animation-blueprints.md).
 
 ## Enable it
 
@@ -18,13 +18,13 @@ Target: Unreal Engine 5.8, Windows. Motion Matching selects animation from a Pos
 
 - Locomotion or actions should respond to the current trajectory, and fidelity should grow by adding animation to the Database (Epic).
 - Which Databases are searched depends on gameplay context: a Chooser picks them at runtime (Epic's Game Animation Sample does this per movement state).
-- The trajectory comes from a movement component; [Mover](./unreal-mover.md) offers `GetPredictedTrajectory` and ChaosMover adds trajectory prediction for motion-matching workflows (5.8 release notes).
+- The trajectory comes from a movement component; [Mover](unreal-mover.md) offers `GetPredictedTrajectory` and ChaosMover adds trajectory prediction for motion-matching workflows (5.8 release notes).
 
 ## Use something else when
 
-- State machines and Blend Spaces are the other documented locomotion route: [Animation Blueprints](./unreal-animation-blueprints.md).
+- State machines and Blend Spaces are the other documented locomotion route: [Animation Blueprints](unreal-animation-blueprints.md).
 - Epic requires root motion, with the Root Motion property enabled, in locomotion animations; clips without it need another route.
-- Use [Control Rig](./unreal-control-rig.md) for procedural pose edits after the pose is chosen.
+- Use [Control Rig](unreal-control-rig.md) for procedural pose edits after the pose is chosen.
 
 ## How an agent drives it
 

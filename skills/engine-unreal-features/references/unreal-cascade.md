@@ -20,8 +20,8 @@ Target: Unreal Engine 5.8 on Windows. Cascade is Unreal's legacy particle system
 
 ## Use something else when
 
-- Use Niagara ([unreal-niagara.md](../../engine-asset-import/references/unreal-niagara.md)) for every new effect; Epic names it the replacement and Cascade is slated for removal.
-- Use the Niagara template catalog ([unreal-niagara-templates.md](../../engine-asset-import/references/unreal-niagara-templates.md)) to start a new effect from a ready emitter.
+- Use Niagara ([unreal-niagara.md](unreal-niagara.md)) for every new effect; Epic names it the replacement and Cascade is slated for removal.
+- Use the Niagara template catalog ([unreal-niagara-templates.md](unreal-niagara-templates.md)) to start a new effect from a ready emitter.
 - Use [unreal-chaos-niagara.md](unreal-chaos-niagara.md) for effects driven by destruction data.
 
 ## How an agent drives it

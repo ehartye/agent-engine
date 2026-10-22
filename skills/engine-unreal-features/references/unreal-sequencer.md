@@ -24,8 +24,8 @@ Target: Unreal Engine 5.8, Windows. Sequencer is Epic's multi-track, non-linear 
 
 ## Use something else when
 
-- Use [Movie Render Queue](./unreal-movie-render-queue.md) to render a sequence to images or video. Epic's Render Movie page is marked Deprecated.
-- Use [Niagara](../../engine-asset-import/references/unreal-niagara.md) to author the particle effect; Sequencer triggers and times it.
+- Use [Movie Render Queue](unreal-movie-render-queue.md) to render a sequence to images or video. Epic's Render Movie page is marked Deprecated.
+- Use [Niagara](unreal-niagara.md) to author the particle effect; Sequencer triggers and times it.
 - Use Blueprint or C++ for movement that gameplay decides at runtime. Python does not run at runtime, so it cannot drive a shipped game.
 
 ## How an agent drives it
@@ -59,9 +59,9 @@ Target: Unreal Engine 5.8, Windows. Sequencer is Epic's multi-track, non-linear 
 8. For gameplay playback, call `Play` from the player; call `SetPlaybackPosition(0)` first to restart. Set a track's When Finished to Keep State so its value stays after the end, and call Go to End and Stop to skip a cutscene with its final state applied (Epic).
 9. For multiplayer, set `replicate_playback` on the Level Sequence Actor so server playback syncs to clients (Epic Python API).
 10. Record with Take Recorder when the source is live play: it records into a Level Sequence, and Record Sources Into Sub Sequences gives each source its own subsequence (Epic).
-11. Render with [Movie Render Queue](./unreal-movie-render-queue.md).
+11. Render with [Movie Render Queue](unreal-movie-render-queue.md).
 
-Related: [Control Rig](./unreal-control-rig.md).
+Related: [Control Rig](unreal-control-rig.md).
 
 ## Sources
 

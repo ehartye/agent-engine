@@ -9,7 +9,7 @@ Target: Unreal Engine 5.8, Windows. The Water plugin is a "full suite of water t
 | `Water` | Water | no | experimental (not beta, not editor-only; Runtime + Editor modules) | Landmass, Niagara, GeometryProcessing, BlueprintMaterialTextureNodes |
 
 - Enable via Edit > Plugins (search Water) or add `{"Name": "Water", "Enabled": true}` to the `Plugins` array of the `.uproject`; restart the editor.
-- Landmass (see [unreal-landmass.md](./unreal-landmass.md)) comes with it. Carving needs a Landscape created with Enable Edit Layers.
+- Landmass (see [unreal-landmass.md](unreal-landmass.md)) comes with it. Carving needs a Landscape created with Enable Edit Layers.
 - Plugin content is under Water Content; turn on Show Engine Content and Show Plugin Content in the Content Browser to see it. It includes example maps, default materials, Blueprints for caustics, fluid simulation and physics buoyancy.
 
 ## Use it when
@@ -23,10 +23,10 @@ Target: Unreal Engine 5.8, Windows. The Water plugin is a "full suite of water t
 ## Use something else when
 
 - Use a custom water Material (any shading model; enable the Used with Water usage flag) on your own mesh when you want full control of the look; custom water materials can use any shading model. The Water Body Custom actor also accepts a static mesh with the water material and does not carve terrain.
-- Use [Niagara fluids](../../engine-asset-import/references/unreal-niagara-templates.md) when you need simulated splashes, pours or particle-based liquid rather than a surface across a level; see also [Niagara](../../engine-asset-import/references/unreal-niagara.md).
-- Use [Landmass](./unreal-landmass.md) alone when you only need to shape terrain, with no water surface.
-- Use [Mover](./unreal-mover.md) for character movement; it reads water through `unreal.ChaosCharacterWaterCheck`.
-- Use [PCG](./unreal-pcg.md) to scatter shoreline vegetation and rocks around bodies.
+- Use [Niagara fluids](unreal-niagara-templates.md) when you need simulated splashes, pours or particle-based liquid rather than a surface across a level; see also [Niagara](unreal-niagara.md).
+- Use [Landmass](unreal-landmass.md) alone when you only need to shape terrain, with no water surface.
+- Use [Mover](unreal-mover.md) for character movement; it reads water through `unreal.ChaosCharacterWaterCheck`.
+- Use [PCG](unreal-pcg.md) to scatter shoreline vegetation and rocks around bodies.
 
 ## How an agent drives it
 

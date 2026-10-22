@@ -2,7 +2,7 @@
 
 A game mode that sets several ways of doing the same thing in a row on an empty stage, under one camera, so you can see them next to each other and time them in the same run. A *set* is a title and a list of *candidates*; a candidate is a name, a way to spawn N copies of itself, and what it does each frame. The harness supplies everything else: the stage, labels, camera, warm-up, two filmed frames, a timed stress phase per candidate, a JSON receipt, and the exit.
 
-Use it to choose between implementations of one visible thing (mesh components moved by code, a Niagara system, instanced meshes, a material trick) before committing a real scene to one. It is a measuring stage, not a benchmark of a shipped game. The guidance behind it, with the traps found while building it, is in [the reference](../../../skills/engine-asset-import/references/unreal-native-compare-scene.md).
+Use it to choose between implementations of one visible thing (mesh components moved by code, a Niagara system, instanced meshes, a material trick) before committing a real scene to one. It is a measuring stage, not a benchmark of a shipped game. The guidance behind it, with the traps found while building it, is in [the reference](../../../skills/engine-unreal-native/references/unreal-native-compare-scene.md).
 
 ## Files
 
@@ -106,7 +106,7 @@ Run it with `-Set mine`. The pieces:
 
 ## Optional: an authored Niagara candidate
 
-To compare a system you authored (Python through Epic's Niagara toolsets, or in the Niagara editor) rather than an engine template: save it under `/Game/FX`, add `+DirectoriesToAlwaysCook=(Path="/Game/FX")` to `Config/DefaultGame.ini`, and call the same helper with its object path, for example `/Game/FX/NS_Authored.NS_Authored`. See [Niagara in Unreal](../../../skills/engine-asset-import/references/unreal-niagara.md) for the authoring routes. Not run from this example.
+To compare a system you authored (Python through Epic's Niagara toolsets, or in the Niagara editor) rather than an engine template: save it under `/Game/FX`, add `+DirectoriesToAlwaysCook=(Path="/Game/FX")` to `Config/DefaultGame.ini`, and call the same helper with its object path, for example `/Game/FX/NS_Authored.NS_Authored`. See [Niagara in Unreal](../../../skills/engine-unreal-features/references/unreal-niagara.md) for the authoring routes. Not run from this example.
 
 ## Optional: a Niagara Fluids candidate
 
