@@ -2,9 +2,9 @@
 
 ## Unreal 5.7: sprites, audio and running it (tested)
 
-Building a native C++ game? Read [the native Unreal build and capture loop](../../engine-unreal-native/references/unreal-native-game.md): exact 5.8.2 toolchain selection, procedural geometry, editor font/material generation, actual game-camera captures and automation results that cannot be inferred from exit code zero. Its current Editor-game evidence is separate from packaged/cook acceptance.
+Building a native C++ game? Read the native Unreal build and capture loop (`unreal-native` skill, agent-unreal): exact 5.8.2 toolchain selection, procedural geometry, editor font/material generation, actual game-camera captures and automation results that cannot be inferred from exit code zero. Its current Editor-game evidence is separate from packaged/cook acceptance.
 
-Built and run in the [sample scene](../../../docs/sample-scene.md); scripts in `examples/unreal`.
+Built and run in the [sample scene](../../../docs/sample-scene.md); scripts in `examples/unreal` in agent-unreal.
 
 - Import GLB and PNG with `InterchangeManager.import_asset` and `is_automated = True`. glTF through
   `AssetTools.import_asset_tasks` in a commandlet crashes on a missing Slate application. WAV is not an
@@ -22,7 +22,7 @@ Built and run in the [sample scene](../../../docs/sample-scene.md); scripts in `
 
 ## Unreal 5.8.3 (tested)
 
-The same scripts from `examples/unreal` pass on 5.8.3 (fox animating, music bed playing, both flipbooks advancing,
+The same scripts from `examples/unreal` in agent-unreal pass on 5.8.3 (fox animating, music bed playing, both flipbooks advancing,
 screenshot read by eye) after three changes. Each failed quietly on the first try.
 
 - **The fox split into 48 meshes.** The same `InterchangeManager.import_asset` call that gave one `fox` mesh on

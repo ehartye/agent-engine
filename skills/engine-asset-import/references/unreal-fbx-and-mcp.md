@@ -12,7 +12,7 @@ has to be converted first, and the clips can vanish in the conversion.
 - Fix at the source (works through the MCP tool): export at a rate where each clip is a whole number of frames.
   The fox's 0.8 s and 1.2 s clips are exact at 30 fps and not at 24. In Blender set `scene.render.fps = 30`
   **before** the glTF import: the importer turns seconds into frames at the current rate, and changing it afterwards
-  keeps the old frame numbers and shrinks every clip (0.8 s became 0.64 s). `examples/uefn/glb_to_fbx.py` does this.
+  keeps the old frame numbers and shrinks every clip (0.8 s became 0.64 s). `examples/uefn/glb_to_fbx.py` in agent-unreal does this.
   After it, the default import and Epic's MCP `import_file` both produced the mesh, skeleton and two clips.
 - Fix in the engine (needs a pipeline asset, so not available through the MCP tool): set the animation pipeline's
   `frame_alignment` to `SNAP_TO_FLOOR`, `SNAP_TO_CLOSEST` or `SNAP_TO_CEILING`; all three imported both clips.

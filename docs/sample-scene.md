@@ -47,7 +47,7 @@ on a trigger and picks among its variants. A fixed camera frames all three.
 | Web: three.js 0.186.1 | Checks 1 to 4 for all assets on a discrete GPU in headless Chromium: the 3D fox GLB plays `walk` (clip names intact), the campfire (8 frames, 100 ms) and courier (4 frames, 125 ms) flipbooks advance, no console errors, the music bed starts after a click, 12 pickups use all 4 variants with no immediate repeat. Screenshot below, read by eye. | Audio by ear; the music actually looping across its 172 s. |
 | Web: Phaser 3.90.0 | The same checks for the 2D parts (no fox in a 2D engine): the agent-sprites atlas loads unchanged through `load.aseprite`, both animations advance, no errors, variants as above. | Same as three.js. |
 
-The scripts are in [`examples/unreal`](../examples/unreal), [`examples/godot`](../examples/godot), [`examples/unity`](../examples/unity) and [`examples/web`](../examples/web).
+The scripts are in [`examples/unreal`](https://github.com/ehartye/agent-unreal/blob/main/examples/unreal), [`examples/godot`](../examples/godot), [`examples/unity`](../examples/unity) and [`examples/web`](../examples/web).
 
 For 3D games on the web, the acceptance test is a playable slice checked through a state probe, not a fox and two flipbooks.
 
