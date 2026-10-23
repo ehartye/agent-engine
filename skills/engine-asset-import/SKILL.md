@@ -1,6 +1,6 @@
 ---
 name: engine-asset-import
-description: Import agent-sprites atlases, agent-meshes GLB models and agent-beeps WAV exports into a Unity, Godot or web project, and state exactly what was verified for each engine. Not for Unreal or UEFN (use unreal-import, uefn, unreal-native or unreal-features from agent-unreal).
+description: Import agent-sprites atlases, agent-meshes GLB models and agent-beeps WAV exports into a Unity, Godot or web project, and state exactly what was verified for each engine. Not for Unreal or UEFN (use unreal-import, uefn, unreal-native or the unreal-* domain skills from agent-unreal).
 when_to_use: Use when bringing a sprite atlas, GLB, WAV or song export into a Unity, Godot or web project, by script or through an engine's MCP server; when an imported model is missing bones, morphs, meshes or animation clips, or its clips have different names; when a sprite sheet imports with wrong frames, tags or pivot; or when asked whether an asset "works in" an engine. Importing into Unreal is the unreal-import skill in agent-unreal.
 ---
 
@@ -33,7 +33,8 @@ line between what was verified and what was only read in documentation.
 
 Other skills: choosing an engine is `engine-selection`. Importing into Unreal, UEFN, native C++ Unreal games with their
 packaging and profiling, and choosing an Unreal system (with Niagara and editor Python) are the `unreal-import`, `uefn`,
-`unreal-native` and `unreal-features` skills in the agent-unreal plugin.
+`unreal-native` and domain skills (`unreal-rendering`, `unreal-effects`, `unreal-animation`, `unreal-gameplay`,
+`unreal-procedural`, `unreal-editor-scripting`) in the agent-unreal plugin.
 
 ## After importing
 

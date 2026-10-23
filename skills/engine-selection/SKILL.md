@@ -69,7 +69,7 @@ play it. The profiles give what is known per option.
 
 Per-engine evidence, traps and blockers: [engine profiles](references/engine-profiles.md).
 
-After choosing Unreal, `unreal-features` (agent-unreal) picks the system for a goal and [engine-asset-import](../engine-asset-import/SKILL.md) brings assets in.
+After choosing Unreal, the domain skills in agent-unreal (`unreal-rendering`, `unreal-effects`, `unreal-animation`, `unreal-gameplay`, `unreal-procedural`, `unreal-editor-scripting`) pick the system for a goal and [engine-asset-import](../engine-asset-import/SKILL.md) brings assets in.
 
 For a frame-budget target (for example 120 fps) or a plan to add 25% to 50% more content, profile before choosing a fix: [profiling method](../engine-phaser/references/profiling-method.md) is the engine-neutral method, with browser specifics; the Unreal version is native Unreal profiling (`unreal-native` skill, agent-unreal). Do not promise a frame rate from an engine's ceiling.
 
