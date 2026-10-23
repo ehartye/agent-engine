@@ -10,7 +10,10 @@ Add the requested GPU stage without treating it as permission to adopt a framewo
 replace gameplay, or build a general-purpose engine. Agent-engine owns this runtime
 work; agent-sprites owns the source art, atlas and playback metadata.
 
-For Canvas/WebGL work, read [the pass integration guide](references/canvas-webgl.md).
+| You are about to | Read |
+| --- | --- |
+| Add or debug a Canvas/WebGL pass | [the pass integration guide](references/canvas-webgl.md) |
+
 For an existing native renderer, use its shader/material API and current vendor
 documentation instead of introducing WebGL. A standalone shader is not an engine
 port and does not supply scenes, physics, asset import or native export tooling.

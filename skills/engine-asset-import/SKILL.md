@@ -25,7 +25,7 @@ line between what was verified and what was only read in documentation.
 |---|---|
 | Check a GLB's bones, morphs, meshes and clip names after import | [GLB meshes](references/glb-mesh-import.md) |
 | Import a sprite atlas and its tags, durations and pivot | [Sprite atlases](references/sprite-atlas-import.md) |
-| Import rendered WAVs, loops and variants | [Rendered audio](references/wav-audio-import.md); wiring an app: [audio integration](references/audio-integration.md); building and fetching in CI: [CI for generated assets](references/ci-for-generated-assets.md) |
+| Import rendered WAVs, loops and variants | [Rendered audio](references/wav-audio-import.md); wiring an app: [audio integration](references/audio-integration.md), [memory and wiring checklist](references/audio-memory-and-wiring.md); building and fetching in CI: [CI for generated assets](references/ci-for-generated-assets.md) |
 | Import into Godot | [Godot 4.7](references/godot-import.md) |
 | Import into Unity | [Unity 6.3](references/unity-import.md); a long-lived project: [Unity project workflow](references/unity-project-workflow.md) |
 | Load the assets in Phaser or three.js | [Web import](references/web-import.md); a real Phaser game: [engine-phaser](../engine-phaser/SKILL.md) |

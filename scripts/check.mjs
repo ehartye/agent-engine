@@ -19,6 +19,11 @@ for (const args of [
   ['scripts/lint-skills.mjs', 'skills/engine-r3f', 'skills/engine-babylon',
     'skills/phaser-architecture', 'skills/engine-visual-polish',
     '--require-claims', '--skill-md-labels'],
+  // The other skills are checked for structure, links and size; their evidence labels are not yet required.
+  // engine-phaser and engine-selection are selectors with many references, so their SKILL.md budgets are wider.
+  ['scripts/lint-skills.mjs', 'skills/engine-phaser', '--label-pattern', '.', '--max-skill-bytes', '9000'],
+  ['scripts/lint-skills.mjs', 'skills/engine-selection', '--label-pattern', '.', '--max-skill-bytes', '8500'],
+  ['scripts/lint-skills.mjs', 'skills/engine-asset-import', 'skills/engine-custom-shaders', '--label-pattern', '.'],
 ]) {
   const result = spawnSync(process.execPath, args, { cwd: root, stdio: 'inherit' });
   if (result.error) console.error(result.error);

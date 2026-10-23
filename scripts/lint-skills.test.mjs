@@ -169,6 +169,12 @@ test('placeholders such as {{field}}, TODO and TBD are reported, even inside cod
   assert.deepEqual(f.map((x) => x.line), [3, 4, 7]);
 });
 
+test('a GitHub Actions expression is not a placeholder', () => {
+  const ref = '# First\n\n- [tested] The cache key is `${{ github.run_id }}`.\n\n```yaml\nkey: run-${{ github.run_id }}\n```\n';
+  const dir = mk({ 'SKILL.md': GOOD_SKILL, 'references/first.md': ref });
+  assert.deepEqual(lintSkill(dir).filter((x) => x.rule === 'placeholder'), []);
+});
+
 test('size budgets apply to SKILL.md and to each reference', () => {
   const dir = mk({
     'SKILL.md': GOOD_SKILL + '\n' + 'x'.repeat(300) + '\n',
