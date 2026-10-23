@@ -12,11 +12,11 @@ line between what was verified and what was only read in documentation.
 
 ## Before you claim anything
 
-- Say what you checked: "imports into Unity 6 via glTFast with names intact", not "works in
+- [general] Say what you checked: "imports into Unity 6 via glTFast with names intact", not "works in
   Unity". Sections marked "tested" were run in the sample scene; the rest is documentation.
-- Unity: sections marked "tested" were run in the sample scene; the rest of what is said about it is vendor
+- [general] Unity: sections marked "tested" were run in the sample scene; the rest of what is said about it is vendor
   documentation. Say which is which.
-- Check what the engine reports, not only the cause the tool states. A failure message can blame
+- [general] Check what the engine reports, not only the cause the tool states. A failure message can blame
   the wrong thing (a wrong expected bone name was reported as a skin problem).
 
 ## What to read

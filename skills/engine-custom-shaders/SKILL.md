@@ -32,15 +32,15 @@ preserve quantization/dither and which objects are emissive.
 
 ## Integrate and prove the pass
 
-- Prefer GPU presentation with UI outside the world effect. Avoid per-frame GPU
+- [general] Prefer GPU presentation with UI outside the world effect. Avoid per-frame GPU
   readback; copying WebGL output into Canvas 2D is also a boundary to measure.
-- Preserve native-resolution sampling before integer upscale for strict pixel
+- [general] Preserve native-resolution sampling before integer upscale for strict pixel
   games. Verify texture orientation, pixel centers, alpha and atlas edges rather
   than assuming the default sampler or coordinate system is right.
-- For temporal effects, use separate previous/output targets and reset history
+- [general] For temporal effects, use separate previous/output targets and reset history
   on the relevant scene/size transitions. Never read from the texture currently
   attached as the render destination.
-- Make shader compile/link and framebuffer failures observable. Own and dispose
+- [general] Make shader compile/link and framebuffer failures observable. Own and dispose
   the stage's resources; verify context recovery or the project's chosen failure
   path. A silently disabled shader is not successful GPU verification.
 

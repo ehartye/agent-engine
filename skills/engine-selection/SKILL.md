@@ -23,11 +23,11 @@ docs) or **general knowledge**. Never present the last two as the first.
 
 ## Step 2: score "easy for an agent" on five signals
 
-1. **Unattended loop.** Can the agent build, run, screenshot and read logs with no person present?
-2. **Diffable project.** Are scenes and settings text, or binary assets an agent cannot review?
-3. **Import path.** Do the plugins' GLB, atlas and WAV files have a working route in?
-4. **Proof.** What can be checked by a machine, and what only by looking?
-5. **Friction outside the agent.** Installs, sign-in, licences, API churn, iteration time.
+1. [general] **Unattended loop.** Can the agent build, run, screenshot and read logs with no person present?
+2. [general] **Diffable project.** Are scenes and settings text, or binary assets an agent cannot review?
+3. [general] **Import path.** Do the plugins' GLB, atlas and WAV files have a working route in?
+4. [general] **Proof.** What can be checked by a machine, and what only by looking?
+5. [general] **Friction outside the agent.** Installs, sign-in, licences, API churn, iteration time.
 
 ## Step 3: weigh quality and reach
 
@@ -48,24 +48,24 @@ play it. The profiles give what is known per option.
 
 ## Rules
 
-- **Custom is an engine type, not another engine dependency.** For an existing game whose main
+- [general] **Custom is an engine type, not another engine dependency.** For an existing game whose main
   limitation is CPU pixel effects, consider a focused GPU stage before a full port. Use
   [custom engine shaders](../engine-custom-shaders/SKILL.md) for runtime lighting, warps and trails. Once Phaser is chosen,
   use [engine-phaser](../engine-phaser/SKILL.md) for structure, tilemaps, known bugs and GPU verification.
   Keeping gameplay may save migration time; it leaves scene/content tooling and engine maintenance
   with the project. A shader addition does not establish a faster or fully GPU-rendered game.
-- **Three.js is a 3D library, and "not an engine" is a fair description, not a verdict.** It gives a scene graph,
+- [general] **Three.js is a 3D library, and "not an engine" is a fair description, not a verdict.** It gives a scene graph,
   cameras, lights, materials, loaders, animation playback and thin Web Audio wrappers, and leaves physics,
   entities, input, flipbooks and game loop structure to you (tested: the web sample scene needed hand-written
   sprite animation, movement and triggers). Engines built on it exist: Needle Engine (Unity or Blender authoring)
   is the closest; react-three-fiber is a React renderer over it (see [engine-r3f](../engine-r3f/SKILL.md) for a tested game structure). Babylon.js and PlayCanvas are separate engines,
   not built on three.js; see [engine-babylon](../engine-babylon/SKILL.md) for a tested Babylon.js game.
-- Check whether the agent's shell has a desktop before promising a visual check (see the sessions section of the
+- [general] Check whether the agent's shell has a desktop before promising a visual check (see the sessions section of the
   profiles): windowed rendering and screen capture fail in a non-interactive session, while offscreen modes work.
-- Recommend one option and say what it gives up. Do not list five and stop.
-- When a question is open (for example whether a GLB imports with its skin intact), propose a
+- [general] Recommend one option and say what it gives up. Do not list five and stop.
+- [general] When a question is open (for example whether a GLB imports with its skin intact), propose a
   one-hour spike with the [sample scene](../../docs/sample-scene.md) and say what it will settle. For a 3D game, spike a thin playable slice (one flight or movement loop, one imported part kit, one sound) in each candidate stack instead.
-- A screenshot is the only check that catches wrong scale, facing and pivots. Require one.
+- [general] A screenshot is the only check that catches wrong scale, facing and pivots. Require one.
 
 | You are about to | Read |
 | --- | --- |

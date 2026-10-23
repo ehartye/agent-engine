@@ -3,13 +3,13 @@
 How an app consumes agent-beeps output. The mechanism (hashing, lock, store, verify) and the codec
 traps live in agent-beeps and are **linked, not copied**, here:
 
-- `docs/build-lock-and-store.md` in agent-beeps: the algorithm, `beeps.build.json`, the lock schema, the store,
+- [documented] `docs/build-lock-and-store.md` in agent-beeps: the algorithm, `beeps.build.json`, the lock schema, the store,
   `beeps verify`, failure modes.
-- The `beeps-ship` skill in agent-beeps: the recipe an agent follows (build, lock, push, fetch, toolchain
+- [general] The `beeps-ship` skill in agent-beeps: the recipe an agent follows (build, lock, push, fetch, toolchain
   changes) and the web codec traps (MP3 `+bitexact` delay, WebKit-on-Linux MP3 padding, Opus determinism).
-- For running that build in CI, see [ci-for-generated-assets](ci-for-generated-assets.md) and the template
+- [general] For running that build in CI, see [ci-for-generated-assets](ci-for-generated-assets.md) and the template
   `examples/web/ci/pages-audio.yml`.
-- Phaser specifics (cue tables, music state machine, decode failures) stay in
+- [general] Phaser specifics (cue tables, music state machine, decode failures) stay in
   [audio directors](../../engine-phaser/references/audio-directors.md).
 
 If a fact here disagrees with those, they win; fix this page.
@@ -41,11 +41,11 @@ Host **one** format. For a browser game the default is Ogg Opus (`web-universal`
 URL rewrite. One project tried a second MP3 build and removed it: two encodes to keep in sync, a catalog per
 format, and a probe that can misreport. Reasons Opus wins for loops:
 
-- Opus carries its length in the container (pre-skip and end granule position), so every browser trims alike.
+- [general] Opus carries its length in the container (pre-skip and end granule position), so every browser trims alike.
   MP3 delay and padding handling differs by browser (Firefox ignores the delay when the encoder id is
   `Lavf lame`; WebKit on Linux does not trim MP3 padding at all), and a Chromium-only test hides both.
-- Opus is byte-deterministic for one WAV and one ffmpeg build, so the lock can pin encoded bytes.
-- It is smaller at equal quality.
+- [general] Opus is byte-deterministic for one WAV and one ffmpeg build, so the lock can pin encoded bytes.
+- [general] It is smaller at equal quality.
 
 The cost is reach: current Chromium and Firefox decode it, Safari and iOS only from 18.4 (macOS 15.4; a floor one project
 accepted and checked by ear on a device, not by frame count), and WebKit on Linux and Windows
@@ -75,19 +75,19 @@ masters, often on Git LFS, and still benefits from the lock.
 
 At boot, before loading any audio:
 
-1. Test Opus support with `canPlayType('audio/ogg; codecs="opus"')`. Treat `""` as no. Treat `"maybe"` and
+1. [general] Test Opus support with `canPlayType('audio/ogg; codecs="opus"')`. Treat `""` as no. Treat `"maybe"` and
    `"probably"` as unconfirmed: the probe is a hint, and it can misreport on some browsers.
-2. For a confirmed answer, decode a tiny Opus clip with `decodeAudioData` and catch the rejection. That is the real
+2. [general] For a confirmed answer, decode a tiny Opus clip with `decodeAudioData` and catch the rejection. That is the real
    test, and it is what the player's `E_DECODE` reports. Embed the clip in the bundle (about 170 bytes) and
    decode it on a throwaway `OfflineAudioContext`: no gesture and no network are needed, and the callback-only and
    `webkit`-prefixed forms are handled. Playwright's WebKit may have no `AudioContext` at all, so the decision has three
    outcomes: ok, cannot-decode and no-web-audio.
-3. If unsupported, **show a notice and run silent**; do not crash and do not substitute a second format. In a
+3. [general] If unsupported, **show a notice and run silent**; do not crash and do not substitute a second format. In a
    pixel-only game the notice is drawn from the game's own bitmap font like every other message. The game must
    stay playable without sound. Log one console warning and silence the player's per-file errors afterwards. Make the
    notice sticky, dismissed by a click, tap or key after a short wall-clock grace (about 1.5 s; frame-time timers
    stall on a slow software-GL machine and leave it undismissable), and mirror it in the live region.
-4. Test it: a browser spec that runs WebKit on Linux and asserts the notice, and Chromium and Firefox specs that
+4. [general] Test it: a browser spec that runs WebKit on Linux and asserts the notice, and Chromium and Firefox specs that
    decode every music loop and compare the decoded frame count to the catalog's `frames` (delta 0).
 
 A suspended `AudioContext` until a user gesture is normal, not a failure. Unlock on the first `pointerdown`, `keydown`,

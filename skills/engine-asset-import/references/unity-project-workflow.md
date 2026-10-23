@@ -43,14 +43,14 @@ Use the fast loop for logic and Unity only for what needs it.
 
 Traps, all hit here:
 
-- Unity ignores `.csproj` references. Every asmdef that names a type from another asmdef must list it
+- [general] Unity ignores `.csproj` references. Every asmdef that names a type from another asmdef must list it
   in `references`, test assemblies included, or you get `CS0012: ... defined in an assembly that is not
   referenced`.
-- Unity compiles with nullable annotations off, so `object?` warns. A file named `csc.rsp` containing
+- [general] Unity compiles with nullable annotations off, so `object?` warns. A file named `csc.rsp` containing
   `-nullable:enable` beside the asmdef turns it on for that assembly.
-- Two `Color` types (`UnityEngine.Color` and your own) make a bare `Color` ambiguous (CS0104). Add
+- [general] Two `Color` types (`UnityEngine.Color` and your own) make a bare `Color` ambiguous (CS0104). Add
   `using Color = Your.Namespace.Color;` where both namespaces are imported.
-- Files moved under `Assets` have no `.meta` until an editor pass writes them. Run one verb after the
+- [general] Files moved under `Assets` have no `.meta` until an editor pass writes them. Run one verb after the
   move and commit the metas with the files, or every reference to them breaks on the next checkout.
 
 ## Seeing the result
@@ -60,18 +60,18 @@ A screenshot is the only check that catches scale, facing and pivots. A test tag
 pixels and writes a PNG. Launch it **without** `-nographics` so it has a GPU; with `-nographics` the
 render has nothing to draw on. No window is needed.
 
-- Judge facing from an **orthographic** top-down camera. A perspective camera over the middle of the
+- [general] Judge facing from an **orthographic** top-down camera. A perspective camera over the middle of the
   board makes every tall piece lean outward, which looks like a facing error. This cost two wrong fixes
   here before the orthographic shot settled it.
-- glTFast kept a model authored facing +Z facing +Z in Unity (checked with a knight's muzzle).
+- [general] glTFast kept a model authored facing +Z facing +Z in Unity (checked with a knight's muzzle).
   Do not add a 180 degree turn for the handedness change; it is already handled on import.
 
-- Screenshot tests share an assembly with the other PlayMode tests, so `test-playmode` runs them too
+- [general] Screenshot tests share an assembly with the other PlayMode tests, so `test-playmode` runs them too
   unless you filter them out (`-testCategory '!Screenshot'`). Worse, a test that builds scene objects and
   does not destroy them leaks into the next test: here a leftover `NetworkObject` made the next Netcode
   test fail at SetUp with "pre-instantiated GameObject ... not a registered prefab". Destroy what a
   screenshot test creates in `[TearDown]`.
-- A screenshot test that builds its own scene can hide a bad real scene. Here the test added its own light
+- [general] A screenshot test that builds its own scene can hide a bad real scene. Here the test added its own light
   and the generated scene had none, so every screenshot looked right while the headset build would have
   been unlit. Assert the real scene file separately (next section).
 
@@ -88,9 +88,9 @@ instead of trusting what is stored, and check the real scene after any asset swa
 
 Two defects were in the generated scene and neither was visible in a test or a screenshot:
 
-- **No light.** An empty generated scene has none, and the default ambient is near black. The headset
+- [general] **No light.** An empty generated scene has none, and the default ambient is near black. The headset
   cannot see the room's real light, so give the virtual objects a fixed key light and an ambient floor.
-- **Opaque camera clear.** The rig prefab's camera clears to a skybox, which paints over the passthrough
+- [general] **Opaque camera clear.** The rig prefab's camera clears to a skybox, which paints over the passthrough
   layer. The camera must be `SolidColor` with background alpha 0. Meta's SDK sets this only in an editor
   helper, not at runtime.
 
@@ -108,5 +108,5 @@ with the reply reaching only the sender) were checked this way in about a minute
 
 ## Not tested here
 
-- Meta's Interaction SDK grab components, hand-tracking pinch and on-device play: no headset was
+- [general] Meta's Interaction SDK grab components, hand-tracking pinch and on-device play: no headset was
   attached. Pure pick, carry and drop logic is tested; the Quest adapter that feeds it is not.
