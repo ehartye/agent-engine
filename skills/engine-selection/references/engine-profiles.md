@@ -108,6 +108,6 @@ effect appearance, temporal reset and complete-frame performance in the target g
 
 ## What to check first
 
-Before committing to an engine for real work, run the [sample scene](../../../docs/sample-scene.md) in it.
-It answers, in an hour, whether the GLB imports with its skin and clips, whether the atlas needs a
-loader, whether the audio loops, and whether a screenshot can be taken with nobody present.
+- [general] Before committing to an engine for real work, run the [sample scene](../../../docs/sample-scene.md) in it.
+  It answers, in an hour, whether the GLB imports with its skin and clips, whether the atlas needs a
+  loader, whether the audio loops, and whether a screenshot can be taken with nobody present.

@@ -31,8 +31,8 @@ Moved to their own file:
 | Catalog (`index.json`) | generated | regenerated deterministically from the sidecars; the app loads it to learn every cue, bed, loop length and layer |
 | Player | vendored (`beeps player export`) | decodes with Web Audio, unlocks on a gesture, plays cues, loops and adaptive layers |
 
-Never hand-edit a built file: `beeps build` sees `output modified` and redoes it. Never render in CI on the normal
-path; see the CI reference for why renders cannot be repeated.
+- [general] Never hand-edit a built file: `beeps build` sees `output modified` and redoes it. Never render in CI on the normal
+  path; see the CI reference for why renders cannot be repeated.
 
 ## Format decision: Opus only for the web
 

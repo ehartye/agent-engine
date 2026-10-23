@@ -20,10 +20,10 @@ port and does not supply scenes, physics, asset import or native export tooling.
 
 ## Establish the rendering contract
 
-Inspect the actual passes before editing: native buffer and output sizes, world
-and screen coordinates, camera/pixel rounding, lighting and emissive order, alpha,
-UI composition, and pointer mapping. Keep the project's chosen pixel/palette rules;
-blur and smooth lighting are artistic choices, not automatic improvements.
+- [general] Inspect the actual passes before editing: native buffer and output sizes, world
+  and screen coordinates, camera/pixel rounding, lighting and emissive order, alpha,
+  UI composition, and pointer mapping. Keep the project's chosen pixel/palette rules;
+  blur and smooth lighting are artistic choices, not automatic improvements.
 
 Choose one measurable target. For a CPU chem/post pass, begin with an identity
 GPU pass, then replace that effect. Keep CPU lighting initially if it is outside
@@ -57,12 +57,12 @@ because shader work executes on the GPU.
 
 ## Report the evidence and the cost
 
-Tag capability claims **tested here**, **documented**, or **general knowledge**.
-Separate shader compilation, visible fidelity, runtime behavior and measured
-performance; prose/metadata validation does not establish any of these runtime
-proofs. Name the time, regression risk and ongoing resource/context maintenance
-added by the bridge. If a full renderer replacement becomes necessary, surface
-that larger scope before expanding the change.
+- [general] Tag capability claims **tested here**, **documented**, or **general knowledge**.
+  Separate shader compilation, visible fidelity, runtime behavior and measured
+  performance; prose/metadata validation does not establish any of these runtime
+  proofs. Name the time, regression risk and ongoing resource/context maintenance
+  added by the bridge. If a full renderer replacement becomes necessary, surface
+  that larger scope before expanding the change.
 
 There is no agent-sprites shader CLI implied by this skill. Use its exported PNG,
 atlas and playback contract unchanged unless the task calls for an asset change.

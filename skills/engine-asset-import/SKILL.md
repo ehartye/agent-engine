@@ -31,13 +31,13 @@ line between what was verified and what was only read in documentation.
 | Load the assets in Phaser or three.js | [Web import](references/web-import.md); a real Phaser game: [engine-phaser](../engine-phaser/SKILL.md) |
 | See what is verified and not verified per engine | [Engine status](references/engine-status.md) |
 
-Other skills: choosing an engine is `engine-selection`. Importing into Unreal, UEFN, native C++ Unreal games with their
-packaging and profiling, and choosing an Unreal system (with Niagara and editor Python) are the `unreal-import`, `uefn`,
-`unreal-native` and domain skills (`unreal-rendering`, `unreal-effects`, `unreal-animation`, `unreal-gameplay`,
-`unreal-procedural`, `unreal-editor-scripting`) in the agent-unreal plugin.
+- [general] Other skills: choosing an engine is `engine-selection`. Importing into Unreal, UEFN, native C++ Unreal games with their
+  packaging and profiling, and choosing an Unreal system (with Niagara and editor Python) are the `unreal-import`, `uefn`,
+  `unreal-native` and domain skills (`unreal-rendering`, `unreal-effects`, `unreal-animation`, `unreal-gameplay`,
+  `unreal-procedural`, `unreal-editor-scripting`) in the agent-unreal plugin.
 
 ## After importing
 
-Import, then check, then report. If the engine's own MCP server is connected, use it to list the
-imported assets and read the engine log; if it is not, say which checks you could not run. The
-[sample scene](../../docs/sample-scene.md) defines the checks this plugin is aiming for.
+- [general] Import, then check, then report. If the engine's own MCP server is connected, use it to list the
+  imported assets and read the engine log; if it is not, say which checks you could not run. The
+  [sample scene](../../docs/sample-scene.md) defines the checks this plugin is aiming for.
