@@ -1,6 +1,6 @@
 ---
 name: engine-selection
-description: Choose a game engine or web stack (Custom, Unity, Unreal, UEFN for Fortnite, Godot, Phaser, three.js, Babylon.js, PlayCanvas) for a project built with AI agents, weighing how easily an agent can drive and verify it against output quality and reach, with each option's limits.
+description: Choose a game engine or web stack (Custom, Unity, Unreal, UEFN for Fortnite, Godot, Phaser, three.js, Babylon.js, PlayCanvas) for a project built with AI agents, weighing how easily an agent can drive and verify it against output quality and reach, with each option's limits. Not for building in the chosen engine (use that engine's skill) or importing assets.
 when_to_use: Use when asked which engine to use, to compare engines, to start a new game or level project, about making Fortnite levels or UEFN, or whether three.js is an engine; also before promising that an agent can build or verify something in a given engine.
 ---
 
@@ -38,12 +38,12 @@ play it. The profiles give what is known per option.
 
 | Stack | Agent autonomy | Quality and reach | Main limit |
 |---|---|---|---|
-| Custom: owned Canvas/WebGL runtime | General knowledge: text project and browser tooling suit unattended iteration; verify the actual project | Browser pixel games with complete control over the render contract | Own the engine systems and GPU lifecycle; custom shader path is documented, not sample-tested |
-| Web: Phaser, three.js | Highest, and tested: headless Chromium on the GPU, text project, no sign-in, about 12 s per pass | Any browser. 2D strong, 3D moderate | Browser performance ceiling; no native or console |
-| Web 3D game: React Three Fiber, Babylon.js | High, and tested: a small flight slice on each stack ([example](../../examples/web3d/README.md)) was built, driven through a state probe and checked in headless Chromium on the GPU with no person present | Any browser with WebGL 2 | Tested: headless Chromium renders on SwiftShader unless given GPU flags, and both stacks needed some hand-written glue (R3F: toon ramp patch, outlines; Babylon.js: side-effect imports, a deep-import build of about 1.6 MB). Havok and WebGPU not tried |
+| Custom: owned Canvas/WebGL runtime | General knowledge: text project and browser tooling suit unattended work; verify it | Browser pixel games with full control of the render contract | Own the engine systems and GPU lifecycle; shader path documented, not sample-tested |
+| Web: Phaser, three.js | Highest, and tested: headless Chromium on the GPU, text project, no sign-in | Any browser. 2D strong, 3D moderate | Browser performance ceiling; no native or console |
+| Web 3D game: React Three Fiber, Babylon.js | High, and tested: a small flight slice on each stack ([example](../../examples/web3d/README.md)) was built and checked headless on the GPU | Any browser with WebGL 2 | Tested: headless Chromium needs GPU flags, and both stacks needed hand-written glue (details in the [web profiles](references/engine-profiles-web.md)). Havok and WebGPU not tried |
 | Godot | High, and tested: one-command install, headless build, windowed run in about 12 s | Strong 2D, good 3D | Smaller high-end 3D ceiling; best MCP needs Godot 4.7+ |
 | Unreal | Medium: works unattended, but heavy and slow to iterate | Highest visual ceiling | Install weight, minute-long loops, binary assets |
-| Unity | Medium, and tested: headless build and run work once licensed, but the sign-in is a hard gate | Widest platform reach | Interactive licence sign-in; glTF needs a package; windows may not present in some sessions |
+| Unity | Medium, and tested: headless build and run work once licensed, but the sign-in is a hard gate | Widest platform reach | Interactive licence sign-in; glTF needs a package |
 | UEFN | Lowest unattended; official MCP exists | Fortnite only, inside Verse and a memory budget | Sign-in and a running Fortnite client |
 
 ## Rules
@@ -67,7 +67,11 @@ play it. The profiles give what is known per option.
   one-hour spike with the [sample scene](../../docs/sample-scene.md) and say what it will settle. For a 3D game, spike a thin playable slice (one flight or movement loop, one imported part kit, one sound) in each candidate stack instead.
 - A screenshot is the only check that catches wrong scale, facing and pivots. Require one.
 
-Per-engine evidence, traps and blockers: [engine profiles](references/engine-profiles.md).
+| You are about to | Read |
+| --- | --- |
+| Compare Custom, Godot or Unity, or check whether the shell is interactive | [engine profiles](references/engine-profiles.md) |
+| Weigh Unreal or UEFN, their evidence and blockers | [Unreal and UEFN profiles](references/engine-profiles-unreal.md) |
+| Weigh Phaser, three.js, Babylon.js, PlayCanvas or another web stack | [web stack profiles](references/engine-profiles-web.md) |
 
 After choosing Unreal, the domain skills in agent-unreal (`unreal-rendering`, `unreal-effects`, `unreal-animation`, `unreal-gameplay`, `unreal-procedural`, `unreal-editor-scripting`) pick the system for a goal and [engine-asset-import](../engine-asset-import/SKILL.md) brings assets in.
 
