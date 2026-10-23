@@ -20,7 +20,7 @@ Read the relevant reference before choosing the effect implementation.
 | Diagnose a demo-like image, match genre references or design effect families | [Genre and effect craft](references/genre-effect-craft.md) |
 
 In Unreal, choosing materials, Niagara, lighting, anti-aliasing or a rendering system, and comparing
-implementations side by side in one filmed and timed run, are the `unreal-features` and `unreal-native` skills
+implementations side by side in one filmed and timed run, are the `unreal-rendering`, `unreal-effects` and `unreal-native` skills
 in the agent-unreal plugin.
 
 ## Establish the target and current evidence
