@@ -7,7 +7,7 @@ GLSL syntax and texture/framebuffer capabilities; don't mix shader versions.
 
 ## Keep the renderer boundary small
 
-A Canvas that has a 2D context cannot also provide a WebGL context. Keep existing
+- [general] A Canvas that has a 2D context cannot also provide a WebGL context. Keep existing
 world drawing in an offscreen Canvas and use a separate WebGL presentation surface.
 Canvas/OffscreenCanvas is a supported texture source for `texImage2D`; it does not
 need an intermediate `getImageData` extraction. Allocate textures to the required
@@ -42,11 +42,11 @@ normal-map requirements unless the intended lighting needs them.
 
 ## Pixel and color fidelity
 
-For strict pixel art, run the effects at native resolution with `NEAREST` sampling,
+- [general] For strict pixel art, run the effects at native resolution with `NEAREST` sampling,
 no mipmaps and clamp-to-edge wrapping, then integer upscale. Explicitly handle
 out-of-range warp coordinates. Verify pixel-center alignment and Y orientation
 using asymmetric corner markers; distinguish upload flipping from shader UV flips.
-Avoid applying both. Match the existing transparent-pixel and premultiplied-alpha
+Match the existing transparent-pixel and premultiplied-alpha
 behavior, and check color/tint treatment against an identity frame. Trail feedback
 must not accidentally accumulate HUD or force transparent edges to become opaque.
 
@@ -57,7 +57,7 @@ frames bleeding into outlines. Do not discard the sprite playback contract.
 
 ## Temporal effects and lifecycle
 
-Use two distinct history textures/framebuffers. Sample the previous result while
+- [general] Use two distinct history textures/framebuffers. Sample the previous result while
 writing the next, then swap their roles. Keep source input separate from an active
 render target; sampling a target attached to the current framebuffer is a feedback
 loop error. Define whether history contains lit, warped or final world pixels:
@@ -73,7 +73,7 @@ check framebuffer completeness at creation/recreation.
 
 ## CPU profiling and bounded caches
 
-Warm asset uploads, shader compilation and caches before sampling steady play;
+- [general] Warm asset uploads, shader compilation and caches before sampling steady play;
 report startup separately. Time world drawing, lighting, emissives, post effects
 and HUD, then the complete frame callback including simulation and input. Within
 a CPU pixel pass, separate light-map readback, world readback, pixel math and write.
@@ -111,7 +111,7 @@ cache hit rate without treating that as a visible behavior change.
 
 ## Useful proof
 
-Capture an identity frame with corner markers, a representative warp/color frame
+- [general] Capture an identity frame with corner markers, a representative warp/color frame
 and a trail reset. Inspect native-resolution and display-scale screenshots for
 pixel grid, palette/dither, alpha, emissive ordering, HUD clarity and pointer targets.
 Exercise resize and context loss/restoration, and record which rendering path ran.
@@ -130,6 +130,8 @@ does not establish complete presentation latency, mobile speed or a general engi
 performance claim. Other custom renderers still require their own proof.
 
 ## Documentation
+
+- [documented] MDN pages behind the upload and cost guidance.
 
 - [Canvas texture sources and upload overloads](https://developer.mozilla.org/en-US/docs/Web/API/WebGLRenderingContext/texImage2D)
 - [WebGL best practices: uploads, blocking calls and resource costs](https://developer.mozilla.org/en-US/docs/Web/API/WebGL_API/WebGL_best_practices)

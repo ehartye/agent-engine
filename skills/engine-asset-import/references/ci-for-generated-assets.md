@@ -25,12 +25,12 @@ works and the lock is then the stale test.
 
 ## Never regenerate unchanged outputs
 
-Some generators are not bit-exact: rendering the same song four times from empty caches gave four WAVs that differ
-in 33 to 50 of 786,516 samples. A re-render of an unchanged input therefore changes the shipped bytes for nothing,
-and in CI it costs minutes to hours (a cold adaptive-song build was about 40 minutes). The rule: an input that
-already has an output is never generated again. Encoding that follows the render can be deterministic (same WAV,
-same ffmpeg build, same Opus bytes), which is why the lock can pin it. Test your tool for both facts before
-choosing what to pin.
+- [general] Some generators are not bit-exact: rendering the same song four times from empty caches gave four WAVs that differ
+  in 33 to 50 of 786,516 samples. A re-render of an unchanged input therefore changes the shipped bytes for nothing,
+  and in CI it costs minutes to hours (a cold adaptive-song build was about 40 minutes). The rule: an input that
+  already has an output is never generated again. Encoding that follows the render can be deterministic (same WAV,
+  same ffmpeg build, same Opus bytes), which is why the lock can pin it. Test your tool for both facts before
+  choosing what to pin.
 
 A toolchain bump (generator, browser, ffmpeg) changes every hash. Stop and list the drift; accept it once, on
 purpose, on the author's machine, then push. Never let CI regenerate everything because a version moved.
@@ -92,6 +92,6 @@ purpose, on the author's machine, then push. Never let CI regenerate everything 
 
 ## When the generator is sprites or meshes
 
-Use the same five steps: input hash of the project file and tool version, a lock, a store, CI fetch. Only the
-tool differs. Until a tool has a `build` and `store`, a small committed output plus a checksum manifest gives the
-same stale test. Say which you did.
+- [general] Use the same five steps: input hash of the project file and tool version, a lock, a store, CI fetch. Only the
+  tool differs. Until a tool has a `build` and `store`, a small committed output plus a checksum manifest gives the
+  same stale test. Say which you did.

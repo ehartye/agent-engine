@@ -13,10 +13,10 @@ project, unless marked otherwise. The driver is [`examples/unity/project-driver/
 | `test-playmode` | Netcode host and client in one process, scene objects | about 1 min |
 | `shot` | A camera rendered to a PNG by a PlayMode test | about 45 s |
 
-**A failed compile must not look like a pass.** Unity writes no results file when scripts do not
-compile. If the driver then summarises the previous run's XML, you get "2 passed" next to a screen of
-`error CS`. Delete the results file before each run and fail on any `error CS` in the log. The
-driver does both. This was hit here, not predicted.
+- [general] **A failed compile must not look like a pass.** Unity writes no results file when scripts do not
+  compile. If the driver then summarises the previous run's XML, you get "2 passed" next to a screen of
+  `error CS`. Delete the results file before each run and fail on any `error CS` in the log. The
+  driver does both. This was hit here, not predicted.
 
 Unity allows one editor per project. Never run two verbs at once, and do not let a background agent
 launch Unity while you are. Give the background agent the work that needs no editor (authoring GLBs,
@@ -77,12 +77,12 @@ render has nothing to draw on. No window is needed.
 
 ## Re-importing a model breaks references to it
 
-A `ScriptableObject` (a piece set, a prefab table) that points at a glTFast-imported model stores an
-internal object ID derived from the model's node hierarchy. Re-import a model whose hierarchy changed (a
-different exporter, extra nodes) and the reference silently becomes null, while unchanged models keep
-theirs. Symptom: some entries render as the fallback (grey capsules here) and the importer logged no
-error. Regenerate such assets from code (load by path, assign, `SetDirty`) as part of the scene build
-instead of trusting what is stored, and check the real scene after any asset swap.
+- [general] A `ScriptableObject` (a piece set, a prefab table) that points at a glTFast-imported model stores an
+  internal object ID derived from the model's node hierarchy. Re-import a model whose hierarchy changed (a
+  different exporter, extra nodes) and the reference silently becomes null, while unchanged models keep
+  theirs. Symptom: some entries render as the fallback (grey capsules here) and the importer logged no
+  error. Regenerate such assets from code (load by path, assign, `SetDirty`) as part of the scene build
+  instead of trusting what is stored, and check the real scene after any asset swap.
 
 ## Passthrough mixed reality: check the scene file, not just the code
 
@@ -101,10 +101,10 @@ a fixed light looks in a real room were not measured; both need a headset.
 
 ## Multiplayer in tests
 
-Netcode for GameObjects' own `NetcodeIntegrationTest` runs a host and a client in one process. Add
-`com.unity.netcode.gameobjects` to the manifest's `testables`, and filter by assembly name or it also
-runs NGO's own suite (1,352 EditMode tests). RPC authority rules (out-of-turn and illegal-move refusal
-with the reply reaching only the sender) were checked this way in about a minute, with no headset.
+- [general] Netcode for GameObjects' own `NetcodeIntegrationTest` runs a host and a client in one process. Add
+  `com.unity.netcode.gameobjects` to the manifest's `testables`, and filter by assembly name or it also
+  runs NGO's own suite (1,352 EditMode tests). RPC authority rules (out-of-turn and illegal-move refusal
+  with the reply reaching only the sender) were checked this way in about a minute, with no headset.
 
 ## Not tested here
 

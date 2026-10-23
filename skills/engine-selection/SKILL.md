@@ -13,6 +13,8 @@ docs) or **general knowledge**. Never present the last two as the first.
 
 ## Step 1: hard constraints decide before any trade-off
 
+- [general] A hard constraint settles the engine before any trade-off is weighed; each row gives the consequence.
+
 | Constraint | Consequence |
 |---|---|
 | The result must run inside Fortnite | UEFN is the only path. Go to its profile before promising anything. |
@@ -31,10 +33,12 @@ docs) or **general knowledge**. Never present the last two as the first.
 
 ## Step 3: weigh quality and reach
 
-Visual and performance ceiling, 2D or 3D fit, animation and audio tooling, platforms, and who can
-play it. The profiles give what is known per option.
+- [general] Visual and performance ceiling, 2D or 3D fit, animation and audio tooling, platforms, and who can
+  play it. The profiles give what is known per option.
 
 ## Quick picks (judgment, from the evidence in the profiles)
+
+- [general] The table is judgment drawn from the evidence in the profiles, not a measurement.
 
 | Stack | Agent autonomy | Quality and reach | Main limit |
 |---|---|---|---|
