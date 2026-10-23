@@ -26,22 +26,22 @@ Index: [engine-profiles.md](engine-profiles.md).
   content construction (`unreal-native` skill, agent-unreal); visual acceptance remained GAP.
 
 **Import** ([tested] unless noted)
-- GLB and PNG: `InterchangeManager.import_asset` with `is_automated = True`. Do not use
+- [general] GLB and PNG: `InterchangeManager.import_asset` with `is_automated = True`. Do not use
   `AssetTools.import_asset_tasks` for glTF in a commandlet: it asserts on a missing Slate application.
-- WAV is not an Interchange format in 5.7. `AssetTools.import_asset_tasks` works for it headless.
-- Names change: `relic-discovered.0.wav` became `relic-discovered_0`; GLB clips `walk` and `trot` became
+- [general] WAV is not an Interchange format in 5.7. `AssetTools.import_asset_tasks` works for it headless.
+- [general] Names change: `relic-discovered.0.wav` became `relic-discovered_0`; GLB clips `walk` and `trot` became
   `foxwalk` and `foxtrot`.
-- A GLB with 48 skins sharing the same 19 joint nodes merged into one SkeletalMesh.
-- Sprites need the Paper2D plugin. Pivots are in **sheet pixels**, not relative to the frame, so add the
+- [general] A GLB with 48 skins sharing the same 19 joint nodes merged into one SkeletalMesh.
+- [general] Sprites need the Paper2D plugin. Pivots are in **sheet pixels**, not relative to the frame, so add the
   frame origin or frames jump sideways. Paper2D sprites lie in the XZ plane: rotate to face the camera.
-- The atlas `frames` array holds raw cells, tag frames and named cells together; the tag's `from`/`to`
+- [general] The atlas `frames` array holds raw cells, tag frames and named cells together; the tag's `from`/`to`
   index into that array, so frame index is not cell index.
 
 **Traps**
-- `-ExecutePythonScript` quits the editor when the script ends and is refused in `-game`. Use
+- [general] `-ExecutePythonScript` quits the editor when the script ends and is refused in `-game`. Use
   `-ExecCmds="py <file>"` and register a tick callback.
-- Git Bash rewrites an argument like `/Game/Maps/X` into a Windows path. Set `MSYS_NO_PATHCONV=1`.
-- Python arguments differ from C++: `Rotator(roll, pitch, yaw)`, `Color(r=, g=, b=)` (positional order
+- [general] Git Bash rewrites an argument like `/Game/Maps/X` into a Windows path. Set `MSYS_NO_PATHCONV=1`.
+- [general] Python arguments differ from C++: `Rotator(roll, pitch, yaw)`, `Color(r=, g=, b=)` (positional order
   gave a blue light), some properties are not exposed (`initial_texture`).
 - [documented] A community RebuildLightmaps recipe reports a Perforce dependency. Do not generalize that to UnrealBuildTool:
   the native C++ `Build.bat` module compile above completed without a Perforce workflow. Native cook/package evidence is tracked
@@ -89,7 +89,7 @@ Mostly research from 2026-09-30; the [tested] items below are what was run on th
 - [documented] Budget: an area over 100,000 memory units cannot be published.
 - [documented] Testing needs a running Fortnite client and an Epic sign-in; a cycle is about 3 to 6
   minutes. Publishing needs a rating questionnaire and moderation, and an adult account.
-- Unknown: rules for AI-generated assets and for coding agents (the terms pages would not load).
+- [general] Unknown: rules for AI-generated assets and for coding agents (the terms pages would not load).
 - [general] Gameplay is Verse and Creative devices, not engine code. The owner's own design notes say true
   spherical gravity and custom vehicles are not expressible, which is an unverified reading of docs.
 

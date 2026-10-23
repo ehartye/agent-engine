@@ -19,11 +19,12 @@ for (const args of [
   ['scripts/lint-skills.mjs', 'skills/engine-r3f', 'skills/engine-babylon',
     'skills/phaser-architecture', 'skills/engine-visual-polish',
     '--require-claims', '--skill-md-labels'],
-  // The other skills are checked for structure, links and size; their evidence labels are not yet required.
+  // The other four skills require an evidence label on every claim bullet (--skill-md-labels). Sections that are
+  // prose or tables only are not required to carry a labelled bullet (no --require-claims) because they hold no bullet to label.
   // engine-phaser and engine-selection are selectors with many references, so their SKILL.md budgets are wider.
-  ['scripts/lint-skills.mjs', 'skills/engine-phaser', '--label-pattern', '.', '--max-skill-bytes', '9000'],
-  ['scripts/lint-skills.mjs', 'skills/engine-selection', '--label-pattern', '.', '--max-skill-bytes', '8500'],
-  ['scripts/lint-skills.mjs', 'skills/engine-asset-import', 'skills/engine-custom-shaders', '--label-pattern', '.'],
+  ['scripts/lint-skills.mjs', 'skills/engine-phaser', '--skill-md-labels', '--max-skill-bytes', '9000'],
+  ['scripts/lint-skills.mjs', 'skills/engine-selection', '--skill-md-labels', '--max-skill-bytes', '8500'],
+  ['scripts/lint-skills.mjs', 'skills/engine-asset-import', 'skills/engine-custom-shaders', '--skill-md-labels'],
 ]) {
   const result = spawnSync(process.execPath, args, { cwd: root, stdio: 'inherit' });
   if (result.error) console.error(result.error);
