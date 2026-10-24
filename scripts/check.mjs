@@ -16,12 +16,13 @@ tests.push('examples/web/verify-checks.test.mjs', 'examples/web/profiling/frame-
 
 for (const args of [
   ['--test', ...tests],
-  ['scripts/lint-skills.mjs', 'skills/engine-r3f', 'skills/engine-babylon',
-    'skills/phaser-architecture', 'skills/engine-visual-polish',
+  ['scripts/lint-skills.mjs', 'skills/engine-r3f', 'skills/engine-babylon', 'skills/engine-visual-polish',
+    'skills/engine-phaser', 'skills/phaser-architecture', 'skills/phaser-rendering', 'skills/phaser-worlds',
+    'skills/phaser-physics', 'skills/phaser-motion', 'skills/phaser-pixel-ui', 'skills/phaser-input',
+    'skills/phaser-audio', 'skills/phaser-verification',
     '--require-claims', '--skill-md-labels'],
-  // All eight skills require an evidence label on every claim bullet and a labelled bullet in every section.
-  // engine-phaser and engine-selection are selectors with many references, so their SKILL.md budgets are wider.
-  ['scripts/lint-skills.mjs', 'skills/engine-phaser', '--require-claims', '--skill-md-labels', '--max-skill-bytes', '9000'],
+  // Every skill requires an evidence label on every claim bullet and a labelled bullet in every section.
+  // engine-selection is a selector with many references, so its SKILL.md budget is wider.
   ['scripts/lint-skills.mjs', 'skills/engine-selection', '--require-claims', '--skill-md-labels', '--max-skill-bytes', '8500'],
   ['scripts/lint-skills.mjs', 'skills/engine-asset-import', 'skills/engine-custom-shaders', '--require-claims', '--skill-md-labels'],
 ]) {

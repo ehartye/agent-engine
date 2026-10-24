@@ -1,6 +1,5 @@
 # Lint and release checks for the skills. No dependencies: Node only.
-# The older skills (engine-selection, engine-asset-import, engine-phaser, engine-custom-shaders) do not pass the
-# evidence-label rules yet; they are backlog, so only the scoped newer skills are linted here.
+# Every skill passes the strict evidence-label rules; scripts/check.mjs lists them.
 name: lint-skills
 
 on:

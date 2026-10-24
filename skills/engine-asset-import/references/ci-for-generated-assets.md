@@ -80,7 +80,7 @@ purpose, on the author's machine, then push. Never let CI regenerate everything 
   - [general] Set `timeout-minutes` on the job: `playwright install --with-deps` hung for 40+ minutes twice. Upload `test-results` when the job fails.
   - [general] Promote a browser job to blocking only after 2 consecutive green runs with no retries, as a separate commit that can be reverted.
   The template `examples/web/ci/pages-audio.yml` has these steps. For the harness side (condition waits instead of
-  sleeps, GPU-only tests tagged and skipped), see [verifying on a real GPU](../../engine-phaser/references/verifying-on-a-gpu.md).
+  sleeps, GPU-only tests tagged and skipped), see [verifying on a real GPU](../../phaser-verification/references/verifying-on-a-gpu.md).
 - [general] **Lock gate.** After any step that rewrites the lock, fail on `git diff --exit-code <lock>`: a developer forgot
   to commit it, and the cache key would not match what was built.
 - [general] **Check before build.** A `--check` that renders nothing and lists stale assets with reasons is the cheap CI

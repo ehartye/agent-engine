@@ -55,7 +55,7 @@ docs) or **general knowledge**. Never present the last two as the first.
 - [general] **Custom is an engine type, not another engine dependency.** For an existing game whose main
   limitation is CPU pixel effects, consider a focused GPU stage before a full port. Use
   [custom engine shaders](../engine-custom-shaders/SKILL.md) for runtime lighting, warps and trails. Once Phaser is chosen,
-  use [engine-phaser](../engine-phaser/SKILL.md) for structure, tilemaps, known bugs and GPU verification.
+  use [engine-phaser](../engine-phaser/SKILL.md) for structure; it routes to the Phaser domain skills.
   Keeping gameplay may save migration time; it leaves scene/content tooling and engine maintenance
   with the project. A shader addition does not establish a faster or fully GPU-rendered game.
 - [general] **Three.js is a 3D library, and "not an engine" is a fair description, not a verdict.** It gives a scene graph,
@@ -79,7 +79,7 @@ docs) or **general knowledge**. Never present the last two as the first.
 
 After choosing Unreal, the domain skills in agent-unreal (`unreal-rendering`, `unreal-effects`, `unreal-animation`, `unreal-gameplay`, `unreal-procedural`, `unreal-editor-scripting`) pick the system for a goal and [engine-asset-import](../engine-asset-import/SKILL.md) brings assets in.
 
-For a frame-budget target (for example 120 fps) or a plan to add 25% to 50% more content, profile before choosing a fix: [profiling method](../engine-phaser/references/profiling-method.md) is the engine-neutral method, with browser specifics; the Unreal version is native Unreal profiling (`unreal-native` skill, agent-unreal). Do not promise a frame rate from an engine's ceiling.
+For a frame-budget target (for example 120 fps) or a plan to add 25% to 50% more content, profile before choosing a fix: [profiling method](../phaser-verification/references/profiling-method.md) is the engine-neutral method, with browser specifics; the Unreal version is native Unreal profiling (`unreal-native` skill, agent-unreal). Do not promise a frame rate from an engine's ceiling.
 
 For a Fortnite project blocked by missing MCP operations, or a proposal to author
 in regular UE and port, read UEFN authoring routes (`uefn` skill, agent-unreal)
