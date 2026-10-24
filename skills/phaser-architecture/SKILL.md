@@ -7,13 +7,15 @@ description: Coordinate architecture across Phaser games and owned tools. Use wh
 
 Keep architecture guidance encapsulated in agent-engine. The games own their rules,
 content and native bindings; the asset and testing tools own their reusable capabilities.
-This skill supplies coordination guidance, not a shared runtime or an implemented UI/playbot API.
+This skill supplies coordination guidance. Runtime exports belong to their producer;
+the linked API reference distinguishes released contracts from unreleased candidates.
 
 Read only the reference needed for the decision.
 
 | You are about to | Read |
 | --- | --- |
 | Choose contract owners, align sessions, share themed dialogs or add a bespoke panel | [Owners and extensions](references/owners-and-extensions.md) |
+| Bind the shared Sprites UI exports, native ports, contexts or mount lifecycle | [Shared UI API and native ownership](references/shared-ui-api.md) |
 | Align playbot configuration, transports, starting states or acceptance evidence | [Playbot evidence](references/playbot-evidence.md) |
 | Reduce browser/build duplication, select checks or separate publication from deep acceptance | [Resources and validation](references/resources-and-validation.md) |
 | Set or verify a frame budget across games, or cost a content increase against it | [Profiling method](../phaser-verification/references/profiling-method.md) |
@@ -35,4 +37,4 @@ Read only the reference needed for the decision.
 ## Scope and routing
 
 - [documented] Native implementation stays with [engine-phaser](../engine-phaser/SKILL.md); engine choice stays with [engine-selection](../engine-selection/SKILL.md). This capability adds no widget engine, replacement game engine, cloud service or cross-game mutable registry.
-- [general] Extract a separate game-architecture plugin only when references, recurring cross-tool coordination or release cadence outgrow this folder. A shared runtime needs its own placement/versioning decision; the accepted guidance boundary does not imply one exists.
+- [general] Extract a separate game-architecture plugin only when references, recurring cross-tool coordination or release cadence outgrow this folder. Shared runtime availability follows the actual producer export/version and consumer acceptance; this guidance does not add runtime code to Engine.
