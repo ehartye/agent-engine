@@ -10,7 +10,7 @@ traps live in agent-beeps and are **linked, not copied**, here:
 - [general] For running that build in CI, see [ci-for-generated-assets](ci-for-generated-assets.md) and the template
   `examples/web/ci/pages-audio.yml`.
 - [general] Phaser specifics (cue tables, music state machine, decode failures) stay in
-  [audio directors](../../engine-phaser/references/audio-directors.md).
+  [audio directors](../../phaser-audio/references/audio-directors.md).
 
 If a fact here disagrees with those, they win; fix this page.
 
