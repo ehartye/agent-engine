@@ -11,6 +11,29 @@
 
 ## Select checks from changed inputs
 
+- [general] Reusable UI libraries own generic components, layout, themes, interaction,
+rendering, extensions and resource lifetime. Verify those independently through
+producer CPU/type/export checks and a standalone native fixture with small authored
+assets, supported backends and representative context/input/cleanup boundaries.
+Producer fixtures and implementation must have no consumer names or dependencies.
+Each consumer chooses and verifies its own immutable released pin. Broad game
+campaigns and unrelated world/rendering failures do not gate a library release.
+
+- [general] A bounded consumer contract should cover actual theme/assets and representative
+text/shell/control pixels; pointer, keyboard and controller routing exactly once;
+modal cancellation/focus restoration and the native text bridge; resize, scrolling
+and context changes; one clipped extension; remount/failure cleanup; and one real
+action/transaction with its refusal path. Retire duplicate generic assertions only
+after identifying their producer replacements. Preserve game adapter, action,
+transaction, extension and gameplay protections. Reuse one compatible browser/server
+with fresh scenario contexts, one worker and zero retries. Measure startup, case and
+cleanup separately; target under two minutes without relaxing assertions.
+
+- [general] After passing selected checks, review/push/handoff and unchanged metadata do not
+justify another run. Widen only for changed dependencies, an observed failure or a
+named unresolved risk. Build the final production artifact once, verify applicable
+packaging/offline/audio obligations, then verify live assets and ordinary UI input.
+
 | Change | Relevant owners and escalation |
 | --- | --- |
 | Rules/session/saves | Authoritative rules/transaction/recovery checks; native seam if platform wiring changes |
@@ -20,7 +43,9 @@
 | Browser/resource/runner ownership | Isolation, partial failure, honest child exits, exhaustive inventory reconciliation |
 | Dependencies/Phaser patches | Clean install/patch checks and affected native lifecycle owners |
 | Build/entry/catalog/base path/offline | One attributable build and owning built-payload checks |
-| Shared/unknown impact or release | Deliberate complete inventory and appropriate hardware/earned-route acceptance |
+| Shared library release | Independent producer CPU/type/export/native contract and established packaging checks |
+| Consumer UI adoption | Complete released export, typecheck and bounded host contract; widen for named integration risk |
+| Unknown gameplay impact | Deliberate owning inventory and appropriate hardware/earned-route acceptance |
 
 - [general] Discover actual imports/helpers/subprocesses before admitting CPU parallelism. Unknown resource use stays conservative. Bound browser/GPU files and machine load; retain failures, signals, cancellations and applicable skips. A null child status, signal or spawn error is not success.
 - [general] Run selected owners and the changed consumer seam once. Stop after passing checks with unchanged relevant inputs; review, push or handoff alone is not a new risk. Changed inputs, observed failures, unknown impact or a named remaining risk justify additional checks. Keep repo-local commands and inventories authoritative rather than publishing an unvalidated universal fast subset.
