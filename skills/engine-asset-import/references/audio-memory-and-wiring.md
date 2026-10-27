@@ -17,9 +17,15 @@ Consequences:
 
 - [general] Decode a song when it is about to be needed and release it when it is not. Budget by decoded seconds times
   8 bytes per frame-channel pair (48,000 x 4 bytes x 2 channels = 384 KB per second).
-- [general] The vendored player **never evicts**: once a buffer is decoded it stays until the page closes. An app with many
-  songs must manage its own set: load a region's songs on entry, and on a phone budget one adaptive song at a time.
-  Plan this before adding the fifth or tenth song, not after a mobile tab is killed.
+- [documented] Players before version 4 never evict: a decoded buffer stays until the page closes. Player 4 (agent-beeps 0.9.0
+  and later) evicts least-recently-used buffers that nothing holds, but only when the game passes `memoryBudgetBytes`; with no
+  budget it behaves as before. A buffer that is playing, scheduled, part of the current music or ambience, or still fading out is
+  never evicted, so the real peak can exceed the budget (`W_MEMORY_BUDGET`), and a buffer needed again soon after its eviction
+  reports `W_MEMORY_THRASH` (raise the budget or prefetch less). `prefetch(ids)`, `unload(id)`, `memory()` and
+  `layerLoading: 'state'` bound memory further (agent-beeps `runtime/player/loader.js` and its game-player reference). Read which
+  player a game vendored from the `PLAYER_VERSION` export of the exported player (`'3'` in 0.8.0, `'4'` from 0.9.0).
+- [general] An app with many songs still plans its set: load a region's songs on entry, and on a phone budget one adaptive
+  song at a time. Plan this before adding the fifth or tenth song, not after a mobile tab is killed.
 - [general] Sfx are short and cheap; preload them.
 - [general] Fewer layers is the cheapest memory fix; split a long song into sections before adding layers.
 
@@ -36,5 +42,5 @@ Consequences:
    `AudioBufferSourceNode` start, the console is clean and first-load bytes stay in budget (for example 14 files,
    4 MB). Skip it when the audio folder is absent, and run the catalog tests with `REQUIRE_AUDIO=1` in CI so a
    missing render fails instead of skipping.
-5. [general] Decoded-memory budget and a release policy (the player does not evict).
+5. [general] Decoded-memory budget and a release policy: set `memoryBudgetBytes` on player 4, or release songs yourself on an older player.
 6. [general] CI from the template, fetching by lock, plus an advisory browser job.
