@@ -16,6 +16,7 @@ window.__player = player;
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize(W, H);
 renderer.setPixelRatio(1);
+window.__gl = renderer.getContext();   // the WebGL context the page renders with, for the verifier
 document.body.prepend(renderer.domElement);
 
 const scene = new THREE.Scene();
