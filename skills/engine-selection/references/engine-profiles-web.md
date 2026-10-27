@@ -4,10 +4,11 @@ Index: [engine-profiles.md](engine-profiles.md).
 
 ## Web stacks
 
-- [tested] Phaser 3.90.0 and three.js 0.186.1 builds of the sample scene ran in headless Chromium on the GPU
+- [tested] Phaser 4.2.1 and three.js 0.186.1 builds of the sample scene ran in headless Chromium on the GPU
   (WebGL renderer: a discrete GPU through ANGLE D3D11) with no console errors; a page loads in about a second and a
-  full verification pass takes about 12 seconds, with no install of an engine and no sign-in. Phaser loaded the
-  agent-sprites atlas unchanged through its Aseprite loader. three.js kept the GLB's clip names. The
+  full verification pass takes about 12 seconds, with no install of an engine and no sign-in. The three.js result is from
+  the earlier run; the Phaser result was repeated on 4.2.1, where the page moved from 3.90.0 with only the version
+  changed. Phaser loaded the agent-sprites atlas unchanged through its Aseprite loader. three.js kept the GLB's clip names. The
   agent-beeps player picked all 4 pickup variants with no immediate repeat.
 - [tested] Phaser 4.2.1 (the `latest` release, 2026-07-09) carried a large procedural 2D game: chunked GPU
   tilemaps, particles, parallel scenes, an Aseprite creature and terrain pipeline, on the GPU in headless Chromium. It also
