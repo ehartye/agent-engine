@@ -12,7 +12,7 @@ const tests = ['scripts', 'tests'].flatMap(directory =>
     .sort()
     .map(name => `${directory}/${name}`)
 );
-tests.push('examples/web/verify-checks.test.mjs', 'examples/web/profiling/frame-checks.test.mjs', 'examples/web3d/core/core.test.mjs', 'examples/web3d/core/game.test.mjs', 'examples/web/harness/tests/no-sleeps.test.mjs');
+tests.push('examples/web/verify-checks.test.mjs', 'examples/web/profiling/frame-checks.test.mjs', 'examples/web3d/core/core.test.mjs', 'examples/web3d/core/game.test.mjs', 'examples/web/harness/tests/no-sleeps.test.mjs', 'examples/web/harness/tests/run-node.test.mjs');
 
 for (const args of [
   ['--test', ...tests],
