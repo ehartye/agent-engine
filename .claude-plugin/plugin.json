@@ -1,6 +1,6 @@
 {
   "name": "agent-engine",
-  "version": "0.31.0",
+  "version": "0.32.0",
   "description": "Skills that help choose a game engine or web stack for agent-built projects (ease of AI-assisted development against quality and reach, with limits) and glue agent-sprites, agent-meshes and agent-beeps assets into Unity, Godot and the web: how each engine imports them, what has been verified, and a sample scene that acts as the acceptance test. Unreal and UEFN are in the agent-unreal plugin. Early: Godot, Unity and the web tier (Phaser, three.js, React Three Fiber, Babylon.js) are tested.",
   "author": {
     "name": "ehartye"
