@@ -8,9 +8,9 @@ traps live in agent-beeps and are **linked, not copied**, here:
 - [general] The `beeps-ship` skill in agent-beeps: the recipe an agent follows (build, lock, push, fetch, toolchain
   changes) and the web codec traps (MP3 `+bitexact` delay, WebKit-on-Linux MP3 padding, Opus determinism).
 - [general] For running that build in CI, see [ci-for-generated-assets](ci-for-generated-assets.md) and the template
-  `examples/web/ci/pages-audio.yml`.
-- [general] Phaser specifics (cue tables, music state machine, decode failures) stay in
-  [audio directors](../../phaser-audio/references/audio-directors.md).
+  `examples/web/ci/pages-audio.yml` in the agent-phaser plugin.
+- [general] Phaser specifics (cue tables, music state machine, decode failures) stay in the
+  `audio-directors` reference of `agent-phaser:phaser-audio`.
 
 If a fact here disagrees with those, they win; fix this page.
 

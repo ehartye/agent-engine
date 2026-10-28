@@ -1,6 +1,6 @@
 ---
 name: engine-asset-import
-description: Import agent-sprites atlases, agent-meshes GLB models and agent-beeps WAV exports into a Unity, Godot or web project, and state exactly what was verified for each engine. Not for Unreal or UEFN (use unreal-import, uefn, unreal-native or the unreal-* domain skills from agent-unreal).
+description: Import agent-sprites atlases, agent-meshes GLB models and agent-beeps WAV exports into a Unity, Godot or web project, and state exactly what was verified for each engine. Not for Unreal or UEFN (use unreal-import, uefn, unreal-native or the unreal-* domain skills from agent-unreal) or for building a Phaser game (agent-phaser:engine-phaser).
 when_to_use: Use when bringing a sprite atlas, GLB, WAV or song export into a Unity, Godot or web project, by script or through an engine's MCP server; when an imported model is missing bones, morphs, meshes or animation clips, or its clips have different names; when a sprite sheet imports with wrong frames, tags or pivot; or when asked whether an asset "works in" an engine. Importing into Unreal is the unreal-import skill in agent-unreal.
 ---
 
@@ -28,7 +28,7 @@ line between what was verified and what was only read in documentation.
 | Import rendered WAVs, loops and variants | [Rendered audio](references/wav-audio-import.md); wiring an app: [audio integration](references/audio-integration.md), [memory and wiring checklist](references/audio-memory-and-wiring.md); building and fetching in CI: [CI for generated assets](references/ci-for-generated-assets.md) |
 | Import into Godot | [Godot 4.7](references/godot-import.md) |
 | Import into Unity | [Unity 6.3](references/unity-import.md); a long-lived project: [Unity project workflow](references/unity-project-workflow.md) |
-| Load the assets in Phaser or three.js | [Web import](references/web-import.md); a real Phaser game: [engine-phaser](../engine-phaser/SKILL.md) |
+| Load the assets in Phaser or three.js | [Web import](references/web-import.md); a real Phaser game: `agent-phaser:engine-phaser` in the agent-phaser plugin |
 | See what is verified and not verified per engine | [Engine status](references/engine-status.md) |
 
 - [general] Other skills: choosing an engine is `engine-selection`. Importing into Unreal, UEFN, native C++ Unreal games with their

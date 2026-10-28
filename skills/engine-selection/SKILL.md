@@ -1,6 +1,6 @@
 ---
 name: engine-selection
-description: Choose a game engine or web stack (Custom, Unity, Unreal, UEFN for Fortnite, Godot, Phaser, three.js, Babylon.js, PlayCanvas) for a project built with AI agents, weighing how easily an agent can drive and verify it against output quality and reach, with each option's limits. Not for building in the chosen engine (use that engine's skill) or importing assets.
+description: Choose a game engine or web stack (Custom, Unity, Unreal, UEFN for Fortnite, Godot, Phaser, three.js, Babylon.js, PlayCanvas) for a project built with AI agents, weighing how easily an agent can drive and verify it against output quality and reach, with each option's limits. Not for building in the chosen engine (use that engine's skill; Phaser: agent-phaser) or importing assets.
 when_to_use: Use when asked which engine to use, to compare engines, to start a new game or level project, about making Fortnite levels or UEFN, or whether three.js is an engine; also before promising that an agent can build or verify something in a given engine.
 ---
 
@@ -55,7 +55,7 @@ docs) or **general knowledge**. Never present the last two as the first.
 - [general] **Custom is an engine type, not another engine dependency.** For an existing game whose main
   limitation is CPU pixel effects, consider a focused GPU stage before a full port. Use
   [custom engine shaders](../engine-custom-shaders/SKILL.md) for runtime lighting, warps and trails. Once Phaser is chosen,
-  use [engine-phaser](../engine-phaser/SKILL.md) for structure; it routes to the Phaser domain skills.
+  use `agent-phaser:engine-phaser` (agent-phaser plugin) for structure; it routes to the Phaser domain skills.
   Keeping gameplay may save migration time; it leaves scene/content tooling and engine maintenance
   with the project. A shader addition does not establish a faster or fully GPU-rendered game.
 - [general] **Three.js is a 3D library, and "not an engine" is a fair description, not a verdict.** It gives a scene graph,
@@ -79,7 +79,7 @@ docs) or **general knowledge**. Never present the last two as the first.
 
 After choosing Unreal, the domain skills in agent-unreal (`unreal-rendering`, `unreal-effects`, `unreal-animation`, `unreal-gameplay`, `unreal-procedural`, `unreal-editor-scripting`) pick the system for a goal and [engine-asset-import](../engine-asset-import/SKILL.md) brings assets in.
 
-For a frame-budget target (for example 120 fps) or a plan to add 25% to 50% more content, profile before choosing a fix: [profiling method](../phaser-verification/references/profiling-method.md) is the engine-neutral method, with browser specifics; the Unreal version is native Unreal profiling (`unreal-native` skill, agent-unreal). Do not promise a frame rate from an engine's ceiling.
+For a frame-budget target (for example 120 fps) or a plan to add 25% to 50% more content, profile before choosing a fix: the `profiling-method` reference of `agent-phaser:phaser-verification` is the engine-neutral method, with browser specifics; the Unreal version is native Unreal profiling (`unreal-native` skill, agent-unreal). Do not promise a frame rate from an engine's ceiling.
 
 For a Fortnite project blocked by missing MCP operations, or a proposal to author
 in regular UE and port, read UEFN authoring routes (`uefn` skill, agent-unreal)
