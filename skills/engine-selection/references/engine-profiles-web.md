@@ -13,11 +13,11 @@ Index: [engine-profiles.md](engine-profiles.md).
 - [tested] Phaser 4.2.1 (the `latest` release, 2026-07-09) carried a large procedural 2D game: chunked GPU
   tilemaps, particles, parallel scenes, an Aseprite creature and terrain pipeline, on the GPU in headless Chromium. It also
   exposed two Phaser 4 rendering bugs (GPU tilemap layers draw at twice their position; empty tiles in a GPU layer draw as
-  tile 0) and a tile-animation trap; see [phaser-worlds](../../phaser-worlds/SKILL.md) for workarounds.
+  tile 0) and a tile-animation trap; see `agent-phaser:phaser-worlds` (agent-phaser plugin) for workarounds.
 - [documented] Phaser is a 2D HTML5 framework; agent-beeps ships a browser player.
 - [documented] Open-source Phaser 4 officially supports WebGL 2 canvases. Inspected 4.2.1 defaults to WebGL 1 and accepts a supplied
   WebGL 2 context. Phaser AE is a separate proprietary engine/API; its WebGPU-first policy is not npm Phaser 4. See
-  [WebGL backends](../../phaser-rendering/references/webgl-backends.md) for primary sources, ES3 integration and bounded probe evidence.
+  the `webgl-backends` reference of `agent-phaser:phaser-rendering` for primary sources, ES3 integration and bounded probe evidence.
 - [documented] three.js describes itself as a 3D library. A vendor comparison says "it gives you a scene graph,
   cameras, lights, materials, geometry, loaders, and a renderer, and then it stops"; the wiki records "not a game
   engine" as an unsourced claim, likely true. three.js does ship basic Web Audio classes. agent-meshes ships a

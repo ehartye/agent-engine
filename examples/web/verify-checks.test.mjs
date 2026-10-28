@@ -4,15 +4,16 @@ import assert from 'node:assert/strict';
 import { parseArgs, chromiumArgs, classifyRenderer, rendererCheck, readGlContext, audioGateChecks, gpuArgs, angleBackend } from './verify-checks.mjs';
 
 test('parseArgs takes the page and the two options', () => {
-  assert.deepEqual(parseArgs(['phaser']), { page: 'phaser', allowSoftware: false, autoplay: false });
+  assert.deepEqual(parseArgs(['three']), { page: 'three', allowSoftware: false, autoplay: false });
   assert.deepEqual(parseArgs(['three', '--allow-software']), { page: 'three', allowSoftware: true, autoplay: false });
-  assert.deepEqual(parseArgs(['--autoplay', 'phaser']), { page: 'phaser', allowSoftware: false, autoplay: true });
+  assert.deepEqual(parseArgs(['--autoplay', 'three']), { page: 'three', allowSoftware: false, autoplay: true });
 });
 
 test('parseArgs refuses an unknown page or option', () => {
   assert.throws(() => parseArgs([]), /usage/);
   assert.throws(() => parseArgs(['unity']), /usage/);
-  assert.throws(() => parseArgs(['phaser', '--fast']), /usage/);
+  assert.throws(() => parseArgs(['three', '--fast']), /usage/);
+  assert.throws(() => parseArgs(['phaser']), /usage/); // the Phaser page moved to agent-phaser
 });
 
 test('angleBackend picks the platform backend that reaches a real GPU', () => {
@@ -39,7 +40,7 @@ const SOFT = 'ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C
 
 test('classifyRenderer: a hardware GPU, in a WebGL 2 or a WebGL 1 context', () => {
   assert.equal(classifyRenderer({ context: 'webgl2', renderer: GPU }), 'gpu');
-  assert.equal(classifyRenderer({ context: 'webgl1', renderer: GPU }), 'gpu');          // Phaser creates WebGL 1 by default
+  assert.equal(classifyRenderer({ context: 'webgl1', renderer: GPU }), 'gpu');          // a game on WebGL 1 is classified the same way
 });
 
 test('classifyRenderer: software renderers are webgl-fallback in either context', () => {

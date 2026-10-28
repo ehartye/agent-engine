@@ -4,7 +4,7 @@ A general pattern for any asset an agent tool generates (agent-beeps audio, agen
 GLBs): **a committed lock, a content-addressed store, and a CI that fetches and verifies instead of regenerating.**
 The audio mechanism is documented once, in agent-beeps (`docs/build-lock-and-store.md` and the `beeps-ship`
 skill); this page is the engine-agnostic shape and the CI traps. A working workflow is
-`examples/web/ci/pages-audio.yml`. Audio specifics are in [audio-integration](audio-integration.md).
+`examples/web/ci/pages-audio.yml` in the agent-phaser plugin. Audio specifics are in [audio-integration](audio-integration.md).
 
 ## The pattern
 
@@ -79,8 +79,8 @@ purpose, on the author's machine, then push. Never let CI regenerate everything 
   - [general] WebKit on Linux has no Ogg Opus: assert the unsupported notice there instead of skipping.
   - [general] Set `timeout-minutes` on the job: `playwright install --with-deps` hung for 40+ minutes twice. Upload `test-results` when the job fails.
   - [general] Promote a browser job to blocking only after 2 consecutive green runs with no retries, as a separate commit that can be reverted.
-  The template `examples/web/ci/pages-audio.yml` has these steps. For the harness side (condition waits instead of
-  sleeps, GPU-only tests tagged and skipped), see [verifying on a real GPU](../../phaser-verification/references/verifying-on-a-gpu.md).
+  The template `examples/web/ci/pages-audio.yml` (agent-phaser plugin) has these steps. For the harness side (condition waits instead of
+  sleeps, GPU-only tests tagged and skipped), see the `verifying-on-a-gpu` reference of `agent-phaser:phaser-verification`.
 - [general] **Lock gate.** After any step that rewrites the lock, fail on `git diff --exit-code <lock>`: a developer forgot
   to commit it, and the cache key would not match what was built.
 - [general] **Check before build.** A `--check` that renders nothing and lists stale assets with reasons is the cheap CI

@@ -36,6 +36,13 @@ test('the README status line states the number of skills', () => {
   assert.match(readme(), new RegExp(`^Early \\([^)]*\\)\\. ${words[skills().length]} skills\\.`, 'm'));
 });
 
+test('the README says the Phaser skills moved to agent-phaser, and no Phaser skill remains', () => {
+  assert.match(readme(), /Phaser moved to agent-phaser/);
+  assert.match(readme(), /github\.com\/ehartye\/agent-phaser/);
+  assert.deepEqual(skills().filter((name) => /phaser/.test(name)), []);
+  assert.deepEqual(json('.claude-plugin/plugin.json').keywords.filter((k) => /phaser/.test(k)), []);
+});
+
 test('plugin.json keywords name every web 3D stack that has a skill', () => {
   const keywords = json('.claude-plugin/plugin.json').keywords;
   const need = { 'engine-r3f': 'react-three-fiber', 'engine-babylon': 'babylonjs' };

@@ -19,8 +19,8 @@ export const AUTOPLAY_ARG = '--autoplay-policy=no-user-gesture-required';
 /** Software rasterisers: WebGL works on them with no error, so only the renderer string gives them away. */
 export const SOFTWARE_RENDERER = /swiftshader|llvmpipe|software|basic render/i;
 
-const PAGES = ['phaser', 'three'];
-const USAGE = 'usage: node web/verify.mjs phaser|three [--allow-software] [--autoplay]';
+const PAGES = ['three'];
+const USAGE = 'usage: node web/verify.mjs three [--allow-software] [--autoplay]';
 
 /** @param {string[]} argv */
 export function parseArgs(argv) {
@@ -43,7 +43,7 @@ export function chromiumArgs({ autoplay, platform }) {
 /**
  * Runs inside the page (Playwright serialises this function, so it must stay self-contained). Reads the WebGL context the page renders with,
  * which a page exposes as `window.__gl`; only when it exposes none does it create a fresh canvas, so a game that asks for WebGL 1, its own
- * context or a power preference is classified by the context it uses. Phaser creates a WebGL 1 context by default.
+ * context or a power preference is classified by the context it uses.
  * @returns {{ context: 'webgl2' | 'webgl1' | 'none', source: 'page' | 'fresh-canvas', renderer?: string }}
  */
 export function readGlContext() {

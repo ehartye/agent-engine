@@ -1,0 +1,16 @@
+{
+  "about": "Prompts for the blind-router check of the six agent-engine skills' descriptions. `expect` is the one skill that should be chosen; `alt` lists an acceptable second choice for a genuine overlap; `term` is a regular expression that must appear in the expected skill's description (set where a description carries a trigger, so it cannot lose it unnoticed). Used by tests/engine-routing-prompts.test.mjs and, by hand, to score blind routers. Prompts whose answer is a Phaser skill live in the agent-phaser plugin.",
+  "prompts": [
+    {"id": 1, "topic": "engine choice", "text": "Which engine should an agent-built small 2D game use?", "expect": "engine-selection", "term": "Choose a game engine"},
+    {"id": 2, "topic": "r3f", "text": "Wire a useFrame loop beside React state in a three.js game.", "expect": "engine-r3f", "term": "useFrame"},
+    {"id": 3, "topic": "babylon", "text": "A thin-instanced mesh draws at the origin in Babylon.js.", "expect": "engine-babylon", "term": "thin-instanced"},
+    {"id": 4, "topic": "asset import", "text": "Bring an agent-sprites atlas into a Godot project and say what was verified.", "expect": "engine-asset-import", "term": "Godot"},
+    {"id": 5, "topic": "custom shader", "text": "Add a GPU post-effect shader to our own canvas renderer.", "expect": "engine-custom-shaders", "term": "Canvas/WebGL"},
+    {"id": 6, "topic": "visual polish", "text": "My shooter looks like a demo; what would a VFX polish pass add to the explosions?", "expect": "engine-visual-polish", "term": "VFX"},
+    {"id": 7, "topic": "r3f", "text": "MeshToonMaterial bands come out grey in my React Three Fiber game.", "expect": "engine-r3f", "term": "MeshToonMaterial"},
+    {"id": 8, "topic": "babylon", "text": "My Babylon.js game runs at the wrong speed and positions come out mirrored.", "expect": "engine-babylon", "term": "mirrored"},
+    {"id": 9, "topic": "asset import", "text": "An imported GLB is missing its animation clips in Unity; how do I check what the importer kept?", "expect": "engine-asset-import", "term": "GLB"},
+    {"id": 10, "topic": "engine choice", "text": "Can an agent author and verify a Fortnite level, or should we pick another engine?", "expect": "engine-selection", "term": "UEFN for Fortnite"},
+    {"id": 11, "topic": "custom shader", "text": "Our own canvas renderer spends too long on CPU pixel lighting passes; can a GPU stage take over?", "expect": "engine-custom-shaders", "term": "CPU pixel passes"}
+  ]
+}
