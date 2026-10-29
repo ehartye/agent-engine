@@ -20,7 +20,7 @@ Release 0.34.0 moves the ten Phaser skills (`engine-phaser`, `phaser-architectur
 
 ## Status
 
-Early (0.34.0). Six skills. Four targets are tested with the sample scene (a fox, a pixel campfire, a pixel courier,
+Early (0.34.1). Six skills. Four targets are tested with the sample scene (a fox, a pixel campfire, a pixel courier,
 a music bed and a one-shot): Unreal Engine 5.7.3 and 5.8.3 (recorded in agent-unreal), Godot 4.7.2, Unity 6000.3.25f1 and the web tier (three.js 0.186.1; the
 Phaser 4.2.1 page of the scene moved to agent-phaser). The web 3D skills are backed by [`examples/web3d`](examples/web3d/README.md): engine-neutral core modules with node tests and a React Three Fiber app (three 0.186.1, @react-three/fiber 9.8.1) and a Babylon.js app (9.29.0), each with a verifier that checks renderer behaviour on a real GPU. Each imports the assets, runs with no errors, renders on the GPU and produces a screenshot;
 the web and Unity passes also record which pickup variants played. The scene loops use scripts, not an MCP server.
