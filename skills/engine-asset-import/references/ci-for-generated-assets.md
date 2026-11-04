@@ -95,3 +95,7 @@ purpose, on the author's machine, then push. Never let CI regenerate everything 
 - [general] Use the same five steps: input hash of the project file and tool version, a lock, a store, CI fetch. Only the
   tool differs. Until a tool has a `build` and `store`, a small committed output plus a checksum manifest gives the
   same stale test. Say which you did.
+
+## Pre-scene startup failures
+
+- [general] Retain [startup diagnostics](webgl-startup-diagnostics.md) separately from scene acceptance: launch flags/version, source and observed-response hashes, context/probe outcomes, loader state and sanitized HTTP/error evidence. A support probe is not engine-context proof.

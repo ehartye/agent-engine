@@ -29,6 +29,7 @@ line between what was verified and what was only read in documentation.
 | Import into Godot | [Godot 4.7](references/godot-import.md) |
 | Import into Unity | [Unity 6.3](references/unity-import.md); a long-lived project: [Unity project workflow](references/unity-project-workflow.md) |
 | Load the assets in Phaser or three.js | [Web import](references/web-import.md); a real Phaser game: `agent-phaser:engine-phaser` in the agent-phaser plugin |
+| Diagnose a WebGL launch before a scene exists | [Startup evidence](references/webgl-startup-diagnostics.md) |
 | See what is verified and not verified per engine | [Engine status](references/engine-status.md) |
 
 - [general] Other skills: choosing an engine is `engine-selection`. Importing into Unreal, UEFN, native C++ Unreal games with their
